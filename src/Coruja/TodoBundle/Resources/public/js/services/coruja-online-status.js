@@ -1,7 +1,5 @@
-/**
- * Services that persists and retrieves TODOs from localStorage.
- */
-todoApp.factory('onlineStatus', ["$window", "$rootScope", function ($window, $rootScope) {
+
+angular.module('corujaOnlineStatus', []).factory('onlineStatus', ["$window", "$rootScope", function ($window, $rootScope) {
     var onlineStatus = {};
 
     onlineStatus.onLine = $window.navigator.onLine;

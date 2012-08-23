@@ -1,7 +1,7 @@
 'use strict';
 
 // Declare app level module which depends on filters, and services
-var todoApp = angular.module('todoApp', ['ngResource', 'storage'])
+var todoApp = angular.module('todoApp', ['ngResource', 'corujaResource', 'corujaStorage', 'corujaOnlineStatus'])
     .run(function ($rootScope, $window) {
         $window.addEventListener("online", function () {
             $rootScope.$broadcast('onlineChanged', true);

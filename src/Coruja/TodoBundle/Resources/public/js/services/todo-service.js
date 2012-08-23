@@ -23,9 +23,9 @@ todoApp.factory('todoService', ["$resource", "localStorage", "resourceService",
             localResourceChanged : localStorage('todos.changed'),
             localResourceDeleted : localStorage('todos.deleted'),
             entityFactory : todoFactory
-        }
+        };
 
-        var resource = resourceService(config)
+        var resource = resourceService(config);
 
         var todoService = {};
 

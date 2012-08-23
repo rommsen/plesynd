@@ -1,7 +1,6 @@
-/**
- * Todo Rest Ressource
- */
-todoApp.factory('resourceService', ["$q", "$timeout", "$resource", "localStorage", "onlineStatus",
+'use strict';
+
+angular.module('corujaResource', []).factory('resourceService', ["$q", "$timeout", "$resource", "localStorage", "onlineStatus",
     function ($q, $timeout, $resource, localStorage, onlineStatus) {
         function resourceFactory(config) {
             var remoteResource = config.remoteResource;
