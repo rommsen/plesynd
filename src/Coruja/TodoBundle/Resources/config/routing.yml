@@ -1,0 +1,7 @@
+CorujaTodoBundle_index:
+    pattern:  /
+    defaults: { _controller: CorujaTodoBundle:Todo:index }
+
+todos:
+    type:     rest
+    resource: Coruja\TodoBundle\Controller\TodoRestController

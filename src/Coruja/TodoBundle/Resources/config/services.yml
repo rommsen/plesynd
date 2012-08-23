@@ -1,0 +1,7 @@
+parameters:
+#    coruja_todo.example.class: Coruja\TodoBundle\Example
+
+services:
+#    coruja_todo.example:
+#        class: %coruja_todo.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]
