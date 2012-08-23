@@ -6,3 +6,9 @@ build/
 vendor
 bin
 composer.phar
+
+web/js/
+web/css/
+.directory
+.idea/
+*~

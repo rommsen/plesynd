@@ -12,9 +12,9 @@ framework:
     form:            true
     csrf_protection: true
     validation:      { enable_annotations: true }
-    templating:      { engines: ['twig'] } #assets_version: SomeVersionScheme
+    templating:      { engines: ['twig', 'php'] } #assets_version: SomeVersionScheme
     default_locale:  %locale%
-    trust_proxy_headers: false # Whether or not the Request object should trust proxy headers (X_FORWARDED_FOR/HTTP_CLIENT_IP)
+    trust_proxy_headers: false # Should Request object should trust proxy headers (X_FORWARDED_FOR/HTTP_CLIENT_IP)
     session:         ~
 
 # Twig Configuration
@@ -25,8 +25,8 @@ twig:
 # Assetic Configuration
 assetic:
     debug:          %kernel.debug%
-    use_controller: false
-    bundles:        [ ]
+    use_controller: true
+    bundles:        ['CorujaTodoBundle']
     #java: /usr/bin/java
     filters:
         cssrewrite: ~
@@ -48,7 +48,31 @@ doctrine:
 
     orm:
         auto_generate_proxy_classes: %kernel.debug%
-        auto_mapping: true
+        #auto_mapping: true
+        entity_managers:
+            default:
+              connection: default
+              mappings:
+                CorujaTodoBundle:
+                    type: annotation
+                    dir: Entity
+                    prefix: Coruja\TodoBundle\Entity\
+
+fos_rest:
+    body_listener: true
+    format_listener: false
+    view:
+        view_response_listener: true
+    routing_loader:
+            default_format: json
+
+sensio_framework_extra:
+    # wegen FOSRestBundle ausgestellt https://github.com/FriendsOfSymfony/FOSRestBundle/blob/master/Resources/doc/3-listener-support.md
+    view:    { annotations: false }
+    router:  { annotations: true }
+
+nelmio_api_doc: ~
+
 
 # Swiftmailer Configuration
 swiftmailer:
