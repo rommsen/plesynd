@@ -12,4 +12,3 @@ web/css/
 .directory
 .idea/
 *~
-app/config/parameters.yml
