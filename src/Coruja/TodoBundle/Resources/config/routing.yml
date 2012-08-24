@@ -1,5 +1,5 @@
 CorujaTodoBundle_index:
-    pattern:  /
+    pattern:  /todo/
     defaults: { _controller: CorujaTodoBundle:Todo:index }
 
 todos:

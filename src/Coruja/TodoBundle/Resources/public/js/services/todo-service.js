@@ -13,7 +13,7 @@ todoApp.factory('todoService', ["$resource", "localStorage", "resourceService",
         }
 
         var config = {
-            remoteResource : $resource('todo/api/todos/:todoId', {todoId:'@id'}, {
+            remoteResource : $resource('api/todos/:todoId', {todoId:'@id'}, {
                 put:{method:'PUT' },
                 post:{method:'POST' }
             }),
