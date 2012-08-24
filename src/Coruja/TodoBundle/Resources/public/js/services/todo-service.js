@@ -1,6 +1,5 @@
-/**
- * Todo Rest Ressource
- */
+'use strict';
+
 todoApp.factory('todoService', ["$resource", "localStorage", "resourceService",
     function ($resource, localStorage, resourceService) {
         var copy = angular.copy;
@@ -29,24 +28,24 @@ todoApp.factory('todoService', ["$resource", "localStorage", "resourceService",
 
         var todoService = {};
 
-        todoService.query = function (success) {
-            return resource.query(success);
+        todoService.query = function (success, error) {
+            return resource.query(success, error);
         };
 
-        todoService.post = function (todo, success) {
-            resource.post(todo, success);
+        todoService.post = function (todo, success, error) {
+            resource.post(todo, success, error);
         };
 
-        todoService.put = function (todo, success) {
-            resource.put(todo, success);
+        todoService.put = function (todo, success, error) {
+            resource.put(todo, success, error);
         };
 
-        todoService.delete = function (todo, success) {
-            resource.delete(todo, success);
+        todoService.delete = function (todo, success, error) {
+            resource.delete(todo, success, error);
         };
 
-        todoService.synchronize = function (success) {
-            resource.synchronize(success);
+        todoService.synchronize = function (success, error) {
+            resource.synchronize(success, error);
         }
 
         todoService.createEntity = function (data) {

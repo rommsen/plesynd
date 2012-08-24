@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('corujaResource', []).factory('resourceService', ["$q", "$timeout", "$resource", "localStorage", "onlineStatus",
+angular.module('corujaResource', ['corujaStorage', 'corujaOnlineStatus']).factory('resourceService', ["$q", "$timeout", "$resource", "localStorage", "onlineStatus",
     function ($q, $timeout, $resource, localStorage, onlineStatus) {
         function resourceFactory(config) {
             var remoteResource = config.remoteResource;
@@ -10,6 +10,7 @@ angular.module('corujaResource', []).factory('resourceService', ["$q", "$timeout
             var localResourceDeleted = config.localResourceDeleted;
             var entityFactory = config.entityFactory;
 
+//            // uncomment to reset data
 //            localResource.storeData([]);
 //            localResourceAdded.storeData([]);
 //            localResourceChanged.storeData([]);
@@ -20,6 +21,11 @@ angular.module('corujaResource', []).factory('resourceService', ["$q", "$timeout
             var forEach = angular.forEach,
                 noop = angular.noop;
 
+            /**
+             * Deletes $save, $get etc methods from Resource Object
+             * @param object
+             * @return {Object}
+             */
             function deleteUnnecessaryProperties(object) {
                 var strippedObject = {};
                 for (var property in object) {
@@ -30,59 +36,84 @@ angular.module('corujaResource', []).factory('resourceService', ["$q", "$timeout
                 return strippedObject;
             }
 
+            /**
+             * Synchronizes the local resources for added, changed and deleted Items
+             * @param success
+             */
             function synchronizeData(success) {
-                $q.all([synchronizeAdded(), synchronizeDeleted(), synchronizeUpdated()]).then(function () {
-                    (success || noop)();
+                var promises = [
+                    synchronizeStorage(localResourceAdded, 'post'),
+                    synchronizeStorage(localResourceChanged, 'put'),
+                    synchronizeStorage(localResourceDeleted, 'delete')
+                ]
+                $q.all(promises).then(function (results) {
+                    console.log('all resolved', results);
+                    (success || noop)(results);
                 });
             }
 
-            function synchronizeAdded() {
+            /**
+             * Synchronizes local resource with remote resource
+             * @param storage local resource
+             * @param method put/post/delete
+             * @return $q.defer().promise
+             */
+            function synchronizeStorage(storage, method) {
                 var deferred = $q.defer();
-                localResourceAdded.query(function (data) {
-                    forEach(data, function (item) {
-                        // id war nur lokal und darf nicht mit übertragen werden
-                        delete item.id;
-                        resource.post(item);
-                        localResourceAdded.delete(item);
-                    });
-                    $timeout(function () {
-                        deferred.resolve(data);
-                    });
-                });
-                return deferred.promise
-            }
+                var promise = deferred.promise;
+                var data_length;
+                var resolved = 0;
+                var results = [];
 
-            function synchronizeUpdated() {
-                var deferred = $q.defer();
-                localResourceChanged.query(function (data) {
-                    forEach(data, function (item) {
-                        resource.put(item);
-                        localResourceChanged.delete(item);
-                    });
-                    $timeout(function () {
-                        deferred.resolve(data);
-                    });
-                });
-                return deferred.promise
-            }
+                function resolve(object, header) {
+                    var result = {};
+                    console.log('data_length', method, data_length);
 
-            function synchronizeDeleted() {
-                var deferred = $q.defer();
-                localResourceDeleted.query(function (data) {
-                    forEach(data, function (item) {
-                        resource.delete(item);
-                        localResourceDeleted.delete(item);
-                    });
-                    $timeout(function () {
-                        deferred.resolve(data);
-                    });
+                    // if headers are not defined, the synchronization of the
+                    // item was not successful and the error callback was called
+                    if(header !== undefined) {
+                        // only delete item from local storage, if sync was successful
+                        storage.delete(object);
+                        result.item = object;
+                        result.header = header;
+                    } else {
+                        result.response = object;
+                    }
+                    results.push(result);
+
+                    resolved += 1;
+                    // resolve when all items are handled (no matter if successful or not)
+                    if (resolved === data_length) {
+                        $timeout(function () {
+                            console.log(method + ' resolved');
+                            deferred.resolve(results);
+                        });
+                    }
+                }
+                // process each item of storage separately
+                storage.query(function (data) {
+                    data_length = data.length;
+                    if (data_length == 0) {
+                        $timeout(function () {
+                            deferred.resolve([]);
+                        });
+                    } else {
+                        forEach(data, function (item) {
+                            if (method === 'post') {
+                                // id was only set locally and should not be transferred
+                                delete item.id;
+                            }
+                            console.log(method, item);
+                            resource[method].call(resource, item, resolve, resolve);
+                        });
+                    }
                 });
-                return deferred.promise
+                return promise;
             }
 
             var resource = {};
 
-            resource.query = function (success) {
+            resource.query = function (success, error) {
                 var deferred = $q.defer();
                 var promise = deferred.promise;
                 var items = [];
@@ -95,85 +126,91 @@ angular.module('corujaResource', []).factory('resourceService', ["$q", "$timeout
 
                 var resource = onlineStatus.isOnline() ? remoteResource : localResource;
                 resource.query(resolveQueryDeferred, function () {
-                    // falls remote nicht geklappt hat, dies ist das error Callback
+                    // if remote query is not successful query the local resource
                     localResource.query(resolveQueryDeferred);
                 });
 
                 promise.then(function (data) {
-                    // sorge dafür, dass alle Objekte vom richtigen Typ sind und nicht Ressourcen
+                    // we dont want to store the ngResource objects but our own
                     forEach(data, function (item) {
                         items.push(entityFactory(deleteUnnecessaryProperties(item)));
                     });
+                    // local resources are always overwritten with last result
                     localResource.storeData(items);
                     (success || noop)(items);
-                });
+                }, error);
                 return items;
             };
 
-            resource.post = function (item, success) {
+            resource.post = function (item, success, error) {
                 if (onlineStatus.isOnline()) {
-                    remoteResource.post(item, function (t, header) {
+                    remoteResource.post(item, function (data, header) {
+                        // REST Server returns Location header with URI
                         var location = header('Location');
                         item.id = location.substring(location.lastIndexOf('/') + 1);
+                        // always store in local resource
                         localResource.post(item);
-
-                    });
+                        (success || noop)(item, header);
+                    }, error);
                 } else {
                     localResource.query(function (data) {
                         item.id = localIdPrefix + data.length;
                         localResource.post(item);
+                        // mark for adding
                         localResourceAdded.post(item);
+                        (success || noop)(item)
                     });
                 }
-                (success || noop)(item)
             };
 
-            resource.put = function (item, success) {
+            resource.put = function (item, success, error) {
                 if (onlineStatus.isOnline()) {
-                    remoteResource.put(item, function () {
+                    remoteResource.put(item, function (data, header) {
                         localResource.put(item);
-                        (success || noop)(item);
-                    });
+                        (success || noop)(item, header);
+                    }, error);
                 } else {
                     // speicher in lokale Resource
                     localResource.put(item);
                     if (String(item.id).substr(0, localIdPrefix.length) == localIdPrefix) {
-                        // war nur lokal deshalb muss sie im added Bereich geändert werden
+                        // if item was only stored locally we need to change
+                        // the local resource for added items
                         localResourceAdded.put(item);
                     } else {
-                        // war remote, deshalb muss sie geändert werden
+                        // otherwise mark for update
                         localResourceChanged.put(item);
                     }
                     (success || noop)(item);
                 }
             };
 
-            resource.delete = function (item, success) {
+            resource.delete = function (item, success, error) {
                 if (onlineStatus.isOnline()) {
                     // remoteResource.delete(item, ... geht nicht
-                    new remoteResource(item).$delete(function () {
+                    new remoteResource(item).$delete(function (data, header) {
                         localResource.delete(item);
-                        (success || noop)(item);
-                    });
+                        (success || noop)(item, header);
+                    }, error);
                 } else {
                     localResource.delete(item);
                     if (String(item.id).substr(0, localIdPrefix.length) == localIdPrefix) {
-                        // war nur lokal, deshalb braucht sie nicht mehr hinzugefügt werden
+                        // if item was only stored locally it should not be added anymore
                         localResourceAdded.delete(item);
                     } else {
-                        // war remote deshalb muss sie gelöscht werden
-                        localResourceDeleted.put(item);
-                        // war remote deshalb muss sie aus dem changed entfernt werden
+                        // otherwise it should not be marked as changed anymore
                         localResourceChanged.delete(item);
+                        // mark for deletion
+                        localResourceDeleted.put(item);
                     }
                     (success || noop)(item);
                 }
             };
 
-            resource.synchronize = function (success) {
+            resource.synchronize = function (success, error) {
                 if (onlineStatus.isOnline()) {
-                    synchronizeData(success);
+                    synchronizeData(success, error);
                 } else {
+                    // can not synchronize when offline
                     (success || noop)();
                 }
             }
@@ -182,33 +219,3 @@ angular.module('corujaResource', []).factory('resourceService', ["$q", "$timeout
 
         return resourceFactory;
     }]);
-
-//    // this ist in diesem Fall keine Instanz von Resource
-//    remoteResource.save([{'title': 'dingdong', 'completed' : false}]);
-
-//    var bla = new remoteResource({'title': 'dingdong', 'completed' : false});
-//      //  this ist in diesem Fall eine Instanz von Resource
-//    bla.$save();
-
-
-/*
- was brauche ich: eine Funktionalität, die in der Lage ist zu prüfen, ob das System online ist oder nicht
- wenn ja, soll das $resource Zeug benutzt werden, wenn nicht das offline zeug. Nach außen hin, soll die
- Benutzung aber vollkommen transparent sein. Das bedeutet, dass im Controller einfach
- var todo = new Todo(data) gesagt wird und dann mit todo.$save() gearbeitet werden kann.
- das System muss dann entscheiden was passiert. Wenn das System offline ist, müssen die Requests irgendwie
- zwischengespeichert werden und bei einem Wechsel auf online müssen die Sachen abgeschickt werden.
-
- wenn das system offline ist:
-
- löschen: lösche aus localstorage und schreibe in eigenen LocalStorage für die gelöschten
- hinzufügen: füge in LocalStorage hinzu, erzeuge eine künstliche ID und schreibe in extra localStorage für neue Einträge
- Bearbeiten: bearbeite in normalem Storage und füge in extra storage für bearbeitete Einträge ein. Wenn der Eintrag in
- den neuen zu finden ist, füge ihn nicht in die bearbeiteten ein, sondern ersetze den alten neuen durch den neuen neuen
- */
-
-/**
- * Resource Objekte haben $ Methoden, z.B. $save. Diese sollen nicht im Entity vorkommen
- * @param object
- * @return {Object}
- */

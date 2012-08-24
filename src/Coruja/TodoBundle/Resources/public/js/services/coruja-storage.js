@@ -10,11 +10,14 @@ angular.module('corujaStorage', []).factory('localStorage', ["$timeout", "$q",
 
 
         function storageFactory(storage_id) {
+            /**
+             * Gets the data from localStorage.
+             * Uses deferred to make it integrate with ngResource
+             * @return $q.defer().promise
+             */
             function getData() {
                 var deferred = $q.defer();
 
-                // es muss kein $apply aufgerufen werden, da $timeout
-                // dies erledigt wenn sein defer resolved wird
                 $timeout(function () {
                     deferred.resolve(fromJson(localStorage.getItem(storage_id) || '[]'));
                 });
@@ -22,6 +25,12 @@ angular.module('corujaStorage', []).factory('localStorage', ["$timeout", "$q",
                 return deferred.promise;
             }
 
+            /**
+             * Uses the id property of the item to find its position
+             * @param item
+             * @param data
+             * @return {Number}
+             */
             function findItemPosition(item, data) {
                 var position = -1;
                 forEach(data, function (storedItem, index) {
@@ -38,17 +47,20 @@ angular.module('corujaStorage', []).factory('localStorage', ["$timeout", "$q",
 
             var storage = {};
 
+            /**
+             * Queries the localStorage. Does not return a promise but the value array. This makes it
+             * compatible with ngResource
+             *
+             * @param success callback
+             * @return {Array}
+             */
             storage.query = function (success) {
                 var value = [];
                 getData().then(function (data) {
                     copy(data, value);
-                    // rufe die Success Methode auf, die im Controller
-                    // als Callback mitgegeben werden kann
-                    success(value);
+                    (success || noop)(data);
                 });
 
-                // gib hier nicht das promise Objekt sondern die Referenz auf value zurück,
-                // wenn die Promise resolved wird, wird value im then gefüllt
                 return value;
             };
 
