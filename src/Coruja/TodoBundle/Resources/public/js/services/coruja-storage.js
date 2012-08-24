@@ -70,8 +70,11 @@ angular.module('corujaStorage', []).factory('localStorage', ["$timeout", "$q",
 
             storage.delete = function (item) {
                 getData().then(function (data) {
-                    data.splice(findItemPosition(item, data), 1);
-                    postData(data)
+                    var position = findItemPosition(item, data);
+                    if (position !== -1) {
+                        data.splice(position, 1);
+                        postData(data)
+                    }
                 });
             };
 
@@ -86,7 +89,7 @@ angular.module('corujaStorage', []).factory('localStorage', ["$timeout", "$q",
                 getData().then(function (data) {
                     var position = findItemPosition(item, data);
                     // not found, post it
-                    if (position == -1) {
+                    if (position === -1) {
                         data.push(item);
                     } else {
                         data[position] = item;

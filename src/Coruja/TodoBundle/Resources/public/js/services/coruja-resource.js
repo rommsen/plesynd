@@ -169,7 +169,6 @@ angular.module('corujaResource', ['corujaStorage', 'corujaOnlineStatus']).factor
                         (success || noop)(item, header);
                     }, error);
                 } else {
-                    // speicher in lokale Resource
                     localResource.put(item);
                     if (String(item.id).substr(0, localIdPrefix.length) == localIdPrefix) {
                         // if item was only stored locally we need to change
