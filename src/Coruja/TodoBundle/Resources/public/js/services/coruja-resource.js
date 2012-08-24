@@ -47,7 +47,7 @@ angular.module('corujaResource', ['corujaStorage', 'corujaOnlineStatus']).factor
                     synchronizeStorage(localResourceDeleted, 'delete')
                 ]
                 $q.all(promises).then(function (results) {
-                    console.log('all resolved', results);
+                    console.log('all (post put delete) resolved:', results);
                     (success || noop)(results);
                 });
             }
@@ -67,7 +67,6 @@ angular.module('corujaResource', ['corujaStorage', 'corujaOnlineStatus']).factor
 
                 function resolve(object, header) {
                     var result = {};
-                    console.log('data_length', method, data_length);
 
                     // if headers are not defined, the synchronization of the
                     // item was not successful and the error callback was called
@@ -85,7 +84,7 @@ angular.module('corujaResource', ['corujaStorage', 'corujaOnlineStatus']).factor
                     // resolve when all items are handled (no matter if successful or not)
                     if (resolved === data_length) {
                         $timeout(function () {
-                            console.log(method + ' resolved');
+                            console.log(method + ' resolved, all items are processed');
                             deferred.resolve(results);
                         });
                     }
