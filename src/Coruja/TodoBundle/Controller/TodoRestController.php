@@ -42,7 +42,7 @@ class TodoRestController extends FOSRestController
     }
 
     /**
-     * put: man kennt die Ressource also bearbeiten
+     * Update known resource
      * @Rest\View()
      * @ApiDoc
      */
@@ -52,15 +52,18 @@ class TodoRestController extends FOSRestController
         $em = $this->get('doctrine')->getEntityManager();
         /* @var $em \Doctrine\ORM\EntityManager */
         $todo = $em->find('CorujaTodoBundle:Todo', $id);
-        $todo->setTitle($data->get('title'));
-        $todo->setCompleted($data->get('completed'));
-        $em->flush();
 
-        return View::create(null, HttpCodes::HTTP_NO_CONTENT);
+        if ($todo !== NULL) {
+            $todo->setTitle($data->get('title'));
+            $todo->setCompleted($data->get('completed'));
+            $em->flush();
+            return View::create(null, HttpCodes::HTTP_NO_CONTENT);
+        }
+        return View::create(null, HttpCodes::HTTP_NOT_FOUND);
     }
 
     /**
-     * neue ressourcen
+     * Insert new resource
      * @Rest\View()
      * @ApiDoc
      */
@@ -81,15 +84,20 @@ class TodoRestController extends FOSRestController
 
 
     /**
-     * lösche ressourcen
-     * @Rest\View(statusCode=204)
+     * Deletes resource
+     * @Rest\View()
      * @ApiDoc
      */
     public function deleteTodoAction($id)
     {
         $em = $this->get('doctrine')->getEntityManager();
         /* @var $em \Doctrine\ORM\EntityManager */
-        $em->remove($em->find('CorujaTodoBundle:Todo', $id));
-        $em->flush();
+        $todo = $em->find('CorujaTodoBundle:Todo', $id);
+        if ($todo !== NULL) {
+            $em->remove($todo);
+            $em->flush();
+            return View::create(null, HttpCodes::HTTP_NO_CONTENT);
+        }
+        return View::create(null, HttpCodes::HTTP_NOT_FOUND);
     }
 }
