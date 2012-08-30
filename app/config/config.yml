@@ -26,7 +26,7 @@ twig:
 assetic:
     debug:          %kernel.debug%
     use_controller: false
-    bundles:        ['CorujaTodoBundle']
+    bundles:        ['CorujaPlesyndBundle', 'CorujaTodoBundle']
     #java: /usr/bin/java
     filters:
         cssrewrite: ~
@@ -53,6 +53,10 @@ doctrine:
             default:
               connection: default
               mappings:
+                CorujaPlesyndBundle:
+                    type: annotation
+                    dir: Entity
+                    prefix: Coruja\PlesyndBundle\Entity\
                 CorujaTodoBundle:
                     type: annotation
                     dir: Entity
@@ -60,7 +64,10 @@ doctrine:
 
 fos_rest:
     body_listener: true
-    format_listener: false
+    format_listener:
+        default_priorities: ['json', html, '*/*']
+        fallback_format: html
+        prefer_extension: true
     view:
         view_response_listener: true
     routing_loader:

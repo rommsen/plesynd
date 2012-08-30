@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="plesynd" ng-controller="PlesyndCtrl" manifest="/cacha.appcache">
+<head>
+    <meta charset="utf-8">
+    {% raw %}<title>PleSynd {{online_status_string}}</title>{% endraw %}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    {% stylesheets
+    '@CorujaPlesyndBundle/Resources/public/css/bootstrap.css'
+    '@CorujaPlesyndBundle/Resources/public/css/app.css'
+    '@CorujaPlesyndBundle/Resources/public/css/bootstrap-responsive.css'
+    output='css/compiled/main.css'
+    %}
+    <link rel="stylesheet" href="{{ asset_url }}"/>
+    {% endstylesheets %}
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le fav and touch icons -->
+    <!--
+    <link rel="shortcut icon" href="../assets/ico/favicon.ico">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
+    -->
+</head>
+
+<body>
+
+{% raw %}
+
+<div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container-fluid">
+            <!-- benötigt bootstrap.js
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </a>
+            -->
+            <a class="brand" href="#">Plesynd</a>
+            <span ng-show="online_status" class="pull-right label label-success">Online</span>
+            <span ng-show="!online_status" class="pull-right label label-important">Offline</span>
+            <div class="nav-collapse collapse">
+                <ul class="nav">
+                    <li class="active"><a href="#">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </div><!--/.nav-collapse -->
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="page-header">
+                <p>online/offline bla blub</p>
+            </div>
+        </div><!--/span-->
+    </div><!--/row-->
+</div><!--/.fluid-container-->
+
+<ul class="nav nav-tabs">
+    <li ng-class="{active: 'dashboard' == active_slug}"><a href="#/dashboard">dashboard</a></li>
+    <li ng-class="{active: workspace.slug == active_slug}" ng-repeat="workspace in workspaces" >
+        <a href="#/workspace/{{workspace.slug}}">{{workspace.title}}</a>
+    </li>
+</ul>
+Name {{ active_slug }}
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
+            <div ng-view></div>
+        </div><!--/span-->
+    </div><!--/row-->
+
+    <hr>
+
+    <footer>
+        <p>&copy; Roman Sachse 2012</p>
+    </footer>
+
+</div><!--/.fluid-container-->
+
+
+<!-- Container that holds the different workspaces -->
+<script type="text/ng-template" id="workspaceContainer">
+    <div class="well span5" ng-repeat="widget in workspace.widgets">
+        <!-- <iframe ng-show="widget.uri" ng-src="{{widget.uri}}" width={{widget.width}} height={{widget.height}}></iframe> -->
+        hier kommt der iframe rein
+    </div>
+</script>
+
+<!-- Container that holds the different workspaces -
+<script type="text/ng-template" id="workspaceContainer">
+    <div ng-repeat="workspace in orderedWorkpaces = (workspaces | orderBy:position)"  ng-controller="WorkspaceCtrl">
+        <div ng-show="workspace.slug == active_slug">
+            <div class="well span5" ng-repeat="widget in widgets">
+                <iframe ng-show="widget.uri" ng-src="{{widget.uri}}" width={{widget.width}} height={{widget.height}}></iframe>
+            </div>
+        </div>
+    </div>
+</script>-->
+
+
+<!-- Preload Workspaces
+<div ng-repeat="workspace in workspaces">
+    <div ng-show="false" ng-include="'workspace/'+workspace.slug+'.html'"></div>
+</div>-->
+
+{% endraw %}
+
+<!-- Le javascript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+{% javascripts
+    '@CorujaPlesyndBundle/Resources/public/js/lib/angular/angular.js'
+    '@CorujaPlesyndBundle/Resources/public/js/lib/angular/angular-resource.js'
+    '@CorujaPlesyndBundle/Resources/public/js/app.js'
+    '@CorujaPlesyndBundle/Resources/public/js/controllers.js'
+    '@CorujaPlesyndBundle/Resources/public/js/services/coruja-online-status.js'
+    '@CorujaPlesyndBundle/Resources/public/js/services/coruja-storage.js'
+    '@CorujaPlesyndBundle/Resources/public/js/services/coruja-resource.js'
+    output='js/compiled/main.js'
+%}
+<script src="{{ asset_url }}"></script>
+{% endjavascripts %}
+
+
+
+<script type="text/javascript">
+    var cacheStatusValues = [];
+    cacheStatusValues[0] = 'uncached';
+    cacheStatusValues[1] = 'idle';
+    cacheStatusValues[2] = 'checking';
+    cacheStatusValues[3] = 'downloading';
+    cacheStatusValues[4] = 'updateready';
+    cacheStatusValues[5] = 'obsolete';
+
+    var cache = window.applicationCache;
+    cache.addEventListener('cached', logEvent, false);
+    cache.addEventListener('checking', logEvent, false);
+    cache.addEventListener('downloading', logEvent, false);
+    cache.addEventListener('error', logEvent, false);
+    cache.addEventListener('noupdate', logEvent, false);
+    cache.addEventListener('obsolete', logEvent, false);
+    cache.addEventListener('progress', logEvent, false);
+    cache.addEventListener('updateready', logEvent, false);
+
+    function logEvent(e) {
+        var online, status, type, message;
+        online = (navigator.onLine) ? 'yes' : 'no';
+        status = cacheStatusValues[cache.status];
+        type = e.type;
+        message = 'online: ' + online;
+        message+= ', event: ' + type;
+        message+= ', status: ' + status;
+        if (type == 'error' && navigator.onLine) {
+            message+= ' (prolly a syntax error in manifest)';
+        }
+        console.log(message);
+    }
+
+    window.applicationCache.addEventListener(
+            'updateready',
+            function(){
+                window.applicationCache.swapCache();
+                console.log('swap cache has been called');
+            },
+            false
+    );
+
+    setInterval(function(){cache.update()}, 10000);
+</script>
+
+
+</body>
+</html>

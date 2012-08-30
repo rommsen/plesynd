@@ -3,8 +3,8 @@ parameters:
     database_host:     localhost
     database_port:     ~
     database_name:     plesynd
-    database_user:     plesynd
-    database_password: plesynd
+    database_user:     root
+    database_password: flirtme
 
     mailer_transport:  smtp
     mailer_host:       localhost

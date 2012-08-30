@@ -1,0 +1,31 @@
+{% raw %}
+        {{workspace.slug}}
+    <div ng-repeat="widget in widgets">
+        {{widget.uri}}
+    </div>
+{% endraw %}
+
+
+
+
+{#{% set widgets = workspace.widgets %}#}
+{#{% for i in 0..30 %}#}
+    {#{% if i % 3 == 1%}#}
+        {#<div class="row-fluid">#}
+    {#{% endif %}#}
+    {#<div class="span4">#}
+        {#{% set j = i - 1 %}#}
+        {#{% set widget = widgets.get(i) %}#}
+        {#{% if widget %}#}
+            {#<p>{{widget.uri}}</p>#}
+            {#<p>{{widget.position}}</p>#}
+        {#{% else%}#}
+            {#empty space#}
+        {#{% endif %}#}
+    {#</div><!--/span-->#}
+    {#{% if i % 3 == 0%}#}
+        {#</div><!--/row-->#}
+    {#{% endif %}#}
+{#{% endfor %}#}
+
+{#<iframe ng-src="http://plesynd/app_dev.php/todo/" width="800" height="600"></iframe>#}
