@@ -51,10 +51,23 @@ class PlesyndController extends Controller
     public function appcacheAction() {
         $manifest = <<<EOF
 CACHE MANIFEST
-#Rev 7
+#Rev 1u66
 
 CACHE:
 
+#CSS
+/css/compiled/plesynd/main_bootstrap_1.css
+/css/compiled/plesynd/main_app_2.css
+/css/compiled/plesynd/main_bootstrap-responsive_3.css
+
+#JS
+/js/compiled/plesynd/main_angular_1.js
+/js/compiled/plesynd/main_angular-resource_2.js
+/js/compiled/plesynd/main_app_3.js
+/js/compiled/plesynd/main_controllers_4.js
+/js/compiled/plesynd/main_coruja-online-status_5.js
+/js/compiled/plesynd/main_coruja-storage_6.js
+/js/compiled/plesynd/main_coruja-resource_7.js
 
 NETWORK:
 *

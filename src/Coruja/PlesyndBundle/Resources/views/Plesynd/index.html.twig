@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="plesynd" ng-controller="PlesyndCtrl" manifest="/cacha.appcache">
+<html lang="en" ng-app="plesynd" ng-controller="PlesyndCtrl" manifest="/cache.appcache">
 <head>
     <meta charset="utf-8">
     {% raw %}<title>PleSynd {{online_status_string}}</title>{% endraw %}
@@ -12,7 +12,7 @@
     '@CorujaPlesyndBundle/Resources/public/css/bootstrap.css'
     '@CorujaPlesyndBundle/Resources/public/css/app.css'
     '@CorujaPlesyndBundle/Resources/public/css/bootstrap-responsive.css'
-    output='css/compiled/main.css'
+    output='css/compiled/plesynd/main.css'
     %}
     <link rel="stylesheet" href="{{ asset_url }}"/>
     {% endstylesheets %}
@@ -97,8 +97,7 @@ Name {{ active_slug }}
 <!-- Container that holds the different workspaces -->
 <script type="text/ng-template" id="workspaceContainer">
     <div class="well span5" ng-repeat="widget in workspace.widgets">
-        <!-- <iframe ng-show="widget.uri" ng-src="{{widget.uri}}" width={{widget.width}} height={{widget.height}}></iframe> -->
-        hier kommt der iframe rein
+        <iframe ng-show="widget.uri" ng-src="{{widget.uri}}" width={{widget.width}} height={{widget.height}}></iframe>
     </div>
 </script>
 
@@ -132,7 +131,7 @@ Name {{ active_slug }}
     '@CorujaPlesyndBundle/Resources/public/js/services/coruja-online-status.js'
     '@CorujaPlesyndBundle/Resources/public/js/services/coruja-storage.js'
     '@CorujaPlesyndBundle/Resources/public/js/services/coruja-resource.js'
-    output='js/compiled/main.js'
+    output='js/compiled/plesynd/main.js'
 %}
 <script src="{{ asset_url }}"></script>
 {% endjavascripts %}

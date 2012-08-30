@@ -2,6 +2,10 @@ CorujaTodoBundle_index:
     pattern:  /todo/
     defaults: { _controller: CorujaTodoBundle:Todo:index }
 
+CorujaTodoBundle_appcache:
+    pattern:  /todo/cache.appcache
+    defaults: { _controller: CorujaTodoBundle:Todo:appcache }
+
 todos:
     type:     rest
     resource: Coruja\TodoBundle\Controller\TodoRestController
