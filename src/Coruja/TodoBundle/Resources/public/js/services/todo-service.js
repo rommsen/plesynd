@@ -8,7 +8,7 @@ todoApp.factory('todoService', ["$resource", "localStorage", "resourceService",
             copy(data || {}, this);
         }
 
-        function todoFactory(data) {
+        function entityFactory(data) {
             return new Todo(data);
         }
 
@@ -21,36 +21,36 @@ todoApp.factory('todoService', ["$resource", "localStorage", "resourceService",
             localResourceAdded : localStorage('todos.added'),
             localResourceChanged : localStorage('todos.changed'),
             localResourceDeleted : localStorage('todos.deleted'),
-            entityFactory : todoFactory
+            entityFactory : entityFactory
         };
 
         var resource = resourceService(config);
 
-        var todoService = {};
+        var service = {};
 
-        todoService.query = function (success, error) {
+        service.query = function (success, error) {
             return resource.query(success, error);
         };
 
-        todoService.post = function (todo, success, error) {
+        service.post = function (todo, success, error) {
             resource.post(todo, success, error);
         };
 
-        todoService.put = function (todo, success, error) {
+        service.put = function (todo, success, error) {
             resource.put(todo, success, error);
         };
 
-        todoService.delete = function (todo, success, error) {
+        service.delete = function (todo, success, error) {
             resource.delete(todo, success, error);
         };
 
-        todoService.synchronize = function (success, error) {
+        service.synchronize = function (success, error) {
             resource.synchronize(success, error);
         }
 
-        todoService.createEntity = function (data) {
-            return todoFactory(data);
+        service.createEntity = function (data) {
+            return entityFactory(data);
         };
 
-        return todoService;
+        return service;
     }]);

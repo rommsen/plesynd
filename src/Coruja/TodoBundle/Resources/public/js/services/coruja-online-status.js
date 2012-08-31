@@ -8,6 +8,10 @@ angular.module('corujaOnlineStatus', []).factory('onlineStatus', ["$window", "$r
         return onlineStatus.onLine;
     }
 
+    onlineStatus.getOnlineStatusString = function() {
+        return onlineStatus.isOnline() ? 'online' : 'offline';
+    }
+
     $rootScope.$on('onlineChanged', function(evt, isOnline) {
         onlineStatus.onLine = isOnline;
     });

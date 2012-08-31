@@ -9,14 +9,10 @@ todoApp.controller('TodoCtrl', function TodoCtrl($rootScope, $scope, $location, 
         });
     }
 
-    function getOnlineStatusString() {
-        return onlineStatus.isOnline() ? 'online' : 'offline';
-    }
-
     $scope.newTodo = "";
     $scope.editedTodo = null;
     $scope.todos = getTodos();
-    $scope.online_status_string = getOnlineStatusString();
+    $scope.online_status_string = onlineStatus.getOnlineStatusString();
 
     if ($location.path() === '') {
         $location.path('/');
@@ -32,7 +28,7 @@ todoApp.controller('TodoCtrl', function TodoCtrl($rootScope, $scope, $location, 
     $scope.$on('onlineChanged', function (evt, isOnline) {
         todoService.synchronize(function () {
             $scope.todos = getTodos();
-            $scope.online_status_string = getOnlineStatusString();
+            $scope.online_status_string = onlineStatus.getOnlineStatusString();
         });
     });
 
