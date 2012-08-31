@@ -13,7 +13,7 @@ plesynd.factory('workspaceService', ["$resource", "localStorage", "resourceServi
         }
 
         var config = {
-            remoteResource : $resource('workspaces/:workspaceId', {workspaceId:'@id'}, {
+            remoteResource : $resource('plesynd/api/workspaces/:workspaceId', {workspaceId:'@id'}, {
                 put:{method:'PUT' },
                 post:{method:'POST' }
             }),

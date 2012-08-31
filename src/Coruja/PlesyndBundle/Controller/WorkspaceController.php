@@ -4,8 +4,6 @@ namespace Coruja\PlesyndBundle\Controller;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
-use FOS\RestBundle\Controller\Annotations\Prefix;
-use FOS\RestBundle\Controller\Annotations\NamePrefix;
 use FOS\RestBundle\View\RouteRedirectView;
 use FOS\RestBundle\View\View;
 use FOS\Rest\Util\Codes as HttpCodes;
@@ -14,13 +12,12 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 /**
- * @Prefix("workspace/api")
- * @NamePrefix("workspaces_api_")
+ * @Route("/plesynd/api/workspaces")
  */
 class WorkspaceController extends FOSRestController
 {
     /**
-     * @Route("/workspaces.{_format}", defaults={"_format" = "~"})
+     * @Route(".{_format}", defaults={"_format" = "~"}, name="get_workspaces")
      * @Method({"GET"})
      * @ApiDoc
      */
@@ -38,7 +35,7 @@ class WorkspaceController extends FOSRestController
     }
 
     /**
-     * @Route("/workspace/{slug}.{_format}", defaults={"_format" = "~"})
+     * @Route("/{slug}.{_format}", defaults={"_format" = "~"}, name="get_workspace")
      * @Method({"GET"})
      * @ApiDoc
      */
@@ -52,5 +49,24 @@ class WorkspaceController extends FOSRestController
         $view->setData($workspace);
         $view->setTemplateVar('workspace');
         return $view;
+    }
+
+    /**
+     * Add workspace
+     * @Route("", name="add_workspace")
+     * @Method({"POST"})
+     * @ApiDoc
+     */
+    public function postWorkspaceAction()
+    {
+        $data = $this->getRequest()->request;
+        $workspace = new \Coruja\PlesyndBundle\Entity\Workspace();
+        $workspace->setTitle($data->get('title'));
+        $em = $this->get('doctrine')->getEntityManager();
+        /* @var $em \Doctrine\ORM\EntityManager */
+        $em->persist($workspace);
+        $em->flush();
+
+        return RouteRedirectView::create('get_workspace', array('slug' => $workspace->getSlug()), HttpCodes::HTTP_CREATED);
     }
 }

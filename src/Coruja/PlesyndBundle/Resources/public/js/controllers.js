@@ -25,6 +25,17 @@ plesynd.controller('PlesyndCtrl', function ($scope, $http, $route, $routeParams,
         $scope.online_status_string = onlineStatus.getOnlineStatusString();
         $scope.$apply();
     });
+
+    $scope.addWorkspace = function() {
+        var number = $scope.workspaces.length+1;
+        var workspace = workspaceService.createEntity({
+            'title' : 'Workspace '+ number,
+            'slug' : 'workspace_'+ number
+        });
+        workspaceService.post(workspace, function () {
+            $scope.workspaces.push(workspace);
+        });
+    }
 });
 
 plesynd.controller('DashboardCtrl', function ($scope) {

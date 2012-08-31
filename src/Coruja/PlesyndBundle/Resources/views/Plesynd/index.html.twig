@@ -75,9 +75,9 @@
     <li ng-class="{active: workspace.slug == active_slug}" ng-repeat="workspace in workspaces" >
         <a href="#/workspace/{{workspace.slug}}">{{workspace.title}}</a>
     </li>
+    <li><a ng-click="addWorkspace()">Add</a></li>
 </ul>
 Name {{ active_slug }}
-
 <div class="container-fluid">
     <div class="row-fluid">
         <div class="span12">
