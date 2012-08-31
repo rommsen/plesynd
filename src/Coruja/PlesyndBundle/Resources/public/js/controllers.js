@@ -1,13 +1,14 @@
 'use strict';
 
 /* Controllers */
-plesynd.controller('PlesyndCtrl', function ($scope, $http, $route, $routeParams, onlineStatus, $filter) {
+plesynd.controller('PlesyndCtrl', function ($scope, $http, $route, $routeParams, $filter, onlineStatus, workspaceService) {
+    function getWorkspaces() {
+        return workspaceService.query();
+    }
+
     $scope.online_status = onlineStatus.isOnline();
     $scope.online_status_string = onlineStatus.getOnlineStatusString();
-
-    $http.get('workspaces').success(function (workspaces) {
-        $scope.workspaces = workspaces;
-    });
+    $scope.workspaces = getWorkspaces();
 
     $scope.routeParams = $routeParams;
     $scope.$watch('routeParams.slug', function (slug) {

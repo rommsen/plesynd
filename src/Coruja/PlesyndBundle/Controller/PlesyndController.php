@@ -65,15 +65,16 @@ CACHE:
 /js/compiled/plesynd/main_angular-resource_2.js
 /js/compiled/plesynd/main_app_3.js
 /js/compiled/plesynd/main_controllers_4.js
-/js/compiled/plesynd/main_coruja-online-status_5.js
-/js/compiled/plesynd/main_coruja-storage_6.js
-/js/compiled/plesynd/main_coruja-resource_7.js
+/js/compiled/plesynd/main_workspace-service_5.js
+/js/compiled/plesynd/main_coruja-online-status_6.js
+/js/compiled/plesynd/main_coruja-storage_7.js
+/js/compiled/plesynd/main_coruja-resource_8.js
 
 NETWORK:
 *
 EOF;
 
-        return new \Symfony\Component\HttpFoundation\Response($manifest);
+        return new Response($manifest);
     }
 
 }
