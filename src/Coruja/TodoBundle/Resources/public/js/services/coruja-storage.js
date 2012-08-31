@@ -34,7 +34,9 @@ angular.module('corujaStorage', []).factory('localStorage', ["$timeout", "$q",
             function findItemPosition(item, data) {
                 var position = -1;
                 forEach(data, function (storedItem, index) {
-                    if (item.id == storedItem.id) {
+                    // find the position, if local_id is set use this because the item
+                    // is stored with this id in the local storage
+                    if ((item.local_id !== undefined ? item.local_id : item.id) == storedItem.id) {
                         position = index;
                     }
                 });

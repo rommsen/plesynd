@@ -100,6 +100,8 @@ angular.module('corujaResource', ['corujaStorage', 'corujaOnlineStatus']).factor
                         forEach(data, function (item) {
                             if (method === 'post') {
                                 // id was only set locally and should not be transferred
+                                // but we need id for local storage deletion
+                                item.local_id = item.id;
                                 delete item.id;
                             }
                             console.log(method, item);
