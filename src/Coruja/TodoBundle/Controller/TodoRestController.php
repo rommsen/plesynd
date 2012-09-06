@@ -4,19 +4,21 @@ namespace Coruja\TodoBundle\Controller;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
-use FOS\RestBundle\Controller\Annotations\Prefix;
-use FOS\RestBundle\Controller\Annotations\NamePrefix;
 use FOS\RestBundle\View\RouteRedirectView;
 use FOS\RestBundle\View\View;
 use FOS\Rest\Util\Codes as HttpCodes;
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+
 /**
- * @Prefix("todo/api")
- * @NamePrefix("todo_api_")
+ * @Route("/todo/api/todos")
  */
 class TodoRestController extends FOSRestController
 {
     /**
+     * @Route(".{_format}", defaults={"_format" = "~"}, name="get_todos")
+     * @Method({"GET"})
      * @Rest\View()
      * @ApiDoc
      */
@@ -25,10 +27,15 @@ class TodoRestController extends FOSRestController
         $em = $this->get('doctrine')->getEntityManager();
         /* @var $em \Doctrine\ORM\EntityManager */
         $todos = $em->getRepository('CorujaTodoBundle:Todo')->findAll();
+        return View::create($todos, HttpCodes::HTTP_OK, array(
+            'Access-Control-Allow-Origin' => '*',
+        ));
         return $todos;
     }
 
     /**
+     * @Route("/{id}.{_format}", defaults={"_format" = "~"}, name="get_todo")
+     * @Method({"GET"})
      * @Rest\View()
      * @ApiDoc
      * @param $id
@@ -42,9 +49,11 @@ class TodoRestController extends FOSRestController
     }
 
     /**
-     * Update known resource
+     * @Route("/{id}", name="put_todo")
+     * @Method({"PUT"})
      * @Rest\View()
      * @ApiDoc
+     * @param $id
      */
     public function putTodoAction($id)
     {
@@ -63,7 +72,8 @@ class TodoRestController extends FOSRestController
     }
 
     /**
-     * Insert new resource
+     * @Route("", name="post_todo")
+     * @Method({"POST"})
      * @Rest\View()
      * @ApiDoc
      */
@@ -79,14 +89,16 @@ class TodoRestController extends FOSRestController
         $em->persist($todo);
         $em->flush();
 
-        return RouteRedirectView::create('todo_api_get_todo', array('id' => $todo->getId()), HttpCodes::HTTP_CREATED);
+        return RouteRedirectView::create('get_todo', array('id' => $todo->getId()), HttpCodes::HTTP_CREATED);
     }
 
 
     /**
-     * Deletes resource
+     * @Route("/{id}", name="delete_todo")
+     * @Method({"DELETE"})
      * @Rest\View()
      * @ApiDoc
+     * @param $id
      */
     public function deleteTodoAction($id)
     {
@@ -100,4 +112,17 @@ class TodoRestController extends FOSRestController
         }
         return View::create(null, HttpCodes::HTTP_NOT_FOUND);
     }
+
+//    /**
+//     * @Route("/{id}.{_format}", defaults={"id" = null, "_format" = "~"}, name="options_todos")
+//     * @Method({"OPTIONS"})
+//     */
+//    public function optionsTodoAction()
+//    {
+//        return View::create(null, HttpCodes::HTTP_OK, array(
+//            'Access-Control-Allow-Methods' => 'POST, GET, PUT, DELETE, OPTIONS',
+//            'Access-Control-Allow-Origin' => '*',
+//            'Access-Control-Allow-Headers' => 'X-REQUESTED-WITH, content-type'));
+//
+//    }
 }

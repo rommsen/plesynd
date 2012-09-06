@@ -4,10 +4,19 @@ namespace Coruja\TodoBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+
+/**
+ * @Route("/todo")
+ */
 class TodoController extends Controller
 {
+    /**
+     * @Route("")
+     * @Method({"GET"})
+     */
     public function indexAction()
     {
         return $this->render('CorujaTodoBundle:Todo:index.html.twig');
