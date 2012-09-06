@@ -12,3 +12,4 @@ web/css/
 .directory
 .idea/
 *~
+/nbproject/private/
