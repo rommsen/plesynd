@@ -96,8 +96,10 @@ Name {{ active_slug }}
 
 <!-- Container that holds the different workspaces -->
 <script type="text/ng-template" id="workspaceContainer">
-    <div class="well span5" ng-repeat="widget in workspace.widgets">
-        <iframe ng-show="widget.uri" ng-src="{{widget.uri}}" width={{widget.width}} height={{widget.height}}></iframe>
+    <div class="span5" ng-repeat="widget in workspace.widgets">
+        <div class="widget" width={{widget.instance.width}} height={{widget.instance.height}}>
+            <iframe class="well" ng-src="{{widget.instance.url}}" width={{widget.instance.width}} height={{widget.instance.height}}></iframe>
+        </div>
     </div>
 </script>
 

@@ -23,9 +23,17 @@ class WorkspaceController extends FOSRestController
      */
     public function getWorkspacesAction()
     {
+        $connection = new \Coruja\WookieConnectorBundle\Connector\WookieConnectorService("http://localhost:8080/wookie/", "TEST", "localhost_dev", "demo_2");
         $em = $this->get('doctrine')->getEntityManager();
         /* @var $em \Doctrine\ORM\EntityManager */
         $workspaces = $em->getRepository('CorujaPlesyndBundle:Workspace')->findAll();
+
+        foreach($workspaces as /* @var \Coruja\PlesyndBundle\Entity\Workspace $workspace */ $workspace) {
+            foreach($workspace->getWidgets() as /* @var \Coruja\PlesyndBundle\Entity\Widget $widget */ $widget) {
+                $connection->getUser()->setLoginName($widget->getInstanceIdentifier());
+                $widget->setInstance($connection->getOrCreateInstance($widget));
+            }
+        }
 
         $view = View::create();
         $view->setTemplate('CorujaPlesyndBundle:Workspace:workspaces.html.twig');

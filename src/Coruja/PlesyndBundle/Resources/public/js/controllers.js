@@ -42,7 +42,7 @@ plesynd.controller('DashboardCtrl', function ($scope) {
 
 });
 
-plesynd.controller('WorkspaceCtrl', function ($scope) {
+plesynd.controller('WorkspaceCtrl', function ($scope, $http) {
     $scope.parent = $scope.$parent;
     $scope.$watch('parent.activeWorkspace', function (activeWorkspace) {
         $scope.workspace = activeWorkspace;

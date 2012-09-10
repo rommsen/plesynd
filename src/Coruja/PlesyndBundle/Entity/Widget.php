@@ -1,13 +1,15 @@
 <?php
 namespace Coruja\PlesyndBundle\Entity;
 
+use Coruja\WookieConnectorBundle\Connector\WidgetInterface;
+use Coruja\WookieConnectorBundle\Connector\WidgetInstance;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="Widget")
  */
-class Widget
+class Widget implements WidgetInterface
 {
     /**
      * @ORM\Id
@@ -15,6 +17,33 @@ class Widget
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
+
+    /**
+     * Wookie Instance Identifier
+     * @ORM\Column(type="string", length=255)
+     */
+    protected $instance_identifier;
+
+    /**
+     * Wookie Identifier (URI)
+     * @ORM\Column(type="string", length=255)
+     */
+    protected $identifier_uri;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    protected $title;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    protected $icon;
+
+    /**
+     * @ORM\Column(type="text")
+     */
+    protected $description;
 
     /**
      * @var Workspace
@@ -29,56 +58,62 @@ class Widget
     protected $position;
 
     /**
-     * @ORM\Column(type="smallint")
+     * @var \Coruja\WookieConnectorBundle\Connector\WidgetInstance
      */
-    protected $width;
+    protected $instance;
 
-    /**
-     * @ORM\Column(type="smallint")
-     */
-    protected $height;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    protected $uri;
+    public function __construct() {
+        $this->instance_identifier = uniqid();
+    }
 
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
-    public function setWorkspace(Workspace $workspace)
-    {
-        $this->workspace = $workspace;
+    public function getInstanceIdentifier() {
+        return $this->instance_identifier;
     }
 
     /**
-     * @return Workspace
+     * Get a unique identifier for this widget type.
+     *
+     * @return String widget identifier (guid)
      */
-    public function getWorkspace()
+    public function getIdentifier()
     {
-        return $this->workspace;
+        return $this->identifier_uri;
     }
 
-    public function setPosition($position)
+    /**
+     * Get the human readable title of this widget.
+     * @return String widget title
+     */
+    public function getTitle()
     {
-        $this->position = $position;
+        return $this->title;
     }
 
-    public function getPosition()
+    /**
+     * Get the location of a logo for this widget.
+     * @return String widget icon url
+     */
+    public function getIcon()
     {
-        return $this->position;
+        return $this->icon;
     }
 
-    public function setUri($uri)
+    /**
+     * Get the description of the widget.
+     *
+     * @return String widget description
+     */
+    public function getDescription()
     {
-        $this->uri = $uri;
+        return $this->description;
     }
 
-    public function getUri()
-    {
-        return $this->uri;
+    public function setInstance($instance) {
+        $this->instance = $instance;
     }
-
 }
