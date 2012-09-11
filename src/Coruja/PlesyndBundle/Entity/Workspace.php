@@ -27,9 +27,9 @@ class Workspace
     protected $slug;
 
     /**
-     * @ORM\OneToMany(targetEntity="Widget", mappedBy="workspace")
+     * @ORM\OneToMany(targetEntity="Widget", mappedBy="workspace", cascade={"all"})
      **/
-    private $widgets;
+    protected $widgets;
 
 
     public function __construct() {
@@ -51,6 +51,7 @@ class Workspace
 
     public function addWidget(Widget $widget)
     {
+        $widget->setPosition($this->widgets->count()+1);
         $this->widgets->add($widget);
     }
 

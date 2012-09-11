@@ -11,7 +11,6 @@
     {% stylesheets
     '@CorujaPlesyndBundle/Resources/public/css/bootstrap.css'
     '@CorujaPlesyndBundle/Resources/public/css/app.css'
-    '@CorujaPlesyndBundle/Resources/public/css/bootstrap-responsive.css'
     output='css/compiled/plesynd/main.css'
     %}
     <link rel="stylesheet" href="{{ asset_url }}"/>
@@ -47,8 +46,6 @@
             </a>
             -->
             <a class="brand" href="#">Plesynd</a>
-            <span ng-show="online_status" class="pull-right label label-success">Online</span>
-            <span ng-show="!online_status" class="pull-right label label-important">Offline</span>
             <div class="nav-collapse collapse">
                 <ul class="nav">
                     <li class="active"><a href="#">Home</a></li>
@@ -64,26 +61,35 @@
     <div class="row-fluid">
         <div class="span12">
             <div class="page-header">
-                <p>online/offline bla blub</p>
+                System is
+                <span ng-show="online_status" class="label label-success">Online</span>
+                <span ng-show="!online_status" class="label label-important">Offline</span>
             </div>
         </div><!--/span-->
     </div><!--/row-->
 </div><!--/.fluid-container-->
 
-<ul class="nav nav-tabs">
-    <li ng-class="{active: 'dashboard' == active_slug}"><a href="#/dashboard">dashboard</a></li>
-    <li ng-class="{active: workspace.slug == active_slug}" ng-repeat="workspace in workspaces" >
-        <a href="#/workspace/{{workspace.slug}}">{{workspace.title}}</a>
-    </li>
-    <li><a ng-click="addWorkspace()">Add</a></li>
-</ul>
-Name {{ active_slug }}
+
 <div class="container-fluid">
+    <div class="row-fluid">
+        <div class="12">
+            <ul class="nav nav-tabs">
+                <li ng-class="{active: undefined == active_slug}"><a href="#/dashboard">dashboard</a></li>
+                <li ng-class="{active: workspace.slug == active_slug}" ng-repeat="workspace in workspaces" >
+                    <a href="#/workspace/{{workspace.slug}}">
+                        {{workspace.title}}
+                        <span ng-show="workspace.slug == active_slug" ng-click="changeShowEdit()"> | e</span>
+                    </a>
+                </li>
+                <li><a ng-click="addWorkspace()">Add</a></li>
+            </ul>
+        </div>
+    </div><!--/row-->
     <div class="row-fluid">
         <div class="span12">
             <div ng-view></div>
         </div><!--/span-->
-    </div><!--/row-->
+    </div>
 
     <hr>
 
@@ -96,11 +102,50 @@ Name {{ active_slug }}
 
 <!-- Container that holds the different workspaces -->
 <script type="text/ng-template" id="workspaceContainer">
-    <div class="span5" ng-repeat="widget in workspace.widgets">
-        <div class="widget" width={{widget.instance.width}} height={{widget.instance.height}}>
-            <iframe class="well" ng-src="{{widget.instance.url}}" width={{widget.instance.width}} height={{widget.instance.height}}></iframe>
+    <div class="row-fluid edit-workspace" ng-show="parent.show_edit">
+        <div class="span12 well">
+            <div class="row-fluid choose-widget">
+                <div class="span2">
+                    <select ng-model="widget" ng-options="widget.title for widget in widgets">
+                        <option value="">-- Choose Widget --</option>
+                    </select>
+                </div><!--/span-->
+                <div class="span10">
+                    <button class="btn" ng-show="widget" ng-click="addWidgetToWorkspace(widget)">Add Widget to Workspace</button>
+                </div><!--/span-->
+            </div><!--/row-->
+            <div class="row-fluid">
+                <div class="span5">
+                    <table ng-show="widget" class="table table-bordered">
+                        <tbody>
+                        <tr>
+                            <td><img ng-src="{{widget.icon}}" /></td>
+                        </tr>
+                        <tr>
+                            <td>{{widget.title}}</td>
+                        </tr>
+                        <tr>
+                            <td>{{widget.description}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div><!--/span-->
+            </div><!--/row-->
+            <div class="row-fluid">
+                <div class="span12">
+                    <button class="btn" ng-click="deleteWorkspace()">Delete workspace</button>
+                </div><!--/span-->
+            </div><!--/row-->
+        </div><!--/span-->
+    </div><!--/row-->
+    <hr>
+    <div class="rhghow-fluid">
+        <div ng-repeat="widget in workspace.widgets">
+            <div class="widget pull-left">
+                <iframe class="well" ng-src="{{widget.instance.url}}" width={{widget.instance.width}} height={{widget.instance.height}}></iframe>
+            </div>
         </div>
-    </div>
+    </div><!--/row-->
 </script>
 
 <!-- Container that holds the different workspaces -

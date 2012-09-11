@@ -63,15 +63,22 @@ class Widget implements WidgetInterface
     protected $instance;
 
 
-    public function __construct() {
+    public function __construct($identifier, $title, $description, $icon)
+    {
         $this->instance_identifier = uniqid();
+        $this->identifier_uri = $identifier;
+        $this->title = $title;
+        $this->description = $description;
+        $this->icon = $icon;
     }
 
-    public function getId() {
+    public function getId()
+    {
         return $this->id;
     }
 
-    public function getInstanceIdentifier() {
+    public function getInstanceIdentifier()
+    {
         return $this->instance_identifier;
     }
 
@@ -94,6 +101,7 @@ class Widget implements WidgetInterface
         return $this->title;
     }
 
+
     /**
      * Get the location of a logo for this widget.
      * @return String widget icon url
@@ -113,7 +121,20 @@ class Widget implements WidgetInterface
         return $this->description;
     }
 
-    public function setInstance($instance) {
+    public function setPosition($position)
+    {
+        $this->position = $position;
+    }
+
+    public function setWorkspace(Workspace $workspace) {
+        $this->workspace = $workspace;
+        $this->workspace->addWidget($this);
+    }
+
+    public function setInstance($instance)
+    {
         $this->instance = $instance;
     }
+
+
 }

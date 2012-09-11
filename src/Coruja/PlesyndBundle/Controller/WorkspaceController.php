@@ -49,8 +49,7 @@ class WorkspaceController extends FOSRestController
      */
     public function getWorkspaceAction($slug)
     {
-        $em = $this->get('doctrine')->getEntityManager();
-        /* @var $em \Doctrine\ORM\EntityManager */
+        $em = /* @var $em \Doctrine\ORM\EntityManager */ $this->get('doctrine')->getEntityManager();
         $workspace = $em->getRepository('CorujaPlesyndBundle:Workspace')->findOneBy(array('slug' => $slug));
         $view = View::create();
         $view->setTemplate('CorujaPlesyndBundle:Workspace:partial.html.twig');
@@ -76,5 +75,25 @@ class WorkspaceController extends FOSRestController
         $em->flush();
 
         return RouteRedirectView::create('get_workspace', array('slug' => $workspace->getSlug()), HttpCodes::HTTP_CREATED);
+    }
+
+    /**
+     * @Route("/{id}", name="delete_workspace")
+     * @Method({"DELETE"})
+     * @Rest\View()
+     * @ApiDoc
+     * @param $id
+     */
+    public function deleteWorkspaceAction($id)
+    {
+        $em = $this->get('doctrine')->getEntityManager();
+        /* @var $em \Doctrine\ORM\EntityManager */
+        $workspace = $em->find('CorujaPlesyndBundle:Workspace', $id);
+        if ($workspace !== NULL) {
+            $em->remove($workspace);
+            $em->flush();
+            return View::create(null, HttpCodes::HTTP_NO_CONTENT);
+        }
+        return View::create(null, HttpCodes::HTTP_NOT_FOUND);
     }
 }

@@ -10,7 +10,7 @@ class PlesyndController extends Controller
 {
 
     /**
-     * @Route("/index")
+     * @Route("/")
      */
     public function indexAction() {
         return $this->render('CorujaPlesyndBundle:Plesynd:index.html.twig');
