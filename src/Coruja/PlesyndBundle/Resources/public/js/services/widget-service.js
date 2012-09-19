@@ -1,26 +1,26 @@
 'use strict';
 
-plesynd.factory('workspaceService', ["$resource", "localStorage", "resourceService",
+plesynd.factory('widgetService', ["$resource", "localStorage", "resourceService",
     function ($resource, localStorage, resourceService) {
         var copy = angular.copy;
 
-        function Workspace(data) {
+        function Widget(data) {
             copy(data || {}, this);
         }
 
         function entityFactory(data) {
-            return new Workspace(data);
+            return new Widget(data);
         }
 
         var config = {
-            remoteResource : $resource('plesynd/api/workspaces/:workspaceId', {workspaceId:'@id'}, {
+            remoteResource : $resource('plesynd/api/widgets/:widgetId', {widgetId:'@id'}, {
                 put:{method:'PUT' },
                 post:{method:'POST' }
             }),
-            localResource : localStorage('workspaces'),
-            localResourceAdded : localStorage('workspaces.added'),
-            localResourceChanged : localStorage('workspaces.changed'),
-            localResourceDeleted : localStorage('workspaces.deleted'),
+            localResource : localStorage('widgets'),
+            localResourceAdded : localStorage('widgets.added'),
+            localResourceChanged : localStorage('widgets.changed'),
+            localResourceDeleted : localStorage('widgets.deleted'),
             entityFactory : entityFactory
         };
 
@@ -55,18 +55,6 @@ plesynd.factory('workspaceService', ["$resource", "localStorage", "resourceServi
         service.createEntity = function (data) {
             return entityFactory(data);
         };
-
-
-        // workspace specific methods
-        service.deleteWidget = function(workspace, widget) {
-
-            var tmp = $resource('plesynd/api/workspaces/:workspaceId/widgets/:widgetId', {workspaceId:'@id'}, {
-                put:{method:'PUT' },
-                post:{method:'POST' }
-            });
-
-            tmp.delete({'workspaceId': workspace.id, "widgetId": widget.id});
-        }
 
         return service;
     }]);

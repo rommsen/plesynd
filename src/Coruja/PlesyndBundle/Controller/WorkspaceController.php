@@ -23,17 +23,9 @@ class WorkspaceController extends FOSRestController
      */
     public function getWorkspacesAction()
     {
-        $connection = new \Coruja\WookieConnectorBundle\Connector\WookieConnectorService("http://localhost:8080/wookie/", "TEST", "localhost_dev", "demo_2");
         $em = $this->get('doctrine')->getEntityManager();
         /* @var $em \Doctrine\ORM\EntityManager */
         $workspaces = $em->getRepository('CorujaPlesyndBundle:Workspace')->findAll();
-
-        foreach($workspaces as /* @var \Coruja\PlesyndBundle\Entity\Workspace $workspace */ $workspace) {
-            foreach($workspace->getWidgets() as /* @var \Coruja\PlesyndBundle\Entity\Widget $widget */ $widget) {
-                $connection->getUser()->setLoginName($widget->getInstanceIdentifier());
-                $widget->setInstance($connection->getOrCreateInstance($widget));
-            }
-        }
 
         $view = View::create();
         $view->setTemplate('CorujaPlesyndBundle:Workspace:workspaces.html.twig');
@@ -43,16 +35,18 @@ class WorkspaceController extends FOSRestController
     }
 
     /**
-     * @Route("/{slug}.{_format}", defaults={"_format" = "~"}, name="get_workspace")
+     * @Route("/{id}.{_format}", defaults={"_format" = "~"}, name="get_workspace")
      * @Method({"GET"})
      * @ApiDoc
      */
-    public function getWorkspaceAction($slug)
+    public function getWorkspaceAction($id)
     {
-        $em = /* @var $em \Doctrine\ORM\EntityManager */ $this->get('doctrine')->getEntityManager();
-        $workspace = $em->getRepository('CorujaPlesyndBundle:Workspace')->findOneBy(array('slug' => $slug));
+        $em = $this->get('doctrine')->getEntityManager();
+        /* @var $em \Doctrine\ORM\EntityManager */
+        $workspace = $em->getRepository('CorujaPlesyndBundle:Workspace')->findOneBy(array('id' => $id));
+
         $view = View::create();
-        $view->setTemplate('CorujaPlesyndBundle:Workspace:partial.html.twig');
+        $view->setTemplate('CorujaPlesyndBundle:Workspace:workspaces.html.twig');
         $view->setData($workspace);
         $view->setTemplateVar('workspace');
         return $view;
@@ -74,7 +68,7 @@ class WorkspaceController extends FOSRestController
         $em->persist($workspace);
         $em->flush();
 
-        return RouteRedirectView::create('get_workspace', array('slug' => $workspace->getSlug()), HttpCodes::HTTP_CREATED);
+        return RouteRedirectView::create('get_workspace', array('id' => $workspace->getId()), HttpCodes::HTTP_CREATED);
     }
 
     /**

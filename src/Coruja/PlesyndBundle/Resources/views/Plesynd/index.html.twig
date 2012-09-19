@@ -21,6 +21,17 @@
     <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
 
+    <style type="text/css">
+        @charset "UTF-8";
+        [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+            display: none;
+        }
+
+        ng\:form {
+            display: block;
+        }
+    </style>
+
     <!-- Le fav and touch icons -->
     <!--
     <link rel="shortcut icon" href="../assets/ico/favicon.ico">
@@ -72,24 +83,31 @@
 
 <div class="container-fluid">
     <div class="row-fluid">
-        <div class="12">
+        <div class="span12">
+            <div class="progress" ng-class="active" ng-cloak>
+                <div class="bar" style="width: 100%;"></div>
+            </div>
+        </div><!--/span-->
+    </div><!--/row-->
+    <div class="row-fluid">
+        <div class="span12">
             <ul class="nav nav-tabs">
-                <li ng-class="{active: undefined == active_slug}"><a href="#/dashboard">dashboard</a></li>
-                <li ng-class="{active: workspace.slug == active_slug}" ng-repeat="workspace in workspaces" >
-                    <a href="#/workspace/{{workspace.slug}}">
+                <li ng-class="{active: checkActiveTab('dashboard')}"><a href="#/dashboard">dashboard</a></li>
+                <li ng-class="{active: checkActiveTab(workspace.id)}" ng-repeat="workspace in workspaces" >
+                    <a href="#/workspace/{{workspace.id}}">
                         {{workspace.title}}
-                        <span ng-show="workspace.slug == active_slug" ng-click="changeShowEdit()"> | e</span>
+                        <span ng-show="checkActiveTab(workspace.id)" ng-click="changeShowEdit()"> | e</span>
                     </a>
                 </li>
                 <li><a ng-click="addWorkspace()">Add</a></li>
             </ul>
-        </div>
+        </div><!--/span-->
     </div><!--/row-->
     <div class="row-fluid">
         <div class="span12">
             <div ng-view></div>
         </div><!--/span-->
-    </div>
+    </div><!--/row-->
 
     <hr>
 
@@ -100,13 +118,22 @@
 </div><!--/.fluid-container-->
 
 
+<!-- Container that holds dashboard -->
+<script type="text/ng-template" id="dashboard">
+    <div class="row-fluid"
+        <div class="span12 well">
+            {{ dashboard.info }}
+        </div><!--/span-->
+    </div><!--/row-->
+</script>
+
 <!-- Container that holds the different workspaces -->
 <script type="text/ng-template" id="workspaceContainer">
-    <div class="row-fluid edit-workspace" ng-show="parent.show_edit">
+    <div class="row-fluid edit-workspace" ng-show="show_edit">
         <div class="span12 well">
             <div class="row-fluid choose-widget">
                 <div class="span2">
-                    <select ng-model="widget" ng-options="widget.title for widget in widgets">
+                    <select ng-model="widget" ng-options="widget.title for widget in availableWidgets">
                         <option value="">-- Choose Widget --</option>
                     </select>
                 </div><!--/span-->
@@ -139,31 +166,24 @@
         </div><!--/span-->
     </div><!--/row-->
     <hr>
-    <div class="rhghow-fluid">
-        <div ng-repeat="widget in workspace.widgets">
-            <div class="widget pull-left">
-                <iframe class="well" ng-src="{{widget.instance.url}}" width={{widget.instance.width}} height={{widget.instance.height}}></iframe>
+    <div>
+    <div ng-repeat="widget in workspaceWidgets">
+        <div class="widget well pull-left" style="width: {{widget.instance.width}}px;height: widget.instance.heightpx;">
+            <div class="navbar navbar-inverse">
+                <div class="navbar-inner">
+                    <div class="container-fluid">
+                        <ul class="nav">
+                            <li><a ng-click="deleteWidgetFromWorkspace(widget)">delete</a></li>
+                        </ul>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div><!--/row-->
-</script>
-
-<!-- Container that holds the different workspaces -
-<script type="text/ng-template" id="workspaceContainer">
-    <div ng-repeat="workspace in orderedWorkpaces = (workspaces | orderBy:position)"  ng-controller="WorkspaceCtrl">
-        <div ng-show="workspace.slug == active_slug">
-            <div class="well span5" ng-repeat="widget in widgets">
-                <iframe ng-show="widget.uri" ng-src="{{widget.uri}}" width={{widget.width}} height={{widget.height}}></iframe>
-            </div>
+            <hr>
+            <iframe  ng-src="{{widget.instance.url}}" width={{widget.instance.width}} height={{widget.instance.height}}></iframe>
         </div>
     </div>
-</script>-->
-
-
-<!-- Preload Workspaces
-<div ng-repeat="workspace in workspaces">
-    <div ng-show="false" ng-include="'workspace/'+workspace.slug+'.html'"></div>
-</div>-->
+    </div>
+</script>
 
 {% endraw %}
 
@@ -171,11 +191,17 @@
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
 {% javascripts
+    '@CorujaPlesyndBundle/Resources/public/js/lib/jquery-1.8.1.js'
     '@CorujaPlesyndBundle/Resources/public/js/lib/angular/angular.js'
     '@CorujaPlesyndBundle/Resources/public/js/lib/angular/angular-resource.js'
+    '@CorujaPlesyndBundle/Resources/public/js/lib/postmessage.js'
     '@CorujaPlesyndBundle/Resources/public/js/app.js'
-    '@CorujaPlesyndBundle/Resources/public/js/controllers.js'
+    '@CorujaPlesyndBundle/Resources/public/js/controllers/plesynd-controller.js'
+    '@CorujaPlesyndBundle/Resources/public/js/controllers/workspace-controller.js'
+    '@CorujaPlesyndBundle/Resources/public/js/controllers/dashboard-controller.js'
     '@CorujaPlesyndBundle/Resources/public/js/services/workspace-service.js'
+    '@CorujaPlesyndBundle/Resources/public/js/services/widget-service.js'
+    '@CorujaPlesyndBundle/Resources/public/js/services/workspace-widget-service.js'
     '@CorujaPlesyndBundle/Resources/public/js/services/coruja-online-status.js'
     '@CorujaPlesyndBundle/Resources/public/js/services/coruja-storage.js'
     '@CorujaPlesyndBundle/Resources/public/js/services/coruja-resource.js'

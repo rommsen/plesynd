@@ -20,6 +20,7 @@ class Widget implements WidgetInterface
 
     /**
      * Wookie Instance Identifier
+     * Used to get always the same instance from Wookie
      * @ORM\Column(type="string", length=255)
      */
     protected $instance_identifier;
@@ -61,6 +62,9 @@ class Widget implements WidgetInterface
      * @var \Coruja\WookieConnectorBundle\Connector\WidgetInstance
      */
     protected $instance;
+
+    // TODO currently only used for json, maybe use serialize filter
+    protected $workspace_id;
 
 
     public function __construct($identifier, $title, $description, $icon)
@@ -131,9 +135,20 @@ class Widget implements WidgetInterface
         $this->workspace->addWidget($this);
     }
 
+    /**
+     * @return Workspace
+     */
+    public function getWorkspace() {
+        return $this->workspace;
+    }
+
     public function setInstance($instance)
     {
         $this->instance = $instance;
+    }
+
+    public function setWorkspaceId($workspace_id) {
+        $this->workspace_id = $workspace_id;
     }
 
 

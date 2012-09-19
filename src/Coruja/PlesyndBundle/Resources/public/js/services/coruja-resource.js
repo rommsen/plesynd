@@ -114,7 +114,7 @@ angular.module('corujaResource', ['corujaStorage', 'corujaOnlineStatus']).factor
 
             var resource = {};
 
-            resource.query = function (success, error) {
+            resource.query = function (params, success, error) {
                 var deferred = $q.defer();
                 var promise = deferred.promise;
                 var items = [];
@@ -126,7 +126,7 @@ angular.module('corujaResource', ['corujaStorage', 'corujaOnlineStatus']).factor
                 }
 
                 var resource = onlineStatus.isOnline() ? remoteResource : localResource;
-                resource.query(resolveQueryDeferred, function () {
+                resource.query(params, resolveQueryDeferred, function () {
                     // if remote query is not successful query the local resource
                     localResource.query(resolveQueryDeferred);
                 });
@@ -134,13 +134,43 @@ angular.module('corujaResource', ['corujaStorage', 'corujaOnlineStatus']).factor
                 promise.then(function (data) {
                     // we dont want to store the ngResource objects but our own
                     forEach(data, function (item) {
-                        items.push(entityFactory(deleteUnnecessaryProperties(item)));
+                        item = entityFactory(deleteUnnecessaryProperties(item));
+                        items.push(item);
+                        // new items are added to local storage, existing items are updated
+                        //localResource.put(item);
                     });
-                    // local resources are always overwritten with last result
+
                     localResource.storeData(items);
                     (success || noop)(items);
                 }, error);
                 return items;
+            };
+
+            resource.get = function (params, success, error) {
+                var deferred = $q.defer();
+                var promise = deferred.promise;
+                var item;
+
+                function resolveQueryDeferred(data) {
+                    $timeout(function () {
+                        deferred.resolve(data);
+                    });
+                }
+
+                var resource = onlineStatus.isOnline() ? remoteResource : localResource;
+                resource.get(params, resolveQueryDeferred, function () {
+                    // if remote query is not successful query the local resource
+                    localResource.query(params, resolveQueryDeferred);
+                });
+
+                promise.then(function (data) {
+                    // we dont want to store the ngResource objects but our own
+                    item = entityFactory(deleteUnnecessaryProperties(data));
+                    // new items are added to local storage, existing items are updated
+                    localResource.put(item);
+                    (success || noop)(item);
+                }, error);
+                return item;
             };
 
             resource.post = function (item, success, error) {
@@ -205,6 +235,7 @@ angular.module('corujaResource', ['corujaStorage', 'corujaOnlineStatus']).factor
                     (success || noop)(item);
                 }
             };
+
 
             resource.synchronize = function (success, error) {
                 if (onlineStatus.isOnline()) {

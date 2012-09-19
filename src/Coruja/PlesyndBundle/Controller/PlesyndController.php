@@ -23,28 +23,6 @@ class PlesyndController extends Controller
         return $this->render('CorujaPlesyndBundle:Plesynd:partials/dashboard_partial.html.twig');
     }
 
-//    /**
-//     * @Route("/workspaces")
-//     */
-//    public function getWorkspacesAction() {
-//        $workspaces = array();
-//        for($i = 0; $i<10;$i++) {
-//            $workspaces[] = array(
-//                'name' => 'Workspace '.$i,
-//                'slug' => 'workspace-'.$i,
-//            );
-//        }
-//        return new Response(json_encode($workspaces));
-//    }
-//
-//    /**
-//     * @Route("/workspace/{slug}")
-//     */
-//    public function getWorkspaceAction($slug)
-//    {
-//        return $this->render('CorujaPlesyndBundle:Plesynd:partials/workspace_partial.html.twig', array('slug' => $slug));
-//    }
-
     /**
      * @Route("/cache.appcache")
      */
