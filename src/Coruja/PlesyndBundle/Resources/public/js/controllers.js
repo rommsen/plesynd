@@ -1,37 +1,56 @@
 'use strict';
 
 /* Controllers */
-plesynd.controller('PlesyndCtrl', function ($scope, $http, $route, $routeParams, $location, $filter, onlineStatus, workspaceService) {
-    function getWorkspaces() {
-        return workspaceService.query();
-    }
+plesynd.controller('PlesyndCtrl', function ($rootScope, $scope, $http, $location, $filter, onlineStatus, workspaceService) {
+    $rootScope.$on("$routeChangeStart", function (event, next, current) {
+        $scope.alertType = "";
+        $scope.alertMessage = "Loading...";
+        $scope.active = "progress-striped active progress-warning";
+    });
+    $rootScope.$on("$routeChangeSuccess", function (event, current, previous) {
+        $scope.alertType = "alert-success";
+        $scope.alertMessage = "Successfully changed routes :)";
+        $scope.active = "progress-success";
+        $scope.newLocation = $location.path();
+        console.log($scope.newLocation);
+    });
+    $rootScope.$on("$routeChangeError", function (event, current, previous, rejection) {
+        alert("ROUTE CHANGE ERROR: " + rejection);
+        $scope.alertType = "alert-error";
+        $scope.alertMessage = "Failed to change routes :(";
+        $scope.active = "";
+    });
+
+    $rootScope.$on('onlineChanged', function (evt, isOnline) {
+        $scope.online_status = isOnline;
+        $scope.online_status_string = onlineStatus.getOnlineStatusString();
+        $scope.$apply();
+    });
+
+    $scope.checkActiveTab = function (url) {
+        url = url == 'dashboard' ? '/dashboard' : '/workspace/'+url;
+        return url == $scope.newLocation;
+
+    };
+
+    $scope.alertType = "alert-info";
+    $scope.alertMessage = "Welcome to the resolve demo";
 
     $scope.show_edit = false;
-
     $scope.changeShowEdit = function() {
         $scope.show_edit = !$scope.show_edit;
     }
 
-
     $scope.online_status = onlineStatus.isOnline();
     $scope.online_status_string = onlineStatus.getOnlineStatusString();
-    $scope.workspaces = getWorkspaces();
+    $scope.workspaces = workspaceService.query();
 
-    $scope.routeParams = $routeParams;
-    $scope.$watch('routeParams.slug', function (slug) {
-        $scope.active_slug = slug;
-        $scope.show_edit = false;
-        // active_slug is undefined in the first call
-        if ($scope.active_slug !== undefined) {
-            var filtered = $filter('filter')($scope.workspaces, {slug:$scope.active_slug});
-            $scope.activeWorkspace = filtered && filtered.length > 0 ? filtered[0] : null;
+    // get the widgets for the selectbox
+    $scope.widgets = [];
+    $http.get('plesynd/api/widgets').success(function(widgets) {
+        for(var id in widgets) {
+            $scope.widgets.push(widgets[id]);
         }
-    });
-
-    $scope.$on('onlineChanged', function (evt, isOnline) {
-        $scope.online_status = isOnline;
-        $scope.online_status_string = onlineStatus.getOnlineStatusString();
-        $scope.$apply();
     });
 
     $scope.addWorkspace = function () {
@@ -43,7 +62,6 @@ plesynd.controller('PlesyndCtrl', function ($scope, $http, $route, $routeParams,
         });
         workspaceService.post(workspace, function () {
             $scope.workspaces.push(workspace);
-            console.log('jump to; /workspace/'+workspace.slug);
             $location.path('/workspace/'+workspace.slug);
         });
     }
@@ -53,31 +71,14 @@ plesynd.controller('DashboardCtrl', function ($scope) {
 
 });
 
-plesynd.controller('WorkspaceCtrl', function ($scope, $http, $location, workspaceService) {
-    $scope.parent = $scope.$parent;
-
+plesynd.controller('WorkspaceCtrl', function ($scope, $http, $location, workspaceService, workspace) {
+    $scope.workspace = workspace;
     $scope.selected_widget = null;
-    $scope.widgets = [];
-    $http.get('plesynd/api/widgets').success(function(widgets) {
-        for(var id in widgets) {
-            $scope.widgets.push(widgets[id]);
-        }
-    });
-
-    $scope.$watch('parent.activeWorkspace', function (activeWorkspace) {
-        $scope.workspace = activeWorkspace;
-    });
-
-//    $scope.$watch('parent.show_edit', function (show_edit) {
-//        console.log('changed');
-//        $scope.show_edit = show_edit;
-//    });
 
     $scope.deleteWorkspace = function () {
         workspaceService.delete($scope.workspace, function () {
-            $scope.parent.workspaces.splice($scope.parent.workspaces.indexOf($scope.workspace), 1);
+            $scope.workspaces.splice($scope.workspaces.indexOf($scope.workspace), 1);
             $location.path('/dashboard');
-
         });
     }
 
@@ -88,7 +89,6 @@ plesynd.controller('WorkspaceCtrl', function ($scope, $http, $location, workspac
             });
         });
     }
-
 
 });
 

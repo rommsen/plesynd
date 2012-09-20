@@ -179,7 +179,8 @@
                 </div>
             </div>
             <hr>
-            <iframe  ng-src="{{widget.instance.url}}" width={{widget.instance.width}} height={{widget.instance.height}}></iframe>
+            <div ng-bind-html-unsafe="renderWidgetIframe(widget)"></div>
+            <!--<iframe  ng-src="{{widget.instance.url}}" width={{widget.instance.width}} height={{widget.instance.height}}></iframe>-->
         </div>
     </div>
     </div>
