@@ -4,18 +4,19 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
-     <!--
+
     <parameters>
-        <parameter key="coruja_wookie_connector.connector.class">Coruja\WookieConnectorBundle\Connector\WookieConnectorService.php</parameter>
+        <parameter key="coruja_wookie_connector.connector.class">Coruja\WookieConnectorBundle\Connector\WookieConnectorService</parameter>
     </parameters>
 
     <services>
         <service id="coruja_wookie_connector.connector" class="%coruja_wookie_connector.connector.class%">
-            <argument type="service" id="service_id" />
-            <argument>plain_value</argument>
-            <argument>%parameter_name%</argument>
+            <argument>%coruja_wookie_connector.url%</argument>
+            <argument>%coruja_wookie_connector.api_key%</argument>
+            <argument>%coruja_wookie_connector.shared_data_key%</argument>
+            <argument>%coruja_wookie_connector.login_name%</argument>
+            <argument>%coruja_wookie_connector.screen_name%</argument>
         </service>
     </services>
-    -->
 
 </container>

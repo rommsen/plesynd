@@ -24,7 +24,7 @@ class WidgetController extends FOSRestController
      */
     public function getAvailableWidgetsAction()
     {
-        $connection = new \Coruja\WookieConnectorBundle\Connector\WookieConnectorService("http://bla:8080/wookie/", "TEST", "localhost_dev", "demo_2");
+        $connection = $this->get('coruja_wookie_connector.connector');
         $widgets = $connection->getAvailableWidgets();
 
         return View::create($widgets);
@@ -41,7 +41,7 @@ class WidgetController extends FOSRestController
         $widget = /* @var \Coruja\PlesyndBundle\Entity\Widget $widget */
             $em->getRepository('CorujaPlesyndBundle:Widget')->find($id);
 
-        $connection = new \Coruja\WookieConnectorBundle\Connector\WookieConnectorService("http://bla:8080/wookie/", "TEST", "localhost_dev", "demo_2");
+        $connection = $this->get('coruja_wookie_connector.connector');
         $connection->getUser()->setLoginName($widget->getInstanceIdentifier());
         $widget->setInstance($connection->getOrCreateInstance($widget));
         $widget->setWorkspaceId($widget->getWorkspace()->getId());
@@ -56,7 +56,7 @@ class WidgetController extends FOSRestController
      */
     public function getWidgetsAction()
     {
-        $connection = new \Coruja\WookieConnectorBundle\Connector\WookieConnectorService("http://bla:8080/wookie/", "TEST", "localhost_dev", "demo_2");
+        $connection = $this->get('coruja_wookie_connector.connector');
         $em = /* @var $em \Doctrine\ORM\EntityManager */ $this->get('doctrine')->getEntityManager();
         $widgets = $em->getRepository('CorujaPlesyndBundle:Widget')->findAll();
 
