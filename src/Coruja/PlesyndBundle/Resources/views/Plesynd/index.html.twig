@@ -92,7 +92,7 @@
     <div class="row-fluid">
         <div class="span12">
             <ul class="nav nav-tabs">
-                <li ng-class="{active: checkActiveTab('dashboard')}"><a href="#/dashboard">dashboard</a></li>
+                <li ng-class="{active: checkActiveTab('dashboard')}"><a href="#/dashboard">Dashboard</a></li>
                 <li ng-class="{active: checkActiveTab(workspace.id)}" ng-repeat="workspace in workspaces" >
                     <a href="#/workspace/{{workspace.id}}">
                         {{workspace.title}}
@@ -109,6 +109,26 @@
         </div><!--/span-->
     </div><!--/row-->
 
+    <div class="row-fluid">
+        <div class="span12">
+            <div ng-repeat="widget in widgets">
+                <div ng-show="isWidgetVisible(widget)" class="widget well pull-left" style="width: {{ widget.instance.width }}px;height:({{ widget.instance.height }}+80)px;">
+                    <div class="navbar navbar-inverse">
+                        <div class="navbar-inner">
+                            <div class="container-fluid">
+                                <ul class="nav">
+                                    <li><a ng-click="deleteWidgetFromWorkspace(widget)">delete</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div ng-bind-html-unsafe="renderWidgetIframe(widget)"></div>
+                </div>
+            </div>
+        </div><!--/span-->
+    </div><!--/row-->
+
     <hr>
 
     <footer>
@@ -120,9 +140,33 @@
 
 <!-- Container that holds dashboard -->
 <script type="text/ng-template" id="dashboard">
+    <div class="row-fluid">
+        <div class="span6 well" >
+            <table ng-repeat="workspace in workspaces" class="table table-bordered table-striped table-condensed">
+                <thead>
+                <tr>
+                    <th colspan="4"><a href="#/workspace/{{workspace.id}}">{{workspace.title}}</a></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="widget in filtered = (widgets | filter:{workspace.id:workspace.id})">
+                    <td>{{ widget.title }}</td>
+                    <td>{{ widget.position }}</td>
+                    <td>Otto</td>
+                    <td>@mdo</td>
+                </tr>
+                <tr ng-show="filtered.length == 0">
+                    <td colspan="4">Workspace does not have widgets</td>
+                </tr>
+                </tbody>
+            </table>
+        </div><!--/span-->
+    </div><!--/row-->
     <div class="row-fluid"
         <div class="span12 well">
-            {{ dashboard.info }}
+            <div ng-repeat="childFrame in childFrames">
+                {{ childFrame }}
+            </div>
         </div><!--/span-->
     </div><!--/row-->
 </script>
@@ -166,24 +210,6 @@
         </div><!--/span-->
     </div><!--/row-->
     <hr>
-    <div>
-    <div ng-repeat="widget in workspaceWidgets">
-        <div class="widget well pull-left" style="width: {{widget.instance.width}}px;height: widget.instance.heightpx;">
-            <div class="navbar navbar-inverse">
-                <div class="navbar-inner">
-                    <div class="container-fluid">
-                        <ul class="nav">
-                            <li><a ng-click="deleteWidgetFromWorkspace(widget)">delete</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <hr>
-            <div ng-bind-html-unsafe="renderWidgetIframe(widget)"></div>
-            <!--<iframe  ng-src="{{widget.instance.url}}" width={{widget.instance.width}} height={{widget.instance.height}}></iframe>-->
-        </div>
-    </div>
-    </div>
 </script>
 
 {% endraw %}
@@ -202,7 +228,7 @@
     '@CorujaPlesyndBundle/Resources/public/js/controllers/dashboard-controller.js'
     '@CorujaPlesyndBundle/Resources/public/js/services/workspace-service.js'
     '@CorujaPlesyndBundle/Resources/public/js/services/widget-service.js'
-    '@CorujaPlesyndBundle/Resources/public/js/services/workspace-widget-service.js'
+    '@CorujaPlesyndBundle/Resources/public/js/services/coruja-frame-messenger.js'
     '@CorujaPlesyndBundle/Resources/public/js/services/coruja-online-status.js'
     '@CorujaPlesyndBundle/Resources/public/js/services/coruja-storage.js'
     '@CorujaPlesyndBundle/Resources/public/js/services/coruja-resource.js'

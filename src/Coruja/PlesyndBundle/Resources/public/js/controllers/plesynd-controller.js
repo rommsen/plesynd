@@ -1,7 +1,7 @@
 'use strict';
 
 /* Controllers */
-plesynd.controller('PlesyndCtrl', function ($rootScope, $scope, $http, $location, $filter, onlineStatus, workspaceService, widgetService) {
+plesynd.controller('PlesyndCtrl', function ($rootScope, $scope, $http, $location, onlineStatus, workspaceService, widgetService) {
     $rootScope.$on("$routeChangeStart", function (event, next, current) {
         $scope.alertType = "";
         $scope.active = "progress-striped active progress-warning";
@@ -10,7 +10,6 @@ plesynd.controller('PlesyndCtrl', function ($rootScope, $scope, $http, $location
         $scope.alertType = "alert-success";
         $scope.active = "progress-success";
         $scope.newLocation = $location.path();
-        console.log($scope.newLocation);
     });
     $rootScope.$on("$routeChangeError", function (event, current, previous, rejection) {
         alert("ROUTE CHANGE ERROR: " + rejection);
@@ -21,6 +20,18 @@ plesynd.controller('PlesyndCtrl', function ($rootScope, $scope, $http, $location
         $scope.online_status = isOnline;
         $scope.online_status_string = onlineStatus.getOnlineStatusString();
         $scope.$apply();
+    });
+
+    $scope.childFrames = {};
+
+    $rootScope.$on("childFrameRegistered", function (event, child) {
+        $scope.childFrames[child['id']] = child;
+        $scope.$apply();
+    });
+
+    $rootScope.$on("notSyncronizedItemReceived", function (event, next, current) {
+        $scope.alertType = "";
+        $scope.active = "progress-striped active progress-warning";
     });
 
     $scope.checkActiveTab = function (url) {
@@ -60,4 +71,25 @@ plesynd.controller('PlesyndCtrl', function ($rootScope, $scope, $http, $location
             $location.path('/workspace/'+workspace.id);
         });
     }
+
+
+    // Widget Specific Methods
+    $scope.isWidgetVisible = function(widget) {
+        // needs a couple of digest cycles to be defined and set
+        if($scope.activeWorkspace == undefined) {
+            return false;
+        }
+
+        return  widget.workspace.id == $scope.activeWorkspace.id;
+    }
+
+    $scope.renderWidgetIframe = function(widget) {
+        return '<iframe src="'+ widget.instance.url +'" name="' + widget.instance_identifier + '" width='+ widget.instance.width +' height='+ widget.instance.height +'></iframe>';
+    };
+
+    $scope.deleteWidget = function(widget) {
+        widgetService.delete(widget, function() {
+            $scope.widgets.splice($scope.widgets.indexOf(widget), 1);
+        });
+    };
 });
