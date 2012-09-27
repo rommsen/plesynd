@@ -112,17 +112,4 @@ class TodoRestController extends FOSRestController
         }
         return View::create(null, HttpCodes::HTTP_NOT_FOUND);
     }
-
-//    /**
-//     * @Route("/{id}.{_format}", defaults={"id" = null, "_format" = "~"}, name="options_todos")
-//     * @Method({"OPTIONS"})
-//     */
-//    public function optionsTodoAction()
-//    {
-//        return View::create(null, HttpCodes::HTTP_OK, array(
-//            'Access-Control-Allow-Methods' => 'POST, GET, PUT, DELETE, OPTIONS',
-//            'Access-Control-Allow-Origin' => '*',
-//            'Access-Control-Allow-Headers' => 'X-REQUESTED-WITH, content-type'));
-//
-//    }
 }

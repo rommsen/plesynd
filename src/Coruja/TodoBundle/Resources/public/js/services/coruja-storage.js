@@ -53,11 +53,24 @@ angular.module('corujaStorage', []).factory('localStorage', ["$timeout", "$q",
              * Queries the localStorage. Does not return a promise but the value array. This makes it
              * compatible with ngResource
              *
-             * @param success callback
+             * @param a1 callback or params object TODO maybe we can use params to filter the results
+             * @param a2 params object or undefined
              * @return {Array}
              */
-            storage.query = function (success) {
+            storage.query = function (a1, a2) {
                 var value = [];
+                var params;
+                var success;
+                // necessary to be compatible with ngResource, params can be first parameter
+                switch(arguments.length) {
+                    case 1:
+                        success = a1;
+                        break;
+                    default:
+                        params = a1;
+                        success = a2;
+                        break;
+                }
                 getData().then(function (data) {
                     copy(data, value);
                     (success || noop)(data);

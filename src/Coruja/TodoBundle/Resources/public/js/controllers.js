@@ -1,18 +1,20 @@
 'use strict';
 
 /* Controllers */
-todoApp.controller('TodoCtrl', function TodoCtrl($rootScope, $scope, $location, todoService, filterFilter, onlineStatus) {
-    function getTodos() {
-        return todoService.query(function () {
-            $scope.remainingCount = filterFilter($scope.todos, {completed:false}).length;
-            $scope.doneCount = filterFilter($scope.todos, {completed:true}).length;
+todoApp.controller('TodoCtrl', function TodoCtrl($window, $rootScope, $scope, $location, todoService, filterFilter, onlineStatus) {
+    function synchronizeTodos() {
+        todoService.synchronize(function () {
+            $scope.todos = todoService.query(function () {
+                $scope.remainingCount = filterFilter($scope.todos, {completed:false}).length;
+                $scope.doneCount = filterFilter($scope.todos, {completed:true}).length;
+            });
+            $scope.online_status_string = onlineStatus.getOnlineStatusString();
         });
     }
 
+    synchronizeTodos();
     $scope.newTodo = "";
     $scope.editedTodo = null;
-    $scope.todos = getTodos();
-    $scope.online_status_string = onlineStatus.getOnlineStatusString();
 
     if ($location.path() === '') {
         $location.path('/');
@@ -25,12 +27,7 @@ todoApp.controller('TodoCtrl', function TodoCtrl($rootScope, $scope, $location, 
         { completed:true } : null;
     });
 
-    $scope.$on('onlineChanged', function (evt, isOnline) {
-        todoService.synchronize(function () {
-            $scope.todos = getTodos();
-            $scope.online_status_string = onlineStatus.getOnlineStatusString();
-        });
-    });
+    $scope.$on('onlineChanged', synchronizeTodos);
 
     $scope.$watch('remainingCount == 0', function (val) {
         $scope.allChecked = val;
@@ -100,4 +97,26 @@ todoApp.controller('TodoCtrl', function TodoCtrl($rootScope, $scope, $location, 
             }
         });
     };
+});
+
+todoApp.controller('TestCtrl', function TestCtrl($scope) {
+    $scope.test = function() {
+        var moderator = Widget.preferences.getItem("moderator");
+        console.log('Aus dem Widget', moderator);
+        moderator = !moderator;
+        console.log('neuer Wert', moderator);
+        console.log('return aus dem setzen', Widget.preferences.setItem("moderator", moderator));
+        console.log('erneutes holen der werte', Widget.preferences.getItem("moderator"));
+    }
+
+    $scope.test2 = function() {
+        pm({
+            target: window.parent,
+            type: "message",
+            data:{foo:"bar"},
+            success: function(data) {
+                $(document.body).append(JSON.stringify(data));
+            }
+        });
+    }
 });

@@ -1,8 +1,9 @@
 'use strict';
 
-todoApp.factory('todoService', ["$resource", "localStorage", "resourceService",
-    function ($resource, localStorage, resourceService) {
+todoApp.factory('todoService', ["$resource", "$window", "localStorage", "resourceService", "todo_ressource_uri",
+    function ($resource, $window, localStorage, resourceService, todo_ressource_uri) {
         var copy = angular.copy;
+        var local_storage_prefix = "todos_"+$window.name;
 
         function Todo (data) {
             copy(data || {}, this);
@@ -13,14 +14,14 @@ todoApp.factory('todoService', ["$resource", "localStorage", "resourceService",
         }
 
         var config = {
-            remoteResource : $resource('api/todos/:todoId', {todoId:'@id'}, {
+            remoteResource : $resource(todo_ressource_uri, {todoId:'@id'}, {
                 put:{method:'PUT' },
                 post:{method:'POST' }
             }),
-            localResource : localStorage('todos'),
-            localResourceAdded : localStorage('todos.added'),
-            localResourceChanged : localStorage('todos.changed'),
-            localResourceDeleted : localStorage('todos.deleted'),
+            localResource : localStorage(local_storage_prefix),
+            localResourceAdded : localStorage(local_storage_prefix+'.added'),
+            localResourceChanged : localStorage(local_storage_prefix+'.changed'),
+            localResourceDeleted : localStorage(local_storage_prefix+'.deleted'),
             entityFactory : entityFactory
         };
 
@@ -29,7 +30,11 @@ todoApp.factory('todoService', ["$resource", "localStorage", "resourceService",
         var service = {};
 
         service.query = function (success, error) {
-            return resource.query(success, error);
+            return resource.query({}, success, error);
+        };
+
+        service.get = function (params, success, error) {
+            return resource.get(params, success, error);
         };
 
         service.post = function (todo, success, error) {

@@ -1,3 +1,4 @@
+'use strict';
 
 angular.module('corujaOnlineStatus', []).factory('onlineStatus', ["$window", "$rootScope", function ($window, $rootScope) {
     var onlineStatus = {};
