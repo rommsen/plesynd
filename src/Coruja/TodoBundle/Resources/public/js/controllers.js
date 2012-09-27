@@ -7,6 +7,7 @@ todoApp.controller('TodoCtrl', function TodoCtrl($window, $rootScope, $scope, $l
             $scope.todos = todoService.query(function () {
                 $scope.remainingCount = filterFilter($scope.todos, {completed:false}).length;
                 $scope.doneCount = filterFilter($scope.todos, {completed:true}).length;
+                todoService.notifyParentAboutItems();
             });
             $scope.online_status_string = onlineStatus.getOnlineStatusString();
         });
