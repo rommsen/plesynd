@@ -63,6 +63,8 @@ class Widget implements WidgetInterface
      */
     protected $instance;
 
+    protected $is_offline_compatible;
+
     // TODO currently only used for json, maybe use serialize filter
     protected $workspace_id;
 
@@ -149,6 +151,10 @@ class Widget implements WidgetInterface
 
     public function setWorkspaceId($workspace_id) {
         $this->workspace_id = $workspace_id;
+    }
+
+    public function setIsOfflineCompatible($offline_compatible) {
+        $this->is_offline_compatible = $offline_compatible;
     }
 
 

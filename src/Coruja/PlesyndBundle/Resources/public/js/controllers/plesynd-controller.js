@@ -1,10 +1,11 @@
 'use strict';
 
 /* Controllers */
-plesynd.controller('PlesyndCtrl', function ($rootScope, $scope, $http, $location, onlineStatus, workspaceService, widgetService) {
+plesynd.controller('PlesyndCtrl', function ($rootScope, $scope, $http, $location, onlineStatus, workspaceService, widgetService, childFrameService) {
     $rootScope.$on("$routeChangeStart", function (event, next, current) {
         $scope.alertType = "";
         $scope.active = "progress-striped active progress-warning";
+        $scope.show_edit = false;
     });
     $rootScope.$on("$routeChangeSuccess", function (event, current, previous) {
         $scope.alertType = "alert-success";
@@ -22,18 +23,6 @@ plesynd.controller('PlesyndCtrl', function ($rootScope, $scope, $http, $location
         $scope.$apply();
     });
 
-    $scope.childFrames = {};
-
-    $rootScope.$on("childFrameRegistered", function (event, child) {
-        $scope.childFrames[child['id']] = child;
-        $scope.$apply();
-    });
-
-    $rootScope.$on("notSyncronizedItemReceived", function (event, next, current) {
-        $scope.alertType = "";
-        $scope.active = "progress-striped active progress-warning";
-    });
-
     $scope.checkActiveTab = function (url) {
         url = url == 'dashboard' ? '/dashboard' : '/workspace/'+url;
         return url == $scope.newLocation;
@@ -41,7 +30,6 @@ plesynd.controller('PlesyndCtrl', function ($rootScope, $scope, $http, $location
 
     $scope.alertType = "alert-info";
 
-    $scope.show_edit = false;
     $scope.changeShowEdit = function() {
         $scope.show_edit = !$scope.show_edit;
     }
@@ -49,7 +37,10 @@ plesynd.controller('PlesyndCtrl', function ($rootScope, $scope, $http, $location
     $scope.online_status = onlineStatus.isOnline();
     $scope.online_status_string = onlineStatus.getOnlineStatusString();
     $scope.workspaces = workspaceService.query();
-    $scope.widgets = widgetService.query();
+    $scope.widgets = widgetService.query(function(widgets) {
+        childFrameService.setWidgets(widgets);
+    });
+
 
     // get the widgets for the selectbox
     $scope.availableWidgets = [];

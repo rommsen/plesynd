@@ -17,13 +17,6 @@ class PlesyndController extends Controller
     }
 
     /**
-     * @Route("/dashboard")
-     */
-    public function getDashboardAction() {
-        return $this->render('CorujaPlesyndBundle:Plesynd:partials/dashboard_partial.html.twig');
-    }
-
-    /**
      * @Route("/cache.appcache")
      */
     public function appcacheAction() {

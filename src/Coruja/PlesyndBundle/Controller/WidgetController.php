@@ -2,6 +2,8 @@
 namespace Coruja\PlesyndBundle\Controller;
 
 use Coruja\PlesyndBundle\Entity\Widget;
+use Coruja\WookieConnectorBundle\Connector\WidgetProperty;
+use Coruja\WookieConnectorBundle\Connector\Exception\WookieConnectorException;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
@@ -60,8 +62,15 @@ class WidgetController extends FOSRestController
         $em = /* @var $em \Doctrine\ORM\EntityManager */ $this->get('doctrine')->getEntityManager();
         $widgets = $em->getRepository('CorujaPlesyndBundle:Widget')->findAll();
 
-        $widgets = array_map(function(\Coruja\PlesyndBundle\Entity\Widget $widget) use($connection) {
+        $widgets = array_map(function(Widget $widget) use($connection) {
             $connection->getUser()->setLoginName($widget->getInstanceIdentifier());
+            $instance = $connection->getOrCreateInstance($widget);
+            try {
+                $property = $connection->getProperty($instance, new WidgetProperty('plesynd_offline_compatible'));
+                $widget->setIsOfflineCompatible($property->getValue());
+            } catch(WookieConnectorException $e) {
+                $widget->setIsOfflineCompatible(false);
+            }
             $widget->setInstance($connection->getOrCreateInstance($widget));
             $widget->setWorkspaceId($widget->getWorkspace()->getId());
             return $widget;

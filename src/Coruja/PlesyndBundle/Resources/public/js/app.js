@@ -23,7 +23,7 @@ var plesynd = angular.module('plesynd', ['ngResource', 'corujaFrameMessenger', '
 
                 var id = $route.current.params.id;
                 $timeout(function () {
-                    workspaceService.get({'workspaceId':id}, function (result) {
+                    workspaceService.get({'id':id}, function (result) {
                         deferred.resolve(result);
                     });
                 }, 500);

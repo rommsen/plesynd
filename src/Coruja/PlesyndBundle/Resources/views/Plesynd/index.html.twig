@@ -59,27 +59,17 @@
             <a class="brand" href="#">Plesynd</a>
             <div class="nav-collapse collapse">
                 <ul class="nav">
-                    <li class="active"><a href="#">Home</a></li>
-                    <li><a href="#about">About</a></li>
-                    <li><a href="#contact">Contact</a></li>
+                    <li>
+                        <a>
+                            <span ng-show="online_status" class="label label-success">Online</span>
+                            <span ng-show="!online_status" class="label label-important">Offline</span>
+                        </a>
+                    </li>
                 </ul>
             </div><!--/.nav-collapse -->
         </div>
     </div>
 </div>
-
-<div class="container-fluid">
-    <div class="row-fluid">
-        <div class="span12">
-            <div class="page-header">
-                System is
-                <span ng-show="online_status" class="label label-success">Online</span>
-                <span ng-show="!online_status" class="label label-important">Offline</span>
-            </div>
-        </div><!--/span-->
-    </div><!--/row-->
-</div><!--/.fluid-container-->
-
 
 <div class="container-fluid">
     <div class="row-fluid">
@@ -113,11 +103,28 @@
         <div class="span12">
             <div ng-repeat="widget in widgets">
                 <div ng-show="isWidgetVisible(widget)" class="widget well pull-left" style="width: {{ widget.instance.width }}px;height:({{ widget.instance.height }}+80)px;">
-                    <div class="navbar navbar-inverse">
+                    <div class="navbar">
                         <div class="navbar-inner">
                             <div class="container-fluid">
-                                <ul class="nav">
-                                    <li><a ng-click="deleteWidgetFromWorkspace(widget)">delete</a></li>
+                                <a class="brand" href="#">{{ widget.title }}</a>
+                                <ul ng-show="widget.is_offline_compatible" class="nav">
+                                    <li>
+                                        <a>
+                                            <span ng-show="online_status" class="label label-success">Online</span>
+                                            <span ng-show="!online_status" class="label label-important">Offline</span>
+                                        </a>
+                                    </li>
+                                    <li><a><span class="label label-info">Available {{ widget.data.available.length }}</span></a></li>
+                                    <li>
+                                        <a>
+                                            <span class="label " ng-class="{'label-success':widget.data.number_not_synchronized == 0, 'label-warning':widget.data.number_not_synchronized > 0}">
+                                                Sync {{ widget.data.number_not_synchronized }}
+                                            </span>
+                                        </a>
+                                    </li>
+                                </ul>
+                                <ul class="nav pull-right">
+                                    <li><a ng-click="deleteWidget(widget)"><span class="label label-important">x</span></a></li>
                                 </ul>
                             </div>
                         </div>
@@ -149,14 +156,27 @@
                 </tr>
                 </thead>
                 <tbody>
+                <tr ng-show="filtered.length > 0">
+                    <th>#</th>
+                    <th>Widget</th>
+                    <th>Items available</th>
+                    <th>Items not synchronized</th>
+                    <th>delete Widget</th>
+                </tr>
                 <tr ng-repeat="widget in filtered = (widgets | filter:{workspace.id:workspace.id})">
-                    <td>{{ widget.title }}</td>
                     <td>{{ widget.position }}</td>
-                    <td>Otto</td>
-                    <td>@mdo</td>
+                    <td>{{ widget.title }}</td>
+                    <td ng-show="widget.is_offline_compatible"><span class="label label-info">{{ widget.data.available.length }}</span></td>
+                    <td ng-show="widget.is_offline_compatible">
+                        <span class="label " ng-class="{'label-success':widget.data.number_not_synchronized == 0, 'label-warning':widget.data.number_not_synchronized > 0}">
+                            {{ widget.data.number_not_synchronized }}
+                        </span>
+                    </td>
+                    <td ng-show="!widget.is_offline_compatible" colspan="2">Widget is not offline compatible</td>
+                    <td><span ng-click="deleteWidget(widget)" class="btn btn-danger">x</span></td>
                 </tr>
                 <tr ng-show="filtered.length == 0">
-                    <td colspan="4">Workspace does not have widgets</td>
+                    <td colspan="5">Workspace does not have widgets</td>
                 </tr>
                 </tbody>
             </table>
@@ -228,6 +248,7 @@
     '@CorujaPlesyndBundle/Resources/public/js/controllers/dashboard-controller.js'
     '@CorujaPlesyndBundle/Resources/public/js/services/workspace-service.js'
     '@CorujaPlesyndBundle/Resources/public/js/services/widget-service.js'
+    '@CorujaPlesyndBundle/Resources/public/js/services/child-frame-service.js'
     '@CorujaPlesyndBundle/Resources/public/js/services/coruja-frame-messenger.js'
     '@CorujaPlesyndBundle/Resources/public/js/services/coruja-online-status.js'
     '@CorujaPlesyndBundle/Resources/public/js/services/coruja-storage.js'

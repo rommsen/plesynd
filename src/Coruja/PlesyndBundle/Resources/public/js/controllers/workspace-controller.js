@@ -7,6 +7,9 @@ plesynd.controller('WorkspaceCtrl', function ($scope, $http, $location, $filter,
     $scope.$watch('widgets', function() {
         // only show workspace widgets
         $scope.workspaceWidgets = $filter('filter')($scope.widgets, {workspace_id : $scope.workspace.id});
+        if($scope.workspaceWidgets.length == 0) {
+            $scope.show_edit = true;
+        }
     }, true)
 
     $scope.selected_widget = null;
