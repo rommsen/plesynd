@@ -18,11 +18,11 @@ namespace Coruja\WookieConnectorBundle\Connector;
  * limitations under the License.
  */
 
-/** Property class 
+/** WidgetProperty class
  * @package org.wookie.php
  **/
 
- class Property {
+ class WidgetProperty {
 	private $propertyName = '';
 	private $propertyValue = '';
 	private $isPublic = 'false';

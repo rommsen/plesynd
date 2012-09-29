@@ -456,8 +456,8 @@ class WookieConnectorService implements WookieConnectorServiceInterface {
 	/**
 	 * Set property for Widget instance
 	 * @param WidgetInstance instance of WidgetInstance
-	 * @param Propety instance of Property
-	 * @return Property new Property instance
+	 * @param Propety instance of WidgetProperty
+	 * @return WidgetProperty new WidgetProperty instance
 	 * @throws WookieConnectorException, WookieWidgetInstanceException
 	 */
 
@@ -466,7 +466,7 @@ class WookieConnectorService implements WookieConnectorServiceInterface {
 
 		try {
 			if(!$widgetInstance instanceof WidgetInstance) throw new Exception\WookieWidgetInstanceException('No Widget instance');
-			if(!$propertyInstance instanceof Property) throw new Exception\WookieConnectorException('No properties instance');
+			if(!$propertyInstance instanceof WidgetProperty) throw new Exception\WookieConnectorException('No properties instance');
 
 			$data = array(
 				'api_key' => $this->getConnection()->getApiKey(),
@@ -487,7 +487,7 @@ class WookieConnectorService implements WookieConnectorServiceInterface {
 
 		switch($statusCode) {
 		  case 201:
-		  	return $propertyInstance; //new property added, let's return initial Property instance
+		  	return $propertyInstance; //new property added, let's return initial WidgetProperty instance
 		  	break;
 		  case ($statusCode != 201):
 		  	throw new Exception\WookieConnectorException($response->headerToString().'<br />'.$response->getResponseText());
@@ -505,8 +505,8 @@ class WookieConnectorService implements WookieConnectorServiceInterface {
 	/**
 	 * Get property for Widget instance
 	 * @param WidgetInstance instance of WidgetInstance
-	 * @param Propety instance of Property
-	 * @return Property if request fails, return false;
+	 * @param Propety instance of WidgetProperty
+	 * @return WidgetProperty if request fails, return false;
 	 * @throws WookieConnectorException, WookieWidgetInstanceException
 	 */
 
@@ -515,7 +515,7 @@ class WookieConnectorService implements WookieConnectorServiceInterface {
 
 		try {
 			if(!$widgetInstance instanceof WidgetInstance) throw new Exception\WookieWidgetInstanceException('No Widget instance');
-			if(!$propertyInstance instanceof Property) throw new Exception\WookieConnectorException('No properties instance');
+			if(!$propertyInstance instanceof WidgetProperty) throw new Exception\WookieConnectorException('No properties instance');
 
 			$data = array(
 				'api_key' => $this->getConnection()->getApiKey(),
@@ -525,7 +525,6 @@ class WookieConnectorService implements WookieConnectorServiceInterface {
 				'propertyname' => $propertyInstance->getName()
 			);
 			$request = @http_build_query($data);
-
 			if(!$this->checkURL($Url)) {
 				throw new Exception\WookieConnectorException("Properties rest URL is incorrect: ".$Url);
 			}
@@ -535,7 +534,7 @@ class WookieConnectorService implements WookieConnectorServiceInterface {
 			if($statusCode != 200) {
 				throw new Exception\WookieConnectorException($response->headerToString().'<br />'.$response->getResponseText());
 			}
-			return new Property($propertyInstance->getName(), $response->getResponseText());
+			return new WidgetProperty($propertyInstance->getName(), $response->getResponseText());
 
 		} catch (WookieConnectorException $e) {
 			$this->getLogger()->write($e->toString());
@@ -548,7 +547,7 @@ class WookieConnectorService implements WookieConnectorServiceInterface {
 	/**
 	 * Delete property for Widget instance
 	 * @param WidgetInstance instance of WidgetInstance
-	 * @param Propety instance of Property
+	 * @param Propety instance of WidgetProperty
 	 * @return boolean true/false -- true if deleted, false if doesnt exist
 	 * @throws WookieConnectorException, WookieWidgetInstanceException
 	 */
@@ -558,7 +557,7 @@ class WookieConnectorService implements WookieConnectorServiceInterface {
 
 		try {
 			if(!$widgetInstance instanceof WidgetInstance) throw new Exception\WookieWidgetInstanceException('No Widget instance');
-			if(!$propertyInstance instanceof Property) throw new Exception\WookieConnectorException('No properties instance');
+			if(!$propertyInstance instanceof WidgetProperty) throw new Exception\WookieConnectorException('No properties instance');
 
 			$request = '?api_key='.$this->getConnection()->getApiKey();
 			$request .= '&shareddatakey='.$this->getConnection()->getSharedDataKey();
