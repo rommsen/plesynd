@@ -79,6 +79,23 @@ angular.module('corujaStorage', []).factory('localStorage', ["$timeout", "$q",
                 return value;
             };
 
+            /**
+             * @param params needs to include an id property
+             * @param success
+             * @return {*}
+             */
+            storage.get = function(params, success) {
+                var value;
+                getData().then(function (data) {
+                    var position = findItemPosition(params, data);
+                    if (position !== -1) {
+                        value = data[position];
+                        (success || noop)(value);
+                    }
+                });
+                return value;
+            }
+
             storage.storeData = function (data) {
                 postData(data);
             };
