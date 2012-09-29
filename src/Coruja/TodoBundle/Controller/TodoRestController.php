@@ -1,6 +1,7 @@
 <?php
 namespace Coruja\TodoBundle\Controller;
 
+use Coruja\TodoBundle\Entity\Todo;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
@@ -80,7 +81,7 @@ class TodoRestController extends FOSRestController
     public function postTodosAction()
     {
         $data = $this->getRequest()->request;
-        $todo = new \Coruja\TodoBundle\Entity\Todo();
+        $todo = new Todo;
         $todo->setTitle($data->get('title'));
         $todo->setCompleted($data->get('completed'));
 
@@ -108,8 +109,8 @@ class TodoRestController extends FOSRestController
         if ($todo !== NULL) {
             $em->remove($todo);
             $em->flush();
-            return View::create(null, HttpCodes::HTTP_NO_CONTENT);
         }
-        return View::create(null, HttpCodes::HTTP_NOT_FOUND);
+        // always return success, even if entity was not found
+        return View::create(null, HttpCodes::HTTP_NO_CONTENT);
     }
 }
