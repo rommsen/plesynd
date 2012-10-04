@@ -17,6 +17,22 @@ class PlesyndController extends Controller
     }
 
     /**
+     * @Route("/login")
+     */
+    public function loginAction() {
+        $user = $this->container->get('security.context')->getToken()->getUser();
+    }
+
+    /**
+     * @Route("/plesynd/api/logout")
+     */
+    public function logout() {
+        $this->get('security.context')->setToken(null);
+        $this->get('request')->getSession()->invalidate();
+        return new Response('');
+    }
+
+    /**
      * @Route("/cache.appcache")
      */
     public function appcacheAction() {

@@ -90,6 +90,15 @@ nelmio_cors:
             expose_headers: ['Location']
             max_age: 3600
 
+coruja_wookie_connector:
+    protocol: http://
+    host: bla
+    port: 8080
+    path: wookie/
+    api_key: TEST
+    shared_data_key: shared_data
+    login_name: user
+    screen_name : ~
 
 # Swiftmailer Configuration
 swiftmailer:

@@ -1,12 +1,20 @@
+CorujaWookieConnectorBundle:
+    resource: "@CorujaWookieConnectorBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
 CorujaPlesyndBundle:
     resource: "@CorujaPlesyndBundle/Controller/"
     type:     annotation
     prefix:   /
 
-CorujaPlesyndBundle:
+CorujaTodoBundle:
     resource: "@CorujaTodoBundle/Controller/"
     type:     annotation
     prefix:   /
+
+logout:
+    pattern:   /logout
 
 
 #CorujaTodoBundle:

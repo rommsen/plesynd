@@ -1,7 +1,7 @@
 'use strict';
 
 /* Controllers */
-plesynd.controller('PlesyndCtrl', function ($rootScope, $scope, $http, $location, onlineStatus, workspaceService, widgetService, childFrameService) {
+plesynd.controller('PlesyndCtrl', function ($rootScope, $scope, $http, $location, onlineStatus, workspaceService, widgetService, childFrameService, authService) {
     $rootScope.$on("$routeChangeStart", function (event, next, current) {
         $scope.alertType = "";
         $scope.active = "progress-striped active progress-warning";
@@ -83,4 +83,29 @@ plesynd.controller('PlesyndCtrl', function ($rootScope, $scope, $http, $location
             $scope.widgets.splice($scope.widgets.indexOf(widget), 1);
         });
     };
+
+    $scope.is_authenticated = true;
+    $scope.active_username = $scope.username;
+
+    $scope.login = function() {
+        $http.defaults.headers.common['Authorization'] = "Basic " + btoa($scope.username + ":" + $scope.password);
+        $scope.doLogin();
+    }
+
+    $scope.doLogin = function() {
+        $http.get('login').success(function() {
+            authService.loginConfirmed();
+            $scope.active_username = $scope.username;
+            $scope.password = '';
+            $scope.is_authenticated = true;
+        });
+    }
+
+    $scope.logout = function() {
+        $http.defaults.headers.common['Authorization'] = "Basic " + btoa('doof' + ":" + 'man');
+        $http.get('plesynd/api/logout');
+        $scope.is_authenticated = false;
+    }
+
 });
+

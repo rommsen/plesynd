@@ -4,11 +4,12 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
-    <!--
+
     <parameters>
-        <parameter key="coruja_plesynd.example.class">Coruja\PlesyndBundle\Example</parameter>
+        <parameter key="coruja.response_listener.class">Coruja\PlesyndBundle\EventListener\ResponseListener</parameter>
     </parameters>
 
+    <!--
     <services>
         <service id="coruja_plesynd.example" class="%coruja_plesynd.example.class%">
             <argument type="service" id="service_id" />
@@ -17,4 +18,10 @@
         </service>
     </services>
     -->
+
+    <services>
+        <service id="coruja.response_listener" class="%coruja.response_listener.class%">
+            <tag name="kernel.event_listener" event="kernel.response" method="onKernelResponse" />
+        </service>
+    </services>
 </container>
