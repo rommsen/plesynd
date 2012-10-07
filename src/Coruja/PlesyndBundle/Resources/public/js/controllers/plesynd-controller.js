@@ -107,5 +107,24 @@ plesynd.controller('PlesyndCtrl', function ($rootScope, $scope, $http, $location
         $scope.is_authenticated = false;
     }
 
+    $scope.register = function() {
+        $http.post('user', {
+            'username' : 'roman',
+            'password' : 'password',
+            'email' : 'roman.sachse@googlemail.de'
+        });
+    }
+
+});
+
+plesynd.controller('RegisterCtrl', function ($scope) {
+    $scope.submit = false;
+    $scope.user = {};
+
+    $scope.serverValidationError = {};
+
+    $scope.register = function() {
+        $scope.submit = true;
+    }
 });
 

@@ -1,6 +1,6 @@
 'use strict';
 
-var plesynd = angular.module('plesynd', ['ngResource', 'corujaFrameMessenger', 'corujaOnlineStatus', 'corujaResource', 'corujaStorage', 'http-auth-interceptor'])
+var plesynd = angular.module('plesynd', ['ngResource', 'corujaFrameMessenger', 'corujaOnlineStatus', 'corujaRemoteForm', 'corujaResource', 'corujaStorage', 'http-auth-interceptor'])
     .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/dashboard', {templateUrl:'dashboard', controller:'DashboardCtrl',
         resolve:{
