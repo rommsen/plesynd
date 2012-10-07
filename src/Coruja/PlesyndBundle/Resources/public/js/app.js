@@ -1,6 +1,6 @@
 'use strict';
 
-var plesynd = angular.module('plesynd', ['ngResource', 'corujaFrameMessenger', 'corujaOnlineStatus', 'corujaRemoteForm', 'corujaResource', 'corujaStorage', 'http-auth-interceptor'])
+var plesynd = angular.module('plesynd', ['ngResource', 'corujaAuth', 'corujaFrameMessenger', 'corujaOnlineStatus', 'corujaRemoteForm', 'corujaResource', 'corujaStorage'])
     .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/dashboard', {templateUrl:'dashboard', controller:'DashboardCtrl',
         resolve:{
@@ -33,36 +33,6 @@ var plesynd = angular.module('plesynd', ['ngResource', 'corujaFrameMessenger', '
         }});
     $routeProvider.otherwise({redirectTo:'/dashboard'});
 }])
-/**
- * This directive will find itself inside HTML as a class,
- * and will remove that class, so CSS will remove loading image and show app content.
- * It is also responsible for showing/hiding login form.
- */
-    .directive('auth', function() {
-        return {
-            restrict: 'C',
-            link: function(scope, elem, attrs) {
-                //once Angular is started, remove class:
-                elem.removeClass('waiting-for-angular');
-
-                var login = elem.find('#login-holder');
-                var main = elem.find('#content');
-
-                login.hide();
-
-                scope.$on('event:auth-loginRequired', function() {
-                    login.slideDown('slow', function() {
-                        main.hide();
-                    });
-                });
-                scope.$on('event:auth-loginConfirmed', function() {
-                    main.show();
-                    login.slideUp();
-                });
-            }
-        }
-    })
-
     .run(function ($rootScope, $window, parentFrameMessenger) {
         parentFrameMessenger.initialize();
 

@@ -6,7 +6,8 @@ angular.module('corujaRemoteForm', [])
             this.message = message;
         }
 
-        var forEach = angular.forEach;
+        var forEach = angular.forEach,
+            noop = angular.noop;
 
         return {
             'restrict':'A',
@@ -36,6 +37,7 @@ angular.module('corujaRemoteForm', [])
 
                 $scope.serverValidationError = {};
                 $scope.target = $attrs['target'];
+                $scope.success = $attrs['success'];
                 $scope.method = $attrs['method'] || 'post';
                 // error code defaults to 400
                 $scope.validation_error_code = $attrs['errorCode'] || 400;
@@ -61,6 +63,11 @@ angular.module('corujaRemoteForm', [])
                         return;
                     }
                     $http[scope.method].apply($http, [scope.target, scope.formData])
+                        .success(function() {
+                            if((typeof scope[scope.success]) == 'function') {
+                                scope[scope.success]();
+                            }
+                        })
                         .error(function (data, status) {
                             if (status == scope.validation_error_code) {
                                 forEach(data, function (item) {

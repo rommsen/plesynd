@@ -84,47 +84,10 @@ plesynd.controller('PlesyndCtrl', function ($rootScope, $scope, $http, $location
         });
     };
 
-    $scope.is_authenticated = true;
-    $scope.active_username = $scope.username;
-
-    $scope.login = function() {
-        $http.defaults.headers.common['Authorization'] = "Basic " + btoa($scope.username + ":" + $scope.password);
-        $scope.doLogin();
-    }
-
-    $scope.doLogin = function() {
-        $http.get('login').success(function() {
-            authService.loginConfirmed();
-            $scope.active_username = $scope.username;
-            $scope.password = '';
-            $scope.is_authenticated = true;
-        });
-    }
-
     $scope.logout = function() {
-        $http.defaults.headers.common['Authorization'] = "Basic " + btoa('doof' + ":" + 'man');
+        $http.defaults.headers.common['Authorization'] = "Basic " + btoa('#' + ":" + '#');
         $http.get('plesynd/api/logout');
         $scope.is_authenticated = false;
-    }
-
-    $scope.register = function() {
-        $http.post('user', {
-            'username' : 'roman',
-            'password' : 'password',
-            'email' : 'roman.sachse@googlemail.de'
-        });
-    }
-
-});
-
-plesynd.controller('RegisterCtrl', function ($scope) {
-    $scope.submit = false;
-    $scope.user = {};
-
-    $scope.serverValidationError = {};
-
-    $scope.register = function() {
-        $scope.submit = true;
     }
 });
 
