@@ -1,3 +1,8 @@
+coruja_user:
+    resource: "@CorujaUserBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
 CorujaWookieConnectorBundle:
     resource: "@CorujaWookieConnectorBundle/Controller/"
     type:     annotation
@@ -10,6 +15,11 @@ CorujaPlesyndBundle:
 
 CorujaTodoBundle:
     resource: "@CorujaTodoBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
+CorujaUserBundle:
+    resource: "@CorujaUserBundle/Controller/"
     type:     annotation
     prefix:   /
 

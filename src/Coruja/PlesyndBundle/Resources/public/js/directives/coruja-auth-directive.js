@@ -1,30 +1,35 @@
 'use strict';
 
 angular.module('corujaAuth', ['http-auth-interceptor'])
-    .directive('auth', function($http, authService) {
+    .directive('auth', function ($http, authService, systemMessageService) {
         return {
-            restrict: 'C',
-            //scope: true,
-            controller: function($scope, $element, $attrs) {
+            restrict:'C',
+            controller:function ($scope, $element, $attrs) {
                 $scope.authType = 'login'
-                $scope.changeAuthType = function() {
+                $scope.changeAuthType = function () {
                     $scope.authType = $scope.authType == 'login' ? 'register' : 'login';
                 };
-                $scope.login = function() {
+                $scope.login = function () {
                     $http.defaults.headers.common['Authorization'] = "Basic " + btoa($scope.username + ":" + $scope.password);
                     $scope.doLogin();
                 };
 
-                $scope.doLogin = function() {
-                    $http.get('login').success(function() {
-                        authService.loginConfirmed();
-                        $scope.active_username = $scope.username;
-                        $scope.password = '';
-                        $scope.is_authenticated = true;
-                    });
+                $scope.doLogin = function () {
+                    $http.get('login')
+                        .success(function () {
+                            authService.loginConfirmed();
+                            $scope.active_username = $scope.username;
+                            $scope.username = '';
+                            $scope.password = '';
+                            $scope.is_authenticated = true;
+                            systemMessageService.addSuccessMessage('Welcome back ' + $scope.active_username);
+                        })
+                        .error(function () {
+                            systemMessageService.addErrorMessage('Login with username "' + $scope.username + '" was not successful');
+                        });
                 };
             },
-            link: function(scope, element) {
+            link:function (scope, element) {
                 //once Angular is started, remove class:
                 element.removeClass('waiting-for-angular');
 
@@ -33,21 +38,21 @@ angular.module('corujaAuth', ['http-auth-interceptor'])
 
                 auth.hide();
 
-                scope.$on('event:auth-loginRequired', function() {
+                scope.$on('event:auth-loginRequired', function () {
                     content.hide();
                     auth.slideDown('slow');
                 });
-                scope.$on('event:auth-loginConfirmed', function() {
+                scope.$on('event:auth-loginConfirmed', function () {
                     content.show();
                     auth.slideUp();
                 });
 
-                scope.$watch('authType', function(type) {
-                    if(type == 'register') {
+                scope.$watch('authType', function (type) {
+                    if (type == 'register') {
                         auth.find('#login').slideUp('slow');
                         auth.find('#register').slideDown('slow');
                     }
-                    if(type == 'login') {
+                    if (type == 'login') {
                         auth.find('#register').slideUp('slow');
                         auth.find('#login').slideDown('slow');
                     }

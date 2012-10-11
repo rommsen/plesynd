@@ -57,10 +57,15 @@ doctrine:
                     type: annotation
                     dir: Entity
                     prefix: Coruja\PlesyndBundle\Entity\
+                CorujaUserBundle:
+                    type: annotation
+                    dir: Entity
+                    prefix: Coruja\UserBundle\Entity\
                 CorujaTodoBundle:
                     type: annotation
                     dir: Entity
                     prefix: Coruja\TodoBundle\Entity\
+                FOSUserBundle: ~
 
 fos_rest:
     body_listener: true
@@ -72,6 +77,11 @@ fos_rest:
         view_response_listener: true
     routing_loader:
             default_format: json
+
+fos_user:
+    db_driver: orm
+    firewall_name: main
+    user_class: Coruja\UserBundle\Entity\User
 
 sensio_framework_extra:
     # wegen FOSRestBundle ausgestellt https://github.com/FriendsOfSymfony/FOSRestBundle/blob/master/Resources/doc/3-listener-support.md
@@ -107,3 +117,6 @@ swiftmailer:
     username:  %mailer_user%
     password:  %mailer_password%
     spool:     { type: memory }
+
+#framework:
+#    translator: ~

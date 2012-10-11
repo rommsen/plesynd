@@ -5,6 +5,7 @@ namespace Coruja\PlesyndBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use FOS\Rest\Util\Codes as HttpCodes;
 
 class PlesyndController extends Controller
 {
@@ -17,10 +18,11 @@ class PlesyndController extends Controller
     }
 
     /**
+     * when reached, login was successful
      * @Route("/login")
      */
     public function loginAction() {
-        $user = $this->container->get('security.context')->getToken()->getUser();
+        return new Response('', HttpCodes::HTTP_NO_CONTENT);
     }
 
     /**

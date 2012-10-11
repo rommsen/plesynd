@@ -4,34 +4,31 @@ jms_security_extra:
 
 security:
     encoders:
-        Symfony\Component\Security\Core\User\User: plaintext
+        FOS\UserBundle\Model\UserInterface: sha512
 
     role_hierarchy:
         ROLE_ADMIN:       ROLE_USER
         ROLE_SUPER_ADMIN: [ROLE_USER, ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
 
     providers:
-        in_memory:
-            memory:
-                users:
-                    user:  { password: user, roles: [ 'ROLE_USER' ] }
-                    admin: { password: admin, roles: [ 'ROLE_ADMIN' ] }
+        fos_userbundle:
+                id: fos_user.user_provider.username
 
     firewalls:
         dev:
             pattern:  ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
-        login:
-            pattern:  ^/login$
-            security: false
-
-        secured_area:
-            pattern:    ^/plesynd/api
-#            anonymous: ~
-            http_basic: ~
-            #stateless:  true
+        main:
+            pattern:    ^/
+            anonymous: ~
+            http_basic:
+                provider: fos_userbundle
 
     access_control:
+        - { path: ^/plesynd, roles: ROLE_USER }
+        - { path: ^/, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+
+
         #- { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
         #- { path: ^/_internal/secure, roles: IS_AUTHENTICATED_ANONYMOUSLY, ip: 127.0.0.1 }
