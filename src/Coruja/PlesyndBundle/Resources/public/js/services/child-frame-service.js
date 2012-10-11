@@ -1,10 +1,9 @@
 'use strict';
 
-plesynd.factory('childFrameService', ["$rootScope", "widgetService",
-    function ($rootScope, widgetService) {
+plesynd.factory('childFrameService', ["$rootScope",
+    function ($rootScope) {
 
         function ChildFrameService() {
-            console.log('ChildFrameService Konstruktor');
             this.childFrames = {};
             this.widgets = [];
         }
