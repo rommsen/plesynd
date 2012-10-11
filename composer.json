@@ -22,6 +22,7 @@
         "sensio/buzz-bundle": "dev-master",
         "friendsofsymfony/rest": "dev-master",
         "friendsofsymfony/rest-bundle": "dev-master",
+        "friendsofsymfony/user-bundle": "*",
         "nelmio/api-doc-bundle": "dev-master",
         "nelmio/cors-bundle": "dev-master"
     },
