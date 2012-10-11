@@ -1,6 +1,6 @@
 'use strict';
 
-var plesynd = angular.module('plesynd', ['ngResource', 'corujaAuth', 'corujaFrameMessenger', 'corujaOnlineStatus', 'corujaRemoteForm', 'corujaResource', 'corujaStorage'])
+var plesynd = angular.module('plesynd', ['ngResource', 'corujaAuth', 'corujaFrameMessenger', 'corujaOnlineStatus', 'corujaRemoteForm', 'corujaResource', 'corujaStorage', 'corujaMessageContainer', 'corujaSystemMessageService'])
     .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/dashboard', {templateUrl:'dashboard', controller:'DashboardCtrl',
         resolve:{
@@ -11,7 +11,7 @@ var plesynd = angular.module('plesynd', ['ngResource', 'corujaAuth', 'corujaFram
                     deferred.resolve({
                         'info':'my Dashboard'
                     });
-                }, 500);
+                });
 
                 return deferred.promise;
             }
@@ -37,10 +37,14 @@ var plesynd = angular.module('plesynd', ['ngResource', 'corujaAuth', 'corujaFram
         parentFrameMessenger.initialize();
 
         $window.addEventListener("online", function () {
-            $rootScope.$broadcast('onlineChanged', true);
+            $rootScope.$apply(function () {
+                $rootScope.$broadcast('onlineChanged', true);
+            });
         }, true);
 
         $window.addEventListener("offline", function () {
-            $rootScope.$broadcast('onlineChanged', false);
+            $rootScope.$apply(function () {
+                $rootScope.$broadcast('onlineChanged', false);
+            });
         }, true);
     });

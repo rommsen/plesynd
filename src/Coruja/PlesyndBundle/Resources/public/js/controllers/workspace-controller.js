@@ -1,16 +1,16 @@
 'use strict';
 
-plesynd.controller('WorkspaceCtrl', function ($scope, $http, $location, $filter, workspaceService, widgetService, workspace) {
+plesynd.controller('WorkspaceCtrl', function ($scope, $http, $location, $filter, workspaceService, widgetService, workspace, systemMessageService) {
     $scope.workspace = workspace;
     $scope.$parent.activeWorkspace = workspace;
 
-    $scope.$watch('widgets', function() {
+    $scope.$watch('widgets', function () {
         // only show workspace widgets
-        $scope.workspaceWidgets = $filter('filter')($scope.widgets, {workspace_id : $scope.workspace.id});
-        if($scope.workspaceWidgets.length == 0) {
-            $scope.show_edit = true;
+        $scope.workspaceWidgets = $filter('filter')($scope.widgets, {workspace_id:$scope.workspace.id});
+        if ($scope.workspaceWidgets.length == 0) {
+            $scope.changeShowEdit(true);
         }
-    }, true)
+    }, true);
 
     $scope.selected_widget = null;
 
@@ -18,16 +18,31 @@ plesynd.controller('WorkspaceCtrl', function ($scope, $http, $location, $filter,
         workspaceService.delete($scope.workspace, function () {
             // Todo widgets are now own its own, delete them as well
             $scope.workspaces.splice($scope.workspaces.indexOf($scope.workspace), 1);
+            systemMessageService.addSuccessMessage('Workspace ' + $scope.workspace.title + ' deleted');
             $location.path('/dashboard');
         });
     };
 
-    $scope.addWidgetToWorkspace = function() {
+    $scope.updateTitle = function () {
+        workspaceService.put($scope.workspace,
+            function () {
+                // need to reload, because there is no direct binding
+                $scope.$parent.workspaces = workspaceService.query();
+                $scope.change_title = false;
+                systemMessageService.addSuccessMessage('Workspace ' + $scope.workspace.title + ' updated');
+            },
+            function () {
+                systemMessageService.addErrorMessage('Workspace ' + $scope.workspace.title + ' could not be updated');
+            });
+    }
+
+    $scope.addWidgetToWorkspace = function () {
         $scope.widget.workspace_id = $scope.workspace.id;
-        widgetService.post(widgetService.createEntity($scope.widget), function(widget) {
+        widgetService.post(widgetService.createEntity($scope.widget), function (widget) {
             // need to get it, because the widgets instance is not there yet
-            widgetService.get({'widgetId': widget.id}, function(widget) {
+            widgetService.get({'widgetId':widget.id}, function (widget) {
                 $scope.widgets.push(widget);
+                systemMessageService.addSuccessMessage('Widget ' + widget.title + ' was added');
             })
         })
     };

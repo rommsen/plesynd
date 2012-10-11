@@ -72,6 +72,27 @@ class WorkspaceController extends FOSRestController
     }
 
     /**
+     * @Route("/{id}", name="put_workspace")
+     * @Method({"PUT"})
+     * @Rest\View()
+     * @ApiDoc
+     * @param $id
+     */
+    public function putWorkspaceAction($id)
+    {
+        $data = $this->getRequest()->request;
+        $em = $this->get('doctrine')->getEntityManager();
+        /* @var $em \Doctrine\ORM\EntityManager */
+        $workspace = $em->find('CorujaPlesyndBundle:Workspace', $id);
+        if ($workspace !== NULL) {
+            $workspace->setTitle($data->get('title'));
+            $em->flush();
+            return View::create(null, HttpCodes::HTTP_NO_CONTENT);
+        }
+        return View::create(null, HttpCodes::HTTP_NOT_FOUND);
+    }
+
+    /**
      * @Route("/{id}", name="delete_workspace")
      * @Method({"DELETE"})
      * @Rest\View()

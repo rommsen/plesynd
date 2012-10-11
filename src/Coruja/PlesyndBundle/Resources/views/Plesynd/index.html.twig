@@ -30,17 +30,6 @@
     <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
 
-    <style type="text/css">
-        @charset "UTF-8";
-        [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
-            display: none;
-        }
-
-        ng\:form {
-            display: block;
-        }
-    </style>
-
     <!-- Le fav and touch icons -->
     <!--
     <link rel="shortcut icon" href="../assets/ico/favicon.ico">
@@ -66,13 +55,20 @@
                 <li>
                     <a>
                         <span ng-show="online_status" class="label label-success">Online</span>
-                        <span ng-show="!online_status" class="label label-important">Offline</span>
+                        <span ng-hide="online_status" class="label label-important">Offline</span>
+                    </a>
+                </li>
+                <li>
+                    <a>
+                        <span ng-show="loading" class="label label-warning">Loading, please wait...</span>
                     </a>
                 </li>
             </ul>
         </div><!--/.container-fluid -->
     </div>
 </div>
+
+<div message-container class="container-fluid"></div>
 
 <div class="auth waiting-for-angular">
     <div id="auth-container" class="container">
@@ -117,19 +113,12 @@
     <div id="content" class="container-fluid">
         <div class="row-fluid">
             <div class="span12">
-                <div class="progress" ng-class="active" ng-cloak>
-                    <div class="bar" style="width: 100%;"></div>
-                </div>
-            </div><!--/span-->
-        </div><!--/row-->
-        <div class="row-fluid">
-            <div class="span12">
                 <ul class="nav nav-tabs">
                     <li ng-class="{active: checkActiveTab('dashboard')}"><a href="#/dashboard">Dashboard</a></li>
                     <li ng-class="{active: checkActiveTab(workspace.id)}" ng-repeat="workspace in workspaces" >
                         <a href="#/workspace/{{workspace.id}}">
                             {{workspace.title}}
-                            <span ng-show="checkActiveTab(workspace.id)" ng-click="changeShowEdit()"> | e</span>
+                            <span ng-show="online_status && checkActiveTab(workspace.id)" ng-click="changeShowEdit(!show_edit)"> | e</span>
                         </a>
                     </li>
                     <li><a ng-click="addWorkspace()">Add</a></li>
@@ -154,7 +143,7 @@
                                         <li>
                                             <a>
                                                 <span ng-show="online_status" class="label label-success">Online</span>
-                                                <span ng-show="!online_status" class="label label-important">Offline</span>
+                                                <span ng-hide="online_status" class="label label-important">Offline</span>
                                             </a>
                                         </li>
                                         <li><a><span class="label label-info">Available {{ widget.data.available.length }}</span></a></li>
@@ -238,6 +227,13 @@
 <script type="text/ng-template" id="workspaceContainer">
     <div class="row-fluid edit-workspace" ng-show="show_edit">
         <div class="span12 well">
+            <div class="row-fluid" style="margin-bottom:10px;">
+                <div class="span12">
+                    <span ng-hide="change_title" ng-dblclick="change_title = true"><strong>Title</strong>: {{ workspace.title }} (double-click to change)</span>
+                    <input ng-show="change_title" ng-model="workspace.title" />
+                    <button ng-show="change_title" ng-disabled="workspace.title.length == 0" class="btn btn-primary" ng-click="updateTitle()">Update Title</button>
+                </div><!--/span-->
+            </div><!--/row-->
             <div class="row-fluid choose-widget">
                 <div class="span2">
                     <select ng-model="widget" ng-options="widget.title for widget in availableWidgets">
@@ -291,11 +287,13 @@
     '@CorujaPlesyndBundle/Resources/public/js/controllers/workspace-controller.js'
     '@CorujaPlesyndBundle/Resources/public/js/controllers/dashboard-controller.js'
     '@CorujaPlesyndBundle/Resources/public/js/directives/coruja-auth-directive.js'
+    '@CorujaPlesyndBundle/Resources/public/js/directives/coruja-message-container-directive.js'
     '@CorujaPlesyndBundle/Resources/public/js/directives/coruja-remote-form-directive.js'
     '@CorujaPlesyndBundle/Resources/public/js/services/workspace-service.js'
     '@CorujaPlesyndBundle/Resources/public/js/services/widget-service.js'
     '@CorujaPlesyndBundle/Resources/public/js/services/child-frame-service.js'
     '@CorujaPlesyndBundle/Resources/public/js/services/coruja-frame-messenger.js'
+    '@CorujaPlesyndBundle/Resources/public/js/services/coruja-message-service.js'
     '@CorujaPlesyndBundle/Resources/public/js/services/coruja-online-status.js'
     '@CorujaPlesyndBundle/Resources/public/js/services/coruja-storage.js'
     '@CorujaPlesyndBundle/Resources/public/js/services/coruja-resource.js'
