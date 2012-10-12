@@ -19,7 +19,7 @@ plesynd.controller('PlesyndCtrl',
             if(!isOnline) {
                 $scope.changeShowEdit(false);
             }
-            $scope.online_status = isOnline;
+            $scope.isOnline = isOnline;
             $scope.online_status_string = onlineStatus.getOnlineStatusString();
         });
 
@@ -30,14 +30,14 @@ plesynd.controller('PlesyndCtrl',
 
         $scope.changeShowEdit = function(show_edit) {
             // always false offline
-            if(!$scope.online_status) {
+            if(!$scope.isOnline) {
                 $scope.show_edit = false;
             } else {
                 $scope.show_edit = show_edit;
             }
         }
 
-        $scope.online_status = onlineStatus.isOnline();
+        $scope.isOnline = onlineStatus.isOnline();
         $scope.online_status_string = onlineStatus.getOnlineStatusString();
         $scope.workspaces = workspaceService.query();
         $scope.widgets = widgetService.query(function (widgets) {
