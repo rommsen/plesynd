@@ -29,6 +29,19 @@ class WidgetController extends FOSRestController
         $connection = $this->get('coruja_wookie_connector.connector');
         $widgets = $connection->getAvailableWidgets();
 
+         $widgets = array_map(function(\Coruja\WookieConnectorBundle\Connector\Widget $widget) use($connection) {
+             $instance = $connection->getOrCreateInstance($widget->getIdentifier());
+             try {
+                 $property = $connection->getProperty($instance, new WidgetProperty('plesynd_offline_compatible'));
+                 $widget->setOffline($property->getValue());
+             } catch(WookieConnectorException $e) {
+                 $widget->setOffline(false);
+             }
+             return $widget;
+         }, $widgets);
+
+
+
         return View::create($widgets);
     }
 

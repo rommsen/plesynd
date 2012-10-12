@@ -54,8 +54,8 @@
             <ul class="nav">
                 <li>
                     <a>
-                        <span ng-show="online_status" class="label label-success">Online</span>
-                        <span ng-hide="online_status" class="label label-important">Offline</span>
+                        <span ng-show="isOnline" class="label label-success">Online</span>
+                        <span ng-hide="isOnline" class="label label-important">Offline</span>
                     </a>
                 </li>
                 <li>
@@ -118,7 +118,7 @@
                     <li ng-class="{active: checkActiveTab(workspace.id)}" ng-repeat="workspace in workspaces" >
                         <a href="#/workspace/{{workspace.id}}">
                             {{workspace.title}}
-                            <span ng-show="online_status && checkActiveTab(workspace.id)" ng-click="changeShowEdit(!show_edit)"> | e</span>
+                            <span ng-show="isOnline && checkActiveTab(workspace.id)" ng-click="changeShowEdit(!show_edit)"> | e</span>
                         </a>
                     </li>
                     <li><a ng-click="addWorkspace()">Add</a></li>
@@ -142,8 +142,8 @@
                                     <ul ng-show="widget.is_offline_compatible" class="nav">
                                         <li>
                                             <a>
-                                                <span ng-show="online_status" class="label label-success">Online</span>
-                                                <span ng-hide="online_status" class="label label-important">Offline</span>
+                                                <span ng-show="isOnline" class="label label-success">Online</span>
+                                                <span ng-hide="isOnline" class="label label-important">Offline</span>
                                             </a>
                                         </li>
                                         <li><a><span class="label label-info">Available {{ widget.data.available.length }}</span></a></li>
@@ -156,7 +156,7 @@
                                         </li>
                                     </ul>
                                     <ul class="nav pull-right">
-                                        <li><a ng-show="online_status" ng-click="deleteWidget(widget)"><span class="label label-important">x</span></a></li>
+                                        <li><a ng-show="isOnline" ng-click="deleteWidget(widget)"><span class="label label-important">x</span></a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -236,12 +236,17 @@
             </div><!--/row-->
             <div class="row-fluid choose-widget">
                 <div class="span2">
-                    <select ng-model="widget" ng-options="widget.title for widget in availableWidgets">
+                    <select ng-model="widget" ng-options="widget.title for widget in availableWidgets | filter:{title:widgetTitleFilter} | filter:offlineCompatibleCheck">
                         <option value="">-- Choose Widget --</option>
                     </select>
                 </div><!--/span-->
                 <div class="span10">
                     <button class="btn" ng-show="widget" ng-click="addWidgetToWorkspace(widget)">Add Widget to Workspace</button>
+                    <input ng-hide="widget" ng-model="widgetTitleFilter" placeholder="Filter Widgets"/>
+                    <div ng-hide="widget" class="btn-group">
+                        <button ng-class="{'btn-primary':!offlineCompatibleFilter}" ng-click="offlineCompatibleFilter = false" class="btn">all widgets</button>
+                        <button ng-class="{'btn-primary':offlineCompatibleFilter}" ng-click="offlineCompatibleFilter = true" class="btn">offline widgets</button>
+                    </div>
                 </div><!--/span-->
             </div><!--/row-->
             <div class="row-fluid">

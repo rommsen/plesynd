@@ -29,6 +29,8 @@ class Widget implements WidgetInterface {
   private $description;
   private $icon;
 
+  private $is_offline_compatible;
+
   /** Init new Widget
    * 
    * @param String widget identifier/guid
@@ -76,6 +78,10 @@ class Widget implements WidgetInterface {
   public function getDescription() {
     return $this->description;
   }
+
+    public function setOffline($bool) {
+        $this->is_offline_compatible = $bool;
+    }
 
 }
 

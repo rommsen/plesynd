@@ -2,6 +2,8 @@
 
 plesynd.controller('WorkspaceCtrl', function ($scope, $http, $location, $filter, workspaceService, widgetService, workspace, systemMessageService) {
     $scope.workspace = workspace;
+    $scope.widgetTitleFilter = '';
+    $scope.offlineCompatibleFilter = false;
     $scope.$parent.activeWorkspace = workspace;
 
     $scope.$watch('widgets', function () {
@@ -47,6 +49,13 @@ plesynd.controller('WorkspaceCtrl', function ($scope, $http, $location, $filter,
             })
         })
     };
+
+    $scope.offlineCompatibleCheck = function(widget) {
+        if($scope.offlineCompatibleFilter) {
+            return widget.is_offline_compatible
+        }
+        return true;
+    }
 });
 
 

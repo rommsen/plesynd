@@ -21,11 +21,14 @@ class AppKernel extends Kernel
             new JMS\SecurityExtraBundle\JMSSecurityExtraBundle(),
             new Sensio\Bundle\BuzzBundle\SensioBuzzBundle(),
             new FOS\RestBundle\FOSRestBundle(),
+            new FOS\UserBundle\FOSUserBundle(),
             new JMS\SerializerBundle\JMSSerializerBundle($this),
             new Nelmio\ApiDocBundle\NelmioApiDocBundle(),
             new Nelmio\CorsBundle\NelmioCorsBundle(),
             new Coruja\TodoBundle\CorujaTodoBundle(),
             new Coruja\PlesyndBundle\CorujaPlesyndBundle(),
+            new Coruja\WookieConnectorBundle\CorujaWookieConnectorBundle(),
+            new Coruja\UserBundle\CorujaUserBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
