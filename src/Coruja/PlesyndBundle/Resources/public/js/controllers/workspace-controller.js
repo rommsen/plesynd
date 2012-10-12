@@ -17,7 +17,8 @@ plesynd.controller('WorkspaceCtrl', function ($scope, $http, $location, $filter,
     $scope.deleteWorkspace = function () {
         workspaceService.delete($scope.workspace, function () {
             // Todo widgets are now own its own, delete them as well
-            $scope.workspaces.splice($scope.workspaces.indexOf($scope.workspace), 1);
+            // need to reload, because there is no direct binding
+            $scope.$parent.workspaces = workspaceService.query();
             systemMessageService.addSuccessMessage('Workspace ' + $scope.workspace.title + ' deleted');
             $location.path('/dashboard');
         });
