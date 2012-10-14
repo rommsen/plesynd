@@ -19,10 +19,8 @@ todoApp.factory('todoService', ["$resource", "$window", "$q", "localStorage", "r
                 post:{method:'POST' }
             }),
             localResource : localStorage(local_storage_prefix),
-            localResourceAdded : localStorage(local_storage_prefix+'.added'),
-            localResourceChanged : localStorage(local_storage_prefix+'.changed'),
-            localResourceDeleted : localStorage(local_storage_prefix+'.deleted'),
-            entityFactory : entityFactory
+            entityFactory : entityFactory,
+            use_synchronization : true
         };
 
         var resource = resourceService(config);
@@ -61,6 +59,7 @@ todoApp.factory('todoService', ["$resource", "$window", "$q", "localStorage", "r
         };
 
         service.notifyParentAboutItems = function() {
+            return;
             function queryDeferred(storage) {
                 var deferred = $q.defer();
 
