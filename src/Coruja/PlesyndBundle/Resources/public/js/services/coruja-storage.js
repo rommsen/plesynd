@@ -84,13 +84,15 @@ angular.module('corujaStorage', []).factory('localStorage', ["$timeout", "$q",
              * @param success
              * @return {*}
              */
-            storage.get = function(params, success) {
+            storage.get = function(params, success, error) {
                 var value;
                 getData().then(function (data) {
                     var position = findItemPosition(params, data);
                     if (position !== -1) {
                         value = data[position];
                         (success || noop)(value);
+                    } else {
+                        (error || noop)({status : 404});
                     }
                 });
                 return value;

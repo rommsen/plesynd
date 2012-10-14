@@ -23,6 +23,10 @@ plesynd.controller('PlesyndCtrl',
             $scope.online_status_string = onlineStatus.getOnlineStatusString();
         });
 
+        $rootScope.$on('event:auth-loginConfirmed', function () {
+            $scope.initializeContent();
+        });
+
         $scope.checkActiveTab = function (url) {
             url = url == 'dashboard' ? '/dashboard' : '/workspace/' + url;
             return url == $scope.newLocation;
@@ -37,20 +41,24 @@ plesynd.controller('PlesyndCtrl',
             }
         }
 
+        $scope.initializeContent = function() {
+            $scope.workspaces = workspaceService.query();
+            $scope.widgets = widgetService.query(function (widgets) {
+                childFrameService.setWidgets(widgets);
+            });
+
+            // get the widgets for the selectbox
+            $scope.availableWidgets = [];
+            $http.get('plesynd/api/widgets/available').success(function (widgets) {
+                for (var id in widgets) {
+                    $scope.availableWidgets.push(widgets[id]);
+                }
+            });
+        };
+
         $scope.isOnline = onlineStatus.isOnline();
         $scope.online_status_string = onlineStatus.getOnlineStatusString();
-        $scope.workspaces = workspaceService.query();
-        $scope.widgets = widgetService.query(function (widgets) {
-            childFrameService.setWidgets(widgets);
-        });
-
-        // get the widgets for the selectbox
-        $scope.availableWidgets = [];
-        $http.get('plesynd/api/widgets/available').success(function (widgets) {
-            for (var id in widgets) {
-                $scope.availableWidgets.push(widgets[id]);
-            }
-        });
+        $scope.initializeContent();
 
         $scope.addWorkspace = function () {
             var workspace = workspaceService.createEntity({
@@ -86,6 +94,10 @@ plesynd.controller('PlesyndCtrl',
         };
 
         $scope.logout = function () {
+            $location.path('/dashboard');
+            $scope.workspaces = [];
+            $scope.widgets = [];
+            $scope.availableWidgets = [];
             $http.defaults.headers.common['Authorization'] = "Basic " + btoa('#' + ":" + '#');
             $http.get('plesynd/api/logout');
             $scope.is_authenticated = false;

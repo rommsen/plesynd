@@ -1,6 +1,6 @@
 'use strict';
 
-var plesynd = angular.module('plesynd', ['ngResource', 'corujaAuth', 'corujaFrameMessenger', 'corujaOnlineStatus', 'corujaRemoteForm', 'corujaResource', 'corujaStorage', 'corujaMessageContainer', 'corujaSystemMessageService'])
+var plesynd = angular.module('plesynd', ['ngResource', 'corujaAuth', 'corujaFrameMessenger', 'corujaOnlineStatus', 'corujaRemoteForm', 'corujaResource', 'corujaStorage', 'corujaMessageContainer', 'corujaSystemMessageService', 'httpErrorInterceptor'])
     .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/dashboard', {templateUrl:'dashboard', controller:'DashboardCtrl',
         resolve:{
@@ -18,13 +18,17 @@ var plesynd = angular.module('plesynd', ['ngResource', 'corujaAuth', 'corujaFram
         }});
     $routeProvider.when('/workspace/:id', {templateUrl:'workspaceContainer', controller:'WorkspaceCtrl',
         resolve:{
-            workspace:function ($q, $route, $timeout, workspaceService) {
+            workspace:function ($q, $route, $location, $timeout, workspaceService, systemMessageService) {
                 var deferred = $q.defer();
 
                 var id = $route.current.params.id;
                 $timeout(function () {
                     workspaceService.get({'id':id}, function (result) {
                         deferred.resolve(result);
+                    },
+                    function() {
+                        systemMessageService.addErrorMessage('Workspace not found');
+                        $location.path('/dashboard');
                     });
                 }, 500);
 

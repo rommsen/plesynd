@@ -181,6 +181,7 @@
 <script type="text/ng-template" id="dashboard">
     <div class="row-fluid">
         <div class="span6 well" >
+            <span ng-hide="workspaces.length > 0">You have no workspace. <a ng-click="addWorkspace()">Add</a> one to start</span>
             <table ng-repeat="workspace in workspaces" class="table table-bordered table-striped table-condensed">
                 <thead>
                 <tr>
@@ -302,6 +303,7 @@
     '@CorujaPlesyndBundle/Resources/public/js/services/coruja-online-status.js'
     '@CorujaPlesyndBundle/Resources/public/js/services/coruja-storage.js'
     '@CorujaPlesyndBundle/Resources/public/js/services/coruja-resource.js'
+    '@CorujaPlesyndBundle/Resources/public/js/http-error-interceptor.js'
     output='js/compiled/plesynd/main.js'
 %}
 <script src="{{ asset_url }}"></script>

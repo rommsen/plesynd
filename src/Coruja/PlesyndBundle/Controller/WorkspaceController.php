@@ -1,13 +1,20 @@
 <?php
 namespace Coruja\PlesyndBundle\Controller;
 
-use Nelmio\ApiDocBundle\Annotation\ApiDoc;
+use Coruja\PlesyndBundle\Entity\Workspace;
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\RouteRedirectView;
 use FOS\RestBundle\View\View;
 use FOS\Rest\Util\Codes as HttpCodes;
 
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
+use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
+use Symfony\Component\Security\Acl\Permission\MaskBuilder;
+
+use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
@@ -27,6 +34,11 @@ class WorkspaceController extends FOSRestController
         /* @var $em \Doctrine\ORM\EntityManager */
         $workspaces = $em->getRepository('CorujaPlesyndBundle:Workspace')->findAll();
 
+        $securityContext = $this->get('security.context');
+        $workspaces = array_filter($workspaces, function(Workspace $workspace) use ($securityContext) {
+            return $securityContext->isGranted('VIEW', $workspace);
+        });
+
         $view = View::create();
         $view->setTemplate('CorujaPlesyndBundle:Workspace:workspaces.html.twig');
         $view->setData($workspaces);
@@ -45,6 +57,14 @@ class WorkspaceController extends FOSRestController
         /* @var $em \Doctrine\ORM\EntityManager */
         $workspace = $em->getRepository('CorujaPlesyndBundle:Workspace')->findOneBy(array('id' => $id));
 
+        if($workspace === NULL) {
+            return View::create(null, HttpCodes::HTTP_NOT_FOUND);
+        }
+
+        $securityContext = $this->get('security.context');
+        if (false === $securityContext->isGranted('VIEW', $workspace)) {
+            throw new AccessDeniedException();
+        }
         $view = View::create();
         $view->setTemplate('CorujaPlesyndBundle:Workspace:workspaces.html.twig');
         $view->setData($workspace);
@@ -61,12 +81,24 @@ class WorkspaceController extends FOSRestController
     public function postWorkspaceAction()
     {
         $data = $this->getRequest()->request;
-        $workspace = new \Coruja\PlesyndBundle\Entity\Workspace();
+        $workspace = new Workspace();
         $workspace->setTitle($data->get('title'));
-        $em = $this->get('doctrine')->getEntityManager();
-        /* @var $em \Doctrine\ORM\EntityManager */
+
+        $em = /* @var $em \Doctrine\ORM\EntityManager */ $this->get('doctrine')->getEntityManager();
         $em->persist($workspace);
         $em->flush();
+
+        // creating the ACL
+        $aclProvider = $this->get('security.acl.provider');
+        $acl = $aclProvider->createAcl(ObjectIdentity::fromDomainObject($workspace));
+
+        // retrieving the security identity of the currently logged-in user
+        $securityContext = $this->get('security.context');
+        $securityIdentity = UserSecurityIdentity::fromAccount($securityContext->getToken()->getUser());
+
+        // grant owner access
+        $acl->insertObjectAce($securityIdentity, MaskBuilder::MASK_OWNER);
+        $aclProvider->updateAcl($acl);
 
         return RouteRedirectView::create('get_workspace', array('id' => $workspace->getId()), HttpCodes::HTTP_CREATED);
     }
