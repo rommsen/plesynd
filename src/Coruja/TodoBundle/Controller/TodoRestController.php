@@ -81,12 +81,15 @@ class TodoRestController extends FOSRestController
     public function postTodosAction()
     {
         $data = $this->getRequest()->request;
+
+        $em = /* @var $em \Doctrine\ORM\EntityManager */ $this->get('doctrine')->getEntityManager();
+
         $todo = new Todo;
         $todo->setTitle($data->get('title'));
         $todo->setCompleted($data->get('completed'));
+        $todo_list = $data->get('todo_list');
+        $todo->setTodoList($em->find('CorujaTodoBundle:TodoList', $todo_list['id']));
 
-        $em = $this->get('doctrine')->getEntityManager();
-        /* @var $em \Doctrine\ORM\EntityManager */
         $em->persist($todo);
         $em->flush();
 

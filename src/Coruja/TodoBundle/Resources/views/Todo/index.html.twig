@@ -1,60 +1,109 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html lang="en" ng-app="todoApp" gmanifest="/todo/cache.appcache">
 <head>
     <meta charset="utf-8">
     <title>Todo</title>
-    {% stylesheets
-    '@CorujaTodoBundle/Resources/public/css/app.css'
-    output='css/compiled/todo/main.css'
-    %}
-    <link rel="stylesheet" href="{{ asset_url }}" />
-    {% endstylesheets %}
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.1.1/css/bootstrap.min.css" />
+
+    <style>
+        #main {
+            margin:0 auto;
+            float:none;
+        }
+        label[for='toggle-all'] {
+            display: none;
+        }
+        .todo-completed {
+            text-decoration: line-through;
+        }
+        .delete-todo {
+            display: none;
+        }
+        .todo:hover .delete-todo{
+            display:block;
+        }
+        #main td {
+            height: 60px ;
+            padding-bottom: 3px;
+        }
+
+        #main input[type="text"] {
+            height: 30px;
+            margin: 0;
+        }
+    </style>
 </head>
 <body>
 
 {% raw %}
-
-<section id="todoapp" ng-controller="TodoCtrl">
-    <header id="header">
-        <form id="todo-form" ng-submit="addTodo()">
-            <input id="new-todo" placeholder="What needs to be done?" ng-model="newTodo" autofocus>
-        </form>
-    </header>
-    <section id="main" ng-show="todos.length" ng-cloak>
-        <input id="toggle-all" type="checkbox" ng-model="allChecked" ng-click="markAll(allChecked)">
-        <label for="toggle-all">Mark all as complete</label>
-        <ul id="todo-list">
-            <li ng-repeat="todo in todos | filter:statusFilter" ng-dblclick="editTodo(todo)" ng-class="{completed: todo.completed, editing: todo == editedTodo}">
-                <div class="view">
-                    <input class="toggle" type="checkbox" ng-model="todo.completed" ng-change="todoCompleted(todo)">
-                    <label>{{todo.title}} ID: {{todo.id}}</label>
-                    <button class="destroy" ng-click="deleteTodo(todo)"></button>
-                </div>
-                <form ng-submit="doneEditing(todo)">
-                    <input class="edit" ng-model="todo.title" todo-blur="doneEditing(todo)" todo-focus="todo == editedTodo">
+<div id="main" class="span7">
+    <table class="table table-striped" ng-controller="TodoCtrl" ng-cloak>
+        <tr>
+            <th style="width: 20%">
+                <button ng-hide="add_todo_list || activeTodoList" class="btn btn-mini" ng-click="add_todo_list = true"><i class="icon-plus"></i></button>
+                <button ng-show="activeTodoList && !edit_todo_list" class="btn btn-mini" ng-click="edit_todo_list = true"><i class="icon-wrench"></i></button>
+            </th>
+            <th style="width: 60%">
+                <select ng-hide="add_todo_list || edit_todo_list" class="input-xlarge" ng-model="activeTodoList" ng-options="todoList.title for todoList in todoLists ">
+                    <option value="">-- Choose TodoList --</option>
+                </select>
+                <form ng-show="edit_todo_list" ng-submit="editTodoList(activeTodoList)">
+                    <input type="text" placeholder="name of list" ng-model="activeTodoList.title">
                 </form>
-            </li>
-        </ul>
-    </section>
-    <footer id="footer" ng-show="todos.length" ng-cloak>
-      <span id="todo-count"><strong>{{remainingCount}}</strong>
-        <ng-pluralize count="remainingCount" when="{ one: 'item left', other: 'items left' }"></ng-pluralize>
-      </span>
-        <ul id="filters">
-            <li>
-                <a ng-class="{selected: location.path() == '/'} " href="#/">All</a>
-            </li>
-            <li>
-                <a ng-class="{selected: location.path() == '/active'}" href="#/active">Active</a>
-            </li>
-            <li>
-                <a ng-class="{selected: location.path() == '/completed'}" href="#/completed">Completed</a>
-            </li>
-        </ul>
-        <button id="clear-completed" ng-click="clearDoneTodos()" ng-show="doneCount">Clear completed ({{doneCount}})</button>
-    </footer>
-</section>
-
+                <form ng-show="add_todo_list" ng-submit="addTodoList(newTodoList)">
+                    <input type="text" class="input-xlarge" placeholder="name of added list" ng-model="newTodoList">
+                </form>
+            </th>
+            <th style="width: 20%">
+                <button ng-show="edit_todo_list"class="btn btn-warning" ng-click="deleteTodoList(activeTodoList)"><i class="icon-trash"></i></button>
+            </th>
+        </tr>
+        <tr ng-show="activeTodoList">
+            <td style="width: 20%">
+                <input id="toggle-all" type="checkbox" ng-model="allChecked" ng-change="toggleAll()">
+                <label for="toggle-all">Mark all as complete</label>
+            </td>
+            <td colspan="2" style="width: 80%">
+                <form ng-submit="addTodo()">
+                    <input type="text" class="input-xlarge" placeholder="What needs to be done?" ng-model="newTodo" autofocus>
+                </form>
+            </td>
+        </tr>
+        <tr ng-show="activeTodoList" class="todo" ng-repeat="todo in activeTodos | filter:statusFilter">
+            <td style="width: 20%">
+                <i ng-hide="todo.completed" class="icon-ok" ng-click="todoCompleted(todo)"></i>
+                <i ng-show="todo.completed" class="icon-remove" ng-click="todoCompleted(todo)"></i>
+            </td>
+            <td style="width: 60%" class="span10" ng-dblclick="editTodo(todo)">
+                <div ng-class="{'todo-completed': todo.completed}" ng-hide="todo == editedTodo">
+                    <strong>{{todo.title}} ID: {{todo.id}}</strong>
+                </div>
+                <form ng-show="todo == editedTodo" ng-submit="doneEditing(todo)">
+                    <input type="text" class="input-xlarge" ng-model="todo.title" todo-blur="doneEditing(todo)" todo-focus="todo == editedTodo">
+                </form>
+            </td>
+            <td style="width: 20%">
+                <button class="btn btn-mini btn-warning delete-todo" ng-click="deleteTodo(todo)"><i class="icon-trash"></i></button>
+            </td>
+        </tr>
+        <tfoot ng-show="activeTodoList && activeTodos.length">
+            <tr>
+                <td>
+                    <span id="todo-count"><strong>{{remainingCount}}</strong>
+                    <ng-pluralize count="remainingCount" when="{ one: 'item left', other: 'items left' }"></ng-pluralize>
+                </td>
+                <td colspan="2">
+                    <div class="btn-group">
+                        <button class="btn" ng-click="changeFilter('')" ng-class="{'btn-primary': location.path() == '/'}">All</button>
+                        <button class="btn" ng-click="changeFilter('active')" ng-class="{'btn-primary': location.path() == '/active'}">Active</button>
+                        <button class="btn" ng-click="changeFilter('completed')" ng-class="{'btn-primary': location.path() == '/completed'}">Completed</button>
+                        <button class="btn btn-warning" ng-click="clearDoneTodos()" ng-show="doneCount">Clear completed ({{doneCount}})</button>
+                    </div>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
 {% endraw %}
 
 {% javascripts
@@ -71,6 +120,7 @@
     '@CorujaTodoBundle/Resources/public/js/services/coruja-storage.js'
     '@CorujaTodoBundle/Resources/public/js/services/coruja-resource.js'
     '@CorujaTodoBundle/Resources/public/js/services/todo-service.js'
+    '@CorujaTodoBundle/Resources/public/js/services/todo-list-service.js'
     output='js/compiled/todo/main.js'
 %}
 <script src="{{ asset_url }}"></script>

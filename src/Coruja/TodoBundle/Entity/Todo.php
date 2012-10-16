@@ -27,11 +27,11 @@ class Todo
     protected $completed;
 
     /**
-     * @var \DateTime $created
-     *
-     * @ORM\Column(name="completedDate", type="datetime", nullable=true)
+     * @var TodoList
+     * @ORM\ManyToOne(targetEntity="TodoList", inversedBy="todos")
+     * @ORM\JoinColumn(name="todo_list_id", referencedColumnName="id")
      */
-    protected $completedDate;
+    protected $todoList;
 
     public function getId() {
         return $this->id;
@@ -45,6 +45,15 @@ class Todo
         $this->title = $title;
     }
 
+    public function setTodoList(TodoList $todoList) {
+        $this->todoList = $todoList;
+        $this->todoList->addTodo($this);
+    }
 
-
+    /**
+     * @return TodoList
+     */
+    public function getTodoList() {
+        return $this->todoList;
+    }
 }
