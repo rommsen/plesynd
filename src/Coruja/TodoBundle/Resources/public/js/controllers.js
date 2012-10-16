@@ -1,21 +1,45 @@
 'use strict';
 
 /* Controllers */
-todoApp.controller('TodoCtrl', function TodoCtrl($window, $rootScope, $scope, $location, todoService, filterFilter, onlineStatus) {
-    function synchronizeTodos() {
-        todoService.synchronize(function () {
-            $scope.todos = todoService.query(function () {
-                $scope.remainingCount = filterFilter($scope.todos, {completed:false}).length;
-                $scope.doneCount = filterFilter($scope.todos, {completed:true}).length;
-                todoService.notifyParentAboutItems();
-            });
-            $scope.online_status_string = onlineStatus.getOnlineStatusString();
-        });
-    }
+todoApp.controller('TodoCtrl', function TodoCtrl($window, $rootScope, $scope, $location, todoListService, todoService, filterFilter) {
+    var todoListIdLocalStorageKey = "activeTodoListId"+$window.name;
+    var forEach = angular.forEach;
+    var fromJson = angular.fromJson;
+    var toJson = angular.toJson;
 
-    synchronizeTodos();
+    $scope.synchronize = function() {
+        todoListService.synchronize(function () {
+            $scope.todoLists = todoListService.query(function() {
+                forEach($scope.todoLists, function(todoList) {
+                    if(todoList.id == $scope.activeListId) {
+                        $scope.activeTodoList = todoList;
+                    }
+                });
+            });
+            todoService.synchronize(function () {
+                // todos are synchronized after the lists are synchronized
+                $scope.todos = todoService.query(function () {
+                    todoService.notifyParentAboutItems();
+                });
+            });
+        });
+    };
+
+    $scope.prepareActiveTodos = function () {
+        if($scope.todos && $scope.activeTodoList) {
+            localStorage.setItem(todoListIdLocalStorageKey, toJson($scope.activeTodoList.id));
+            $scope.activeTodos = filterFilter($scope.todos,  $scope.filterByActiveTodoList);
+            $scope.remainingCount = filterFilter($scope.activeTodos, {completed:false}).length;
+            $scope.doneCount = filterFilter($scope.activeTodos, {completed:true}).length;
+        }
+    };
+
+    $scope.activeListId = fromJson(localStorage.getItem(todoListIdLocalStorageKey) || '[]');
+    $scope.synchronize();
+
     $scope.newTodo = "";
     $scope.editedTodo = null;
+    $scope.allDone = false;
 
     if ($location.path() === '') {
         $location.path('/');
@@ -28,7 +52,16 @@ todoApp.controller('TodoCtrl', function TodoCtrl($window, $rootScope, $scope, $l
         { completed:true } : null;
     });
 
-    $scope.$on('onlineChanged', synchronizeTodos);
+    $scope.filterByActiveTodoList = function (todo) {
+        if($scope.activeTodoList) {
+            return todo.todo_list.id == $scope.activeTodoList.id;
+        }
+        return false;
+    };
+
+    $scope.$watch('activeTodoList', $scope.prepareActiveTodos);
+    $scope.$watch('todos', $scope.prepareActiveTodos, true);
+    $scope.$on('onlineChanged', $scope.synchronize);
 
     $scope.$watch('remainingCount == 0', function (val) {
         $scope.allChecked = val;
@@ -38,8 +71,9 @@ todoApp.controller('TodoCtrl', function TodoCtrl($window, $rootScope, $scope, $l
         if ($scope.newTodo.length === 0) return;
 
         var todo = todoService.createEntity({
-            title:$scope.newTodo,
-            completed:false
+            title : $scope.newTodo,
+            completed : false,
+            todo_list : {id: $scope.activeTodoList.id}
         });
 
         todoService.post(todo, function () {
@@ -71,6 +105,7 @@ todoApp.controller('TodoCtrl', function TodoCtrl($window, $rootScope, $scope, $l
     };
 
     $scope.todoCompleted = function (todo) {
+        todo.completed = !todo.completed;
         todoService.put(todo, function () {
             if (todo.completed) {
                 $scope.remainingCount--;
@@ -84,40 +119,49 @@ todoApp.controller('TodoCtrl', function TodoCtrl($window, $rootScope, $scope, $l
 
     $scope.clearDoneTodos = function () {
         $scope.todos.forEach(function (todo) {
-            if (todo.completed) {
+            if(todo.completed) {
                 $scope.deleteTodo(todo);
             }
         });
     };
 
-    $scope.markAll = function (done) {
-        $scope.todos.forEach(function (todo) {
-            if (todo.completed != done) {
-                todo.completed = done;
+    $scope.toggleAll = function () {
+        $scope.activeTodos.forEach(function (todo) {
+            if(todo.completed != $scope.allChecked) {
                 $scope.todoCompleted(todo);
             }
         });
     };
-});
 
-todoApp.controller('TestCtrl', function TestCtrl($scope) {
-    $scope.test = function() {
-        var moderator = Widget.preferences.getItem("moderator");
-        console.log('Aus dem Widget', moderator);
-        moderator = !moderator;
-        console.log('neuer Wert', moderator);
-        console.log('return aus dem setzen', Widget.preferences.setItem("moderator", moderator));
-        console.log('erneutes holen der werte', Widget.preferences.getItem("moderator"));
-    }
+    $scope.addTodoList = function () {
+        $scope.add_todo_list = false;
+        if ($scope.newTodoList.length === 0) return;
 
-    $scope.test2 = function() {
-        pm({
-            target: window.parent,
-            type: "message",
-            data:{foo:"bar"},
-            success: function(data) {
-                $(document.body).append(JSON.stringify(data));
-            }
+        var todoList = todoListService.createEntity({
+            title : $scope.newTodoList
         });
-    }
+
+        todoListService.post(todoList, function () {
+            $scope.todoLists.push(todoList);
+            $scope.newTodoList = '';
+        });
+    };
+
+    $scope.deleteTodoList = function (todoList) {
+        todoListService.delete(todoList, function () {
+            $scope.todoLists.splice($scope.todoLists.indexOf(todoList), 1);
+            $scope.activeTodoList = null;
+            $scope.edit_todo_list = false;
+        });
+    };
+
+    $scope.editTodoList = function(todoList) {
+        $scope.edit_todo_list = false;
+        if (todoList.title.length === 0) return;
+        todoListService.put(todoList);
+    };
+
+    $scope.changeFilter = function (filter) {
+        $location.path(filter);
+    };
 });

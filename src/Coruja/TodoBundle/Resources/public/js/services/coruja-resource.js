@@ -10,9 +10,6 @@ angular.module('corujaResource', ['corujaStorage', 'corujaOnlineStatus']).factor
 
 //            // uncomment to reset data
 //            localResource.storeData([]);
-//            localResourceAdded.storeData([]);
-//            localResourceChanged.storeData([]);
-//            localResourceDeleted.storeData([]);
 
             var localIdPrefix = 'local_';
 
@@ -39,10 +36,9 @@ angular.module('corujaResource', ['corujaStorage', 'corujaOnlineStatus']).factor
              * @param success
              */
             function synchronizeData(success) {
-                var promises = [
-                    synchronizeStorage(localResource),
-                ]
-                $q.all(promises).then(function (results) {
+                var promise = synchronizeStorage(localResource);
+
+                promise.then(function (results) {
                     console.log('all (post put delete) resolved:', results);
                     (success || noop)(results);
                 });
@@ -181,7 +177,7 @@ angular.module('corujaResource', ['corujaStorage', 'corujaOnlineStatus']).factor
                         // REST Server returns Location header with URI
                         var location = header('Location');
                         item.id = location.substring(location.lastIndexOf('/') + 1);
-                        resource.updateLocalStorage(item, 'post', false);
+                        resource.updateLocalStorage(item, 'post');
                         (success || noop)(item, header);
                     }, function (response) {
                         resource.localFallback(item, 'post', success, error, response);
@@ -256,8 +252,6 @@ angular.module('corujaResource', ['corujaStorage', 'corujaOnlineStatus']).factor
                         }
                         break;
                 }
-                console.log(localResource);
-
                 localResource[call_method].call(localResource, item);
             };
 
@@ -273,5 +267,4 @@ angular.module('corujaResource', ['corujaStorage', 'corujaOnlineStatus']).factor
         }
 
         return resourceFactory;
-    }])
-;
+    }]);

@@ -1,20 +1,19 @@
 'use strict';
 
-todoApp.factory('todoService', ["$resource", "$window", "$q", "localStorage", "resourceService", "childFrameMessenger", "todo_resource_uri",
-    function ($resource, $window, $q, localStorage, resourceService, childFrameMessenger, todo_resource_uri) {
+todoApp.factory('todoListService', ["$resource", "$window", "$q", "localStorage", "resourceService", "childFrameMessenger", "todo_list_resource_uri",
+    function ($resource, $window, $q, localStorage, resourceService, childFrameMessenger, todo_list_resource_uri) {
         var copy = angular.copy;
-        var local_storage_prefix = "todos_"+$window.name;
+        var local_storage_prefix = "todoLists"+$window.name;
 
-        function Todo (data) {
+        function TodoList (data) {
             copy(data || {}, this);
         }
 
         function entityFactory(data) {
-            return new Todo(data);
+            return new TodoList(data);
         }
-
         var config = {
-            remoteResource : $resource(todo_resource_uri, {todoId:'@id'}, {
+            remoteResource : $resource(todo_list_resource_uri, {todoListId:'@id'}, {
                 put:{method:'PUT' },
                 post:{method:'POST' }
             }),
