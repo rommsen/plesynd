@@ -27,7 +27,7 @@
             padding-bottom: 3px;
         }
 
-        #main input[type="text"] {
+        #main input[type="text"], #main input[type="password"] {
             height: 30px;
             margin: 0;
         }
@@ -36,73 +36,129 @@
 <body>
 
 {% raw %}
-<div id="main" class="span7">
-    <table class="table table-striped" ng-controller="TodoCtrl" ng-cloak>
-        <tr>
-            <th style="width: 20%">
-                <button ng-hide="add_todo_list || activeTodoList" class="btn btn-mini" ng-click="add_todo_list = true"><i class="icon-plus"></i></button>
-                <button ng-show="activeTodoList && !edit_todo_list" class="btn btn-mini" ng-click="edit_todo_list = true"><i class="icon-wrench"></i></button>
-            </th>
-            <th style="width: 60%">
-                <select ng-hide="add_todo_list || edit_todo_list" class="input-xlarge" ng-model="activeTodoList" ng-options="todoList.title for todoList in todoLists ">
-                    <option value="">-- Choose TodoList --</option>
-                </select>
-                <form ng-show="edit_todo_list" ng-submit="editTodoList(activeTodoList)">
-                    <input type="text" placeholder="name of list" ng-model="activeTodoList.title">
-                </form>
-                <form ng-show="add_todo_list" ng-submit="addTodoList(newTodoList)">
-                    <input type="text" class="input-xlarge" placeholder="name of added list" ng-model="newTodoList">
-                </form>
-            </th>
-            <th style="width: 20%">
-                <button ng-show="edit_todo_list"class="btn btn-warning" ng-click="deleteTodoList(activeTodoList)"><i class="icon-trash"></i></button>
-            </th>
-        </tr>
-        <tr ng-show="activeTodoList">
-            <td style="width: 20%">
-                <input id="toggle-all" type="checkbox" ng-model="allChecked" ng-change="toggleAll()">
-                <label for="toggle-all">Mark all as complete</label>
-            </td>
-            <td colspan="2" style="width: 80%">
-                <form ng-submit="addTodo()">
-                    <input type="text" class="input-xlarge" placeholder="What needs to be done?" ng-model="newTodo" autofocus>
-                </form>
-            </td>
-        </tr>
-        <tr ng-show="activeTodoList" class="todo" ng-repeat="todo in activeTodos | filter:statusFilter">
-            <td style="width: 20%">
-                <i ng-hide="todo.completed" class="icon-ok" ng-click="todoCompleted(todo)"></i>
-                <i ng-show="todo.completed" class="icon-remove" ng-click="todoCompleted(todo)"></i>
-            </td>
-            <td style="width: 60%" class="span10" ng-dblclick="editTodo(todo)">
-                <div ng-class="{'todo-completed': todo.completed}" ng-hide="todo == editedTodo">
-                    <strong>{{todo.title}} ID: {{todo.id}}</strong>
-                </div>
-                <form ng-show="todo == editedTodo" ng-submit="doneEditing(todo)">
-                    <input type="text" class="input-xlarge" ng-model="todo.title" todo-blur="doneEditing(todo)" todo-focus="todo == editedTodo">
-                </form>
-            </td>
-            <td style="width: 20%">
-                <button class="btn btn-mini btn-warning delete-todo" ng-click="deleteTodo(todo)"><i class="icon-trash"></i></button>
-            </td>
-        </tr>
-        <tfoot ng-show="activeTodoList && activeTodos.length">
-            <tr>
-                <td>
-                    <span id="todo-count"><strong>{{remainingCount}}</strong>
-                    <ng-pluralize count="remainingCount" when="{ one: 'item left', other: 'items left' }"></ng-pluralize>
-                </td>
-                <td colspan="2">
-                    <div class="btn-group">
-                        <button class="btn" ng-click="changeFilter('')" ng-class="{'btn-primary': location.path() == '/'}">All</button>
-                        <button class="btn" ng-click="changeFilter('active')" ng-class="{'btn-primary': location.path() == '/active'}">Active</button>
-                        <button class="btn" ng-click="changeFilter('completed')" ng-class="{'btn-primary': location.path() == '/completed'}">Completed</button>
-                        <button class="btn btn-warning" ng-click="clearDoneTodos()" ng-show="doneCount">Clear completed ({{doneCount}})</button>
+
+<div id="main" class="auth span6" ng-controller="TodoCtrl" >
+    <div class="well well-small">
+        <strong>Plesynd Todo</strong>
+        <a class="pull-right" ng-click="logout()">Logout</a>
+    </div>
+
+    <div message-container></div>
+
+    <div id="auth-container">
+        <div class="hero-unit" id="login">
+            <div class="well">
+                <form>
+                    <div class="control-group">
+                        <div class="controls">
+                            <input type="text" ng-model="username" placeholder="Username"/>
+                        </div>
                     </div>
+                    <div class="control-group">
+                        <div class="controls">
+                            <input type="password" ng-model="password" placeholder="Password"/>
+                        </div>
+                    </div>
+                    <button type="submit" ng-click="login()" class="btn btn-primary">Login</button>
+                    <button class="btn btn-info" ng-click="changeAuthType('register')">Register</button>
+                </form>
+            </div>
+        </div>
+        <div class="hero-unit" id="register">
+            <div class="well">
+                <form novalidate remote-form method='post' target="user" success="changeAuthType" name="registerForm">
+                    <div class="control-group" ng-class="{error: !registerForm.username.$valid}">
+                        <div class="controls">
+                            <input remote-form-component type="text" name="username" ng-model="user.username" placeholder="Username"/>
+                            <span class="help-inline" ng-show="!registerForm.username.$valid && registerForm.username.$error.server">{{ serverValidationError.username }}</span>
+                        </div>
+                    </div>
+                    <div class="control-group" ng-class="{error: !registerForm.email.$valid}">
+                        <div class="controls">
+                            <input remote-form-component email type="text" name="email" ng-model="user.email" placeholder="Email"/>
+                            <span class="help-inline" ng-show="!registerForm.email.$valid && registerForm.email.$error.server">{{ serverValidationError.email }}</span>
+                        </div>
+                    </div>
+                    <div class="control-group" ng-class="{error: !registerForm.password.$valid}">
+                        <div class="controls">
+                            <input remote-form-componen type="password" name="password" ng-model="user.password" placeholder="Password"/>
+                            <span class="help-inline" ng-show="!registerForm.password.$valid && registerForm.password.$error.server">{{ serverValidationError.email }}</span>
+                        </div>
+                    </div>
+                    <button type="submit" ng-click="submit(user)" ng-disabled="registerForm.$pristine" class="btn btn-primary">Register</button>
+                    <button class="btn btn-info" ng-click="changeAuthType('login')">Go to login</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div id="content">
+        <table class="table table-striped" ng-cloak>
+            <tr>
+                <th style="width: 20%">
+                    <button ng-hide="add_todo_list || activeTodoList" class="btn btn-mini" ng-click="add_todo_list = true"><i class="icon-plus"></i></button>
+                    <button ng-show="activeTodoList && !edit_todo_list" class="btn btn-mini" ng-click="edit_todo_list = true"><i class="icon-wrench"></i></button>
+                </th>
+                <th style="width: 60%">
+                    <select ng-hide="add_todo_list || edit_todo_list" class="input-xlarge" ng-model="activeTodoList" ng-options="todoList.title for todoList in todoLists ">
+                        <option value="">-- Choose TodoList --</option>
+                    </select>
+                    <form ng-show="edit_todo_list" ng-submit="editTodoList(activeTodoList)">
+                        <input type="text" placeholder="name of list" ng-model="activeTodoList.title">
+                    </form>
+                    <form ng-show="add_todo_list" ng-submit="addTodoList(newTodoList)">
+                        <input type="text" class="input-xlarge" placeholder="name of added list" ng-model="newTodoList">
+                    </form>
+                </th>
+                <th style="width: 20%">
+                    <button ng-show="edit_todo_list"class="btn btn-warning" ng-click="deleteTodoList(activeTodoList)"><i class="icon-trash"></i></button>
+                </th>
+            </tr>
+            <tr ng-show="activeTodoList">
+                <td style="width: 20%">
+                    <input id="toggle-all" type="checkbox" ng-model="allChecked" ng-change="toggleAll()">
+                    <label for="toggle-all">Mark all as complete</label>
+                </td>
+                <td colspan="2" style="width: 80%">
+                    <form ng-submit="addTodo()">
+                        <input type="text" class="input-xlarge" placeholder="What needs to be done?" ng-model="newTodo" autofocus>
+                    </form>
                 </td>
             </tr>
-        </tfoot>
-    </table>
+            <tr ng-show="activeTodoList" class="todo" ng-repeat="todo in activeTodos | filter:statusFilter">
+                <td style="width: 20%">
+                    <i ng-hide="todo.completed" class="icon-ok" ng-click="todoCompleted(todo)"></i>
+                    <i ng-show="todo.completed" class="icon-remove" ng-click="todoCompleted(todo)"></i>
+                </td>
+                <td style="width: 60%" class="span10" ng-dblclick="editTodo(todo)">
+                    <div ng-class="{'todo-completed': todo.completed}" ng-hide="todo == editedTodo">
+                        <strong>{{todo.title}} ID: {{todo.id}}</strong>
+                    </div>
+                    <form ng-show="todo == editedTodo" ng-submit="doneEditing(todo)">
+                        <input type="text" class="input-xlarge" ng-model="todo.title" todo-blur="doneEditing(todo)" todo-focus="todo == editedTodo">
+                    </form>
+                </td>
+                <td style="width: 20%">
+                    <button class="btn btn-mini btn-warning delete-todo" ng-click="deleteTodo(todo)"><i class="icon-trash"></i></button>
+                </td>
+            </tr>
+            <tfoot ng-show="activeTodoList && activeTodos.length">
+                <tr>
+                    <td>
+                        <span id="todo-count"><strong>{{remainingCount}}</strong>
+                        <ng-pluralize count="remainingCount" when="{ one: 'item left', other: 'items left' }"></ng-pluralize>
+                    </td>
+                    <td colspan="2">
+                        <div class="btn-group">
+                            <button class="btn" ng-click="changeFilter('')" ng-class="{'btn-primary': location.path() == '/'}">All</button>
+                            <button class="btn" ng-click="changeFilter('active')" ng-class="{'btn-primary': location.path() == '/active'}">Active</button>
+                            <button class="btn" ng-click="changeFilter('completed')" ng-class="{'btn-primary': location.path() == '/completed'}">Completed</button>
+                            <button class="btn btn-warning" ng-click="clearDoneTodos()" ng-show="doneCount">Clear completed ({{doneCount}})</button>
+                        </div>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
 </div>
 {% endraw %}
 
@@ -110,6 +166,7 @@
     '@CorujaTodoBundle/Resources/public/js/lib/jquery-1.8.1.js'
     '@CorujaTodoBundle/Resources/public/js/lib/angular/angular.js'
     '@CorujaTodoBundle/Resources/public/js/lib/angular/angular-resource.js'
+    '@CorujaTodoBundle/Resources/public/js/lib/http-auth-interceptor.js'
     '@CorujaTodoBundle/Resources/public/js/lib/postmessage.js'
     '@CorujaTodoBundle/Resources/public/js/app.js'
     '@CorujaTodoBundle/Resources/public/js/controllers.js'
@@ -117,6 +174,10 @@
     '@CorujaTodoBundle/Resources/public/js/directives/todoFocus.js'
     '@CorujaTodoBundle/Resources/public/js/services/coruja-online-status.js'
     '@CorujaTodoBundle/Resources/public/js/services/coruja-frame-messenger.js'
+    '@CorujaTodoBundle/Resources/public/js/directives/coruja-auth-directive.js'
+    '@CorujaTodoBundle/Resources/public/js/directives/coruja-remote-form-directive.js'
+    '@CorujaPlesyndBundle/Resources/public/js/services/coruja-message-service.js'
+    '@CorujaPlesyndBundle/Resources/public/js/directives/coruja-message-container-directive.js'
     '@CorujaTodoBundle/Resources/public/js/services/coruja-storage.js'
     '@CorujaTodoBundle/Resources/public/js/services/coruja-resource.js'
     '@CorujaTodoBundle/Resources/public/js/services/todo-service.js'

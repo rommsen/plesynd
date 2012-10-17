@@ -1,6 +1,6 @@
 'use strict';
 
-var todoApp = angular.module('todoApp', ['ngResource', 'corujaFrameMessenger', 'corujaOnlineStatus', 'corujaResource', 'corujaStorage'])
+var todoApp = angular.module('todoApp', ['ngResource', 'corujaAuth', 'corujaFrameMessenger', 'corujaOnlineStatus', 'corujaMessageContainer', 'corujaSystemMessageService', 'corujaRemoteForm', 'corujaResource', 'corujaStorage'])
     .value('todo_resource_uri', 'http://plesynd/app_dev.php/todo/api/todos/:todoId')
     .value('todo_list_resource_uri', 'http://plesynd/app_dev.php/todo/api/lists/:todoListId')
     .run(function ($rootScope, $window, childFrameMessenger) {

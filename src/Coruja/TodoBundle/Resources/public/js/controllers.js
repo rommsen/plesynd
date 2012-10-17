@@ -1,7 +1,7 @@
 'use strict';
 
 /* Controllers */
-todoApp.controller('TodoCtrl', function TodoCtrl($window, $rootScope, $scope, $location, todoListService, todoService, filterFilter) {
+todoApp.controller('TodoCtrl', function TodoCtrl($window, $rootScope, $http, $scope, $location, todoListService, todoService, filterFilter, systemMessageService) {
     var todoListIdLocalStorageKey = "activeTodoListId"+$window.name;
     var forEach = angular.forEach;
     var fromJson = angular.fromJson;
@@ -106,15 +106,8 @@ todoApp.controller('TodoCtrl', function TodoCtrl($window, $rootScope, $scope, $l
 
     $scope.todoCompleted = function (todo) {
         todo.completed = !todo.completed;
-        todoService.put(todo, function () {
-            if (todo.completed) {
-                $scope.remainingCount--;
-                $scope.doneCount++;
-            } else {
-                $scope.remainingCount++;
-                $scope.doneCount--;
-            }
-        });
+        // no need to change doneCount and remainingCount because todos are being watched
+        todoService.put(todo);
     };
 
     $scope.clearDoneTodos = function () {
@@ -163,5 +156,12 @@ todoApp.controller('TodoCtrl', function TodoCtrl($window, $rootScope, $scope, $l
 
     $scope.changeFilter = function (filter) {
         $location.path(filter);
+    };
+
+    $scope.logout = function () {
+        //$scope.activeTodoList = null;
+        $http.defaults.headers.common['Authorization'] = "Basic " + btoa('#' + ":" + '#');
+        $http.get('plesynd/api/logout');
+        systemMessageService.addSuccessMessage('See you next time');
     };
 });
