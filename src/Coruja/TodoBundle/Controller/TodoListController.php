@@ -9,6 +9,11 @@ use FOS\RestBundle\View\RouteRedirectView;
 use FOS\RestBundle\View\View;
 use FOS\Rest\Util\Codes as HttpCodes;
 
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
+use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
+use Symfony\Component\Security\Acl\Permission\MaskBuilder;
+
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
@@ -26,6 +31,14 @@ class TodoListController extends FOSRestController
     {
         $em = /* @var $em \Doctrine\ORM\EntityManager */ $this->get('doctrine')->getEntityManager();
         $todoLists = $em->getRepository('CorujaTodoBundle:TodoList')->findAll();
+
+        $logger = $this->get('logger');
+        $securityContext = $this->get('security.context');
+        $todoLists = array_filter($todoLists, function(TodoList $todoList) use ($securityContext, $logger) {
+            $logger->info($securityContext->isGranted('VIEW', $todoList)) ;
+            return $securityContext->isGranted('VIEW', $todoList);
+        });
+
         return View::create($todoLists, HttpCodes::HTTP_OK, array(
             'Access-Control-Allow-Origin' => '*',
         ));
@@ -42,30 +55,19 @@ class TodoListController extends FOSRestController
     {
         $em = /* @var $em \Doctrine\ORM\EntityManager */ $this->get('doctrine')->getEntityManager();
         $todoList = $em->find('CorujaTodoBundle:TodoList', $id);
+
+        if($todoList === NULL) {
+            return View::create(null, HttpCodes::HTTP_NOT_FOUND);
+        }
+
+        $securityContext = $this->get('security.context');
+        if($securityContext->isGranted('VIEW', $todoList) === false) {
+            throw new AccessDeniedException();
+        }
+
         return $todoList;
     }
 
-    /**
-     * @Route("/{id}", name="put_todo_list")
-     * @Method({"PUT"})
-     * @Rest\View()
-     * @ApiDoc
-     * @param $id
-     */
-    public function putTodoListAction($id)
-    {
-        $data = $this->getRequest()->request;
-        $em = $this->get('doctrine')->getEntityManager();
-        /* @var $em \Doctrine\ORM\EntityManager */
-        $todoList = $em->find('CorujaTodoBundle:TodoList', $id);
-
-        if ($todoList !== NULL) {
-            $todoList->setTitle($data->get('title'));
-            $em->flush();
-            return View::create(null, HttpCodes::HTTP_NO_CONTENT);
-        }
-        return View::create(null, HttpCodes::HTTP_NOT_FOUND);
-    }
 
     /**
      * @Route("", name="post_todo_list")
@@ -83,7 +85,45 @@ class TodoListController extends FOSRestController
         $em->persist($todoList);
         $em->flush();
 
+        // creating the ACL
+        $aclProvider = $this->get('security.acl.provider');
+        $acl = $aclProvider->createAcl(ObjectIdentity::fromDomainObject($todoList));
+
+        // retrieving the security identity of the currently logged-in user
+        $securityContext = $this->get('security.context');
+        $securityIdentity = UserSecurityIdentity::fromAccount($securityContext->getToken()->getUser());
+
+        // grant owner access
+        $acl->insertObjectAce($securityIdentity, MaskBuilder::MASK_OWNER);
+        $aclProvider->updateAcl($acl);
+
         return RouteRedirectView::create('get_todo', array('id' => $todoList->getId()), HttpCodes::HTTP_CREATED);
+    }
+
+
+    /**
+     * @Route("/{id}", name="put_todo_list")
+     * @Method({"PUT"})
+     * @Rest\View()
+     * @ApiDoc
+     * @param $id
+     */
+    public function putTodoListAction($id)
+    {
+        $data = $this->getRequest()->request;
+        $em = /* @var $em \Doctrine\ORM\EntityManager */ $this->get('doctrine')->getEntityManager();
+        $todoList = $em->find('CorujaTodoBundle:TodoList', $id);
+
+        if($todoList !== NULL) {
+            $securityContext = $this->get('security.context');
+            if($securityContext->isGranted('EDIT', $todoList) === false) {
+                throw new AccessDeniedException();
+            }
+            $todoList->setTitle($data->get('title'));
+            $em->flush();
+            return View::create(null, HttpCodes::HTTP_NO_CONTENT);
+        }
+        return View::create(null, HttpCodes::HTTP_NOT_FOUND);
     }
 
 
@@ -96,14 +136,20 @@ class TodoListController extends FOSRestController
      */
     public function deleteTodoListAction($id)
     {
-        $em = $this->get('doctrine')->getEntityManager();
-        /* @var $em \Doctrine\ORM\EntityManager */
+        $em = /* @var $em \Doctrine\ORM\EntityManager */ $this->get('doctrine')->getEntityManager();
         $todoList = $em->find('CorujaTodoBundle:TodoList', $id);
-        if ($todoList !== NULL) {
-            $em->remove($todoList);
-            $em->flush();
-            return View::create(null, HttpCodes::HTTP_NO_CONTENT);
+
+        if($todoList === NULL) {
+            return View::create(null, HttpCodes::HTTP_NOT_FOUND);
         }
-        return View::create(null, HttpCodes::HTTP_NOT_FOUND);
+
+        $securityContext = $this->get('security.context');
+        if ($securityContext->isGranted('DELETE', $todoList) === false) {
+            throw new AccessDeniedException();
+        }
+
+        $em->remove($todoList);
+        $em->flush();
+        return View::create(null, HttpCodes::HTTP_NO_CONTENT);
     }
 }
