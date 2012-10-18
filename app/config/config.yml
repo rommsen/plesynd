@@ -92,9 +92,9 @@ nelmio_api_doc: ~
 
 nelmio_cors:
     paths:
-        '^/todo/api/todos':
+        '^/(todo/api|login|logout)':
             allow_origin: ['*']
-            allow_headers: ['X-REQUESTED-WITH', 'Content-Type']
+            allow_headers: ['X-REQUESTED-WITH', 'Content-Type', 'Authorization']
             allow_methods: ['POST', 'PUT', 'GET', 'DELETE', 'OPTIONS'],
             # Location Header is used for POST Request Answers (URI of created Item
             expose_headers: ['Location']
