@@ -2,6 +2,7 @@
 namespace Coruja\PlesyndBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity
@@ -22,18 +23,13 @@ class Workspace
     protected $title;
 
     /**
-     * @ORM\Column(type="string", length=100)
-     */
-    protected $slug;
-
-    /**
      * @ORM\OneToMany(targetEntity="Widget", mappedBy="workspace", cascade={"all"})
      **/
     protected $widgets;
 
 
     public function __construct() {
-        $this->widgets = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->widgets = new ArrayCollection();
     }
 
     public function getId() {
@@ -41,7 +37,6 @@ class Workspace
     }
 
     public function setTitle($title) {
-        $this->slug = strtolower(str_replace(' ', '_', $title));
         $this->title = $title;
     }
 
@@ -49,19 +44,12 @@ class Workspace
         return $this->title;
     }
 
-    public function addWidget(Widget $widget)
-    {
+    public function addWidget(Widget $widget) {
         $widget->setPosition($this->widgets->count()+1);
         $this->widgets->add($widget);
     }
 
-    public function getWidgets()
-    {
+    public function getWidgets()  {
         return $this->widgets;
-    }
-
-    public function getSlug()
-    {
-        return $this->slug;
     }
 }

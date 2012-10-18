@@ -8,7 +8,6 @@ use FOS\RestBundle\View\RouteRedirectView;
 use FOS\RestBundle\View\View;
 use FOS\Rest\Util\Codes as HttpCodes;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
@@ -62,7 +61,7 @@ class WorkspaceController extends FOSRestController
         }
 
         $securityContext = $this->get('security.context');
-        if (false === $securityContext->isGranted('VIEW', $workspace)) {
+        if($securityContext->isGranted('VIEW', $workspace) === false) {
             throw new AccessDeniedException();
         }
         $view = View::create();
@@ -116,7 +115,12 @@ class WorkspaceController extends FOSRestController
         $em = $this->get('doctrine')->getEntityManager();
         /* @var $em \Doctrine\ORM\EntityManager */
         $workspace = $em->find('CorujaPlesyndBundle:Workspace', $id);
-        if ($workspace !== NULL) {
+        if($workspace !== NULL) {
+            $securityContext = $this->get('security.context');
+            if ($securityContext->isGranted('EDIT', $workspace) === false) {
+                throw new AccessDeniedException();
+            }
+
             $workspace->setTitle($data->get('title'));
             $em->flush();
             return View::create(null, HttpCodes::HTTP_NO_CONTENT);
@@ -136,11 +140,17 @@ class WorkspaceController extends FOSRestController
         $em = $this->get('doctrine')->getEntityManager();
         /* @var $em \Doctrine\ORM\EntityManager */
         $workspace = $em->find('CorujaPlesyndBundle:Workspace', $id);
-        if ($workspace !== NULL) {
-            $em->remove($workspace);
-            $em->flush();
-            return View::create(null, HttpCodes::HTTP_NO_CONTENT);
+        if($workspace === NULL) {
+            return View::create(null, HttpCodes::HTTP_NOT_FOUND);
         }
-        return View::create(null, HttpCodes::HTTP_NOT_FOUND);
+
+        $securityContext = $this->get('security.context');
+        if ($securityContext->isGranted('DELETE', $workspace) === false) {
+            throw new AccessDeniedException();
+        }
+
+        $em->remove($workspace);
+        $em->flush();
+        return View::create(null, HttpCodes::HTTP_NO_CONTENT);
     }
 }

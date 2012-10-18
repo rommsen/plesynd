@@ -5,7 +5,6 @@ namespace Coruja\PlesyndBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use FOS\Rest\Util\Codes as HttpCodes;
 
 class PlesyndController extends Controller
 {

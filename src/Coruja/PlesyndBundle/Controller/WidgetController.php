@@ -2,6 +2,7 @@
 namespace Coruja\PlesyndBundle\Controller;
 
 use Coruja\PlesyndBundle\Entity\Widget;
+use Coruja\WookieConnectorBundle\Connector\Widget as WookieWidget;
 use Coruja\WookieConnectorBundle\Connector\WidgetProperty;
 use Coruja\WookieConnectorBundle\Connector\Exception\WookieConnectorException;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
@@ -29,7 +30,7 @@ class WidgetController extends FOSRestController
         $connection = $this->get('coruja_wookie_connector.connector');
         $widgets = $connection->getAvailableWidgets();
 
-         $widgets = array_map(function(\Coruja\WookieConnectorBundle\Connector\Widget $widget) use($connection) {
+         $widgets = array_map(function(WookieWidget $widget) use($connection) {
              $instance = $connection->getOrCreateInstance($widget->getIdentifier());
              try {
                  $property = $connection->getProperty($instance, new WidgetProperty('plesynd_offline_compatible'));
@@ -39,8 +40,6 @@ class WidgetController extends FOSRestController
              }
              return $widget;
          }, $widgets);
-
-
 
         return View::create($widgets);
     }

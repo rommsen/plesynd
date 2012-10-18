@@ -14,3 +14,10 @@ body {
 .choose-widget {
     margin-bottom: 10px;
 }
+
+.form input.ng-invalid.ng-dirty, .form input.ng-invalid.ng-invalid-server {
+    background-color: #FA787E;
+}
+.form input.ng-valid.ng-dirty {
+    background-color: #78FA89;
+}

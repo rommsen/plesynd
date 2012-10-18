@@ -1,46 +1,24 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="plesynd" ng-controller="PlesyndCtrl" smanifest="/cache.appcache">
+<html lang="en" ng-app="application" ng-controller="PlesyndCtrl" smanifest="/cache.appcache">
 <head>
     <meta charset="utf-8">
-    {% raw %}<title>PleSynd {{online_status_string}}</title>{% endraw %}
+    {% raw %}<title ng-cloak>PleSynd {{online_status_string}}</title>{% endraw %}
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
 
     <!-- Le styles -->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.1.1/css/bootstrap.min.css" />
     {% stylesheets
-    '@CorujaPlesyndBundle/Resources/public/css/bootstrap.css'
-    '@CorujaPlesyndBundle/Resources/public/css/app.css'
+    '@CorujaPlesyndBundle/Resources/public/app/application/application.css'
     output='css/compiled/plesynd/main.css'
     %}
     <link rel="stylesheet" href="{{ asset_url }}"/>
     {% endstylesheets %}
 
-    <style type="text/css">
-        .form input.ng-invalid.ng-dirty, .form input.ng-invalid.ng-invalid-server {
-            background-color: #FA787E;
-        }
-        .form input.ng-valid.ng-dirty {
-            background-color: #78FA89;
-        }
-    </style>
-
-    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
-    <!--[if lt IE 9]>
-    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-
-    <!-- Le fav and touch icons -->
-    <!--
-    <link rel="shortcut icon" href="../assets/ico/favicon.ico">
-    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
-    -->
 </head>
 
-<body>
+<body ng-cloak>
 
 {% raw %}
 
@@ -70,13 +48,21 @@
 
 <div message-container class="container-fluid"></div>
 
-<div class="auth waiting-for-angular">
+<div class="auth">
     <div id="auth-container" class="container">
         <div class="hero-unit" id="login">
             <div class="well">
-                <form class="form-inline">
-                    <input type="text" ng-model="username" placeholder="Username"/>
-                    <input type="password" ng-model="password" placeholder="Password"/>
+                <form>
+                    <div class="control-group">
+                        <div class="controls">
+                            <input type="text" ng-model="username" placeholder="Username"/>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="controls">
+                            <input type="password" ng-model="password" placeholder="Password"/>
+                        </div>
+                    </div>
                     <button type="submit" ng-click="login()" class="btn btn-primary">Login</button>
                     <button class="btn btn-info" ng-click="changeAuthType('register')">Register</button>
                 </form>
@@ -283,27 +269,27 @@
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
 {% javascripts
-    '@CorujaPlesyndBundle/Resources/public/js/lib/jquery-1.8.1.js'
-    '@CorujaPlesyndBundle/Resources/public/js/lib/angular/angular.js'
-    '@CorujaPlesyndBundle/Resources/public/js/lib/angular/angular-resource.js'
-    '@CorujaPlesyndBundle/Resources/public/js/lib/http-auth-interceptor.js'
-    '@CorujaPlesyndBundle/Resources/public/js/lib/postmessage.js'
-    '@CorujaPlesyndBundle/Resources/public/js/app.js'
-    '@CorujaPlesyndBundle/Resources/public/js/controllers/plesynd-controller.js'
-    '@CorujaPlesyndBundle/Resources/public/js/controllers/workspace-controller.js'
-    '@CorujaPlesyndBundle/Resources/public/js/controllers/dashboard-controller.js'
-    '@CorujaPlesyndBundle/Resources/public/js/directives/coruja-auth-directive.js'
-    '@CorujaPlesyndBundle/Resources/public/js/directives/coruja-message-container-directive.js'
-    '@CorujaPlesyndBundle/Resources/public/js/directives/coruja-remote-form-directive.js'
-    '@CorujaPlesyndBundle/Resources/public/js/services/workspace-service.js'
-    '@CorujaPlesyndBundle/Resources/public/js/services/widget-service.js'
-    '@CorujaPlesyndBundle/Resources/public/js/services/child-frame-service.js'
-    '@CorujaPlesyndBundle/Resources/public/js/services/coruja-frame-messenger.js'
-    '@CorujaPlesyndBundle/Resources/public/js/services/coruja-message-service.js'
-    '@CorujaPlesyndBundle/Resources/public/js/services/coruja-online-status.js'
-    '@CorujaPlesyndBundle/Resources/public/js/services/coruja-storage.js'
-    '@CorujaPlesyndBundle/Resources/public/js/services/coruja-resource.js'
-    '@CorujaPlesyndBundle/Resources/public/js/http-error-interceptor.js'
+    '@CorujaAngularModuleBundle/Resources/public/app/lib/jquery-1.8.1.js'
+    '@CorujaAngularModuleBundle/Resources/public/app/lib/angular.js'
+    '@CorujaAngularModuleBundle/Resources/public/app/lib/angular-resource.js'
+    '@CorujaAngularModuleBundle/Resources/public/app/lib/http-auth-interceptor.js'
+    '@CorujaAngularModuleBundle/Resources/public/app/lib/postmessage.js'
+    '@CorujaPlesyndBundle/Resources/public/app/application/application.js'
+    '@CorujaPlesyndBundle/Resources/public/app/application/configuration-service.js'
+    '@CorujaPlesyndBundle/Resources/public/app/plesynd/plesynd-controller.js'
+    '@CorujaPlesyndBundle/Resources/public/app/dashboard/dashboard-controller.js'
+    '@CorujaPlesyndBundle/Resources/public/app/workspace/workspace-controller.js'
+    '@CorujaPlesyndBundle/Resources/public/app/workspace/workspace-service.js'
+    '@CorujaPlesyndBundle/Resources/public/app/widget/widget-service.js'
+    '@CorujaAngularModuleBundle/Resources/public/app/coruja-auth/coruja-auth-directive.js'
+    '@CorujaAngularModuleBundle/Resources/public/app/coruja-child-frame/coruja-child-frame-service.js'
+    '@CorujaAngularModuleBundle/Resources/public/app/coruja-frame-messenger/coruja-parent-frame-messenger-service.js'
+    '@CorujaAngularModuleBundle/Resources/public/app/coruja-message/coruja-message-container-directive.js'
+    '@CorujaAngularModuleBundle/Resources/public/app/coruja-message/coruja-message-service.js'
+    '@CorujaAngularModuleBundle/Resources/public/app/coruja-online-status/coruja-online-status-service.js'
+    '@CorujaAngularModuleBundle/Resources/public/app/coruja-remote-form/coruja-remote-form-directive.js'
+    '@CorujaAngularModuleBundle/Resources/public/app/coruja-resource/coruja-resource-service.js'
+    '@CorujaAngularModuleBundle/Resources/public/app/coruja-storage/coruja-local-storage-service.js'
     output='js/compiled/plesynd/main.js'
 %}
 <script src="{{ asset_url }}"></script>
