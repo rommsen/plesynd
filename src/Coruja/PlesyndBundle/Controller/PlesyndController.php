@@ -18,23 +18,6 @@ class PlesyndController extends Controller
     }
 
     /**
-     * when reached, login was successful
-     * @Route("/login")
-     */
-    public function loginAction() {
-        return new Response('', HttpCodes::HTTP_NO_CONTENT);
-    }
-
-    /**
-     * @Route("/plesynd/api/logout")
-     */
-    public function logout() {
-        $this->get('security.context')->setToken(null);
-        $this->get('request')->getSession()->invalidate();
-        return new Response('');
-    }
-
-    /**
      * @Route("/cache.appcache")
      */
     public function appcacheAction() {
