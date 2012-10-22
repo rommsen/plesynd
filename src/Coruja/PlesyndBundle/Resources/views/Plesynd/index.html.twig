@@ -104,7 +104,7 @@
                     <li ng-class="{active: checkActiveTab(workspace.id)}" ng-repeat="workspace in workspaces" >
                         <a href="#/workspace/{{workspace.id}}">
                             {{workspace.title}}
-                            <span ng-show="isOnline && checkActiveTab(workspace.id)" ng-click="changeShowEdit(!show_edit)"> | e</span>
+                            <span ng-show="isOnline && checkActiveTab(workspace.id)" ng-click="changeShowEdit(!show_edit)"> | <i class="icon-wrench"></i> </span>
                         </a>
                     </li>
                     <li><a ng-click="addWorkspace()">Add</a></li>
