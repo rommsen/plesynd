@@ -25,7 +25,7 @@ Application.Controllers.controller('TodoCtrl', function TodoCtrl($window, $rootS
     };
 
     $scope.prepareActiveTodos = function () {
-        if ($scope.todos && $scope.activeTodoList) {
+        if($scope.todos && $scope.activeTodoList) {
             localStorage.setItem(todoListIdLocalStorageKey, toJson($scope.activeTodoList.id));
             $scope.activeTodos = filterFilter($scope.todos, $scope.filterByActiveTodoList);
             $scope.remainingCount = filterFilter($scope.activeTodos, {completed:false}).length;
@@ -36,6 +36,7 @@ Application.Controllers.controller('TodoCtrl', function TodoCtrl($window, $rootS
     $scope.activeListId = fromJson(localStorage.getItem(todoListIdLocalStorageKey) || '[]');
     $scope.isOnline = onlineStatus.isOnline();
     $scope.synchronize();
+    todoService.notifyParentAboutItems();
 
     $scope.newTodo = "";
     $scope.editedTodo = null;

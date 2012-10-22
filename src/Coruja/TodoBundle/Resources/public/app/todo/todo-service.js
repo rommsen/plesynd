@@ -84,6 +84,9 @@ Application.Services.factory('todoService', ["$resource", "$window", "$q", "loca
                     information.available += 1;
                     if(item.synchronize_method !== undefined && method_translation[item.synchronize_method] !== undefined) {
                         information[method_translation[item.synchronize_method]] += 1;
+                        if(item.synchronize_method == 'delete') {
+                            information.available -= 1;
+                        }
                     }
                     information.data = data;
                 });
