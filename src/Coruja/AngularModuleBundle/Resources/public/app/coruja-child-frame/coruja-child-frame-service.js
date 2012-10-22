@@ -21,13 +21,15 @@ Application.Services.factory('childFrameService', ["$rootScope", function ($root
         var self = this;
         var position;
 
-        if (data['id'] != undefined && this.childFrames[data['id']] != undefined) {
+        if (data['id'] !== undefined && this.childFrames[data['id']] !== undefined) {
             position = self.findWidgetPosition(data['id']);
-            if (position != undefined) {
+            console.log(data);
+            if (position !== undefined) {
                 $rootScope.$apply(function () {
                     self.widgets[position]['data'] = data;
                     self.widgets[position]['data']['number_not_synchronized'] =
-                        data['added'].length + data['changed'].length + data['deleted'].length
+                        data['added'] + data['changed'] + data['deleted'];
+                    console.log(self.widgets[position]);
                 })
             }
         }

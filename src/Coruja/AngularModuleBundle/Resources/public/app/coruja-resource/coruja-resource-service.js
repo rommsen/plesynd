@@ -108,6 +108,7 @@ Application.Services.factory('resourceService', ["$q", "$timeout", "$resource", 
             }
 
             var resource = {};
+            var resourceDeferred;
 
             resource.query = function (params, success, error) {
                 var deferred = $q.defer();
@@ -167,9 +168,12 @@ Application.Services.factory('resourceService', ["$q", "$timeout", "$resource", 
             };
 
             resource.post = function (item, success, error) {
+                resourceDeferred = $q.defer();
+                var promise = resourceDeferred.promise;
+
                 if (!onlineStatus.isOnline()) {
                     resource.localFallback(item, 'post', success, error);
-                    return;
+                    return promise;
                 }
 
                 remoteResource.post(item,
@@ -178,49 +182,64 @@ Application.Services.factory('resourceService', ["$q", "$timeout", "$resource", 
                         var location = header('Location');
                         item.id = location.substring(location.lastIndexOf('/') + 1);
                         resource.updateLocalStorage(item, 'post');
+                        resourceDeferred.resolve();
                         (success || noop)(item, header);
                     }, function (response) {
                         resource.localFallback(item, 'post', success, error, response);
                     });
+
+                return promise;
             };
 
 
             resource.put = function (item, success, error) {
+                resourceDeferred = $q.defer();
+                var promise = resourceDeferred.promise;
+
                 if (!onlineStatus.isOnline()) {
                     resource.localFallback(item, 'put', success, error);
-                    return;
+                    return promise;
                 }
 
                 remoteResource.put(item,
                     function (data, header) {
                         resource.updateLocalStorage(item, 'put');
+                        resourceDeferred.resolve();
                         (success || noop)(item, header);
                     }, function (response) {
                         resource.localFallback(item, 'put', success, error, response);
                     });
+                return promise;
             };
 
             resource.delete = function (item, success, error) {
+                resourceDeferred = $q.defer();
+                var promise = resourceDeferred.promise;
+
                 if (!onlineStatus.isOnline()) {
                     resource.localFallback(item, 'delete', success, error);
-                    return;
+                    return promise;
                 }
 
                 // remoteResource.delete(item, ... does not work
                 new remoteResource(item).$delete(
                     function (data, header) {
                         resource.updateLocalStorage(item, 'delete');
+                        resourceDeferred.resolve();
                         (success || noop)(item, header);
                     }, function (response) {
                         resource.localFallback(item, 'delete', success, error, response);
                     });
+                return promise;
             };
 
             resource.localFallback = function (item, method, success, error, response) {
                 if (use_synchronization) {
                     resource.updateLocalStorage(item, method, true);
+                    resourceDeferred.resolve();
                     (success || noop)(item);
                 } else {
+                    resourceDeferred.reject();
                     (error || noop)(response);
                 }
             };

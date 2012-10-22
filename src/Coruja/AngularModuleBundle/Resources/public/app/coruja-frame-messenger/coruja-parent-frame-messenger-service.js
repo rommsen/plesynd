@@ -8,6 +8,7 @@ Application.Services.factory('parentFrameMessenger', ["$rootScope", function ($r
         var self = this;
         pm.bind("register_child_frame", function (child) {
             if (child['id'] != undefined) {
+                console.log('childFrameRegistered');
                 $rootScope.$broadcast("childFrameRegistered", child);
             }
         });
