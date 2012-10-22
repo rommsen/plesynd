@@ -132,7 +132,7 @@
                                                 <span ng-hide="isOnline" class="label label-important">Offline</span>
                                             </a>
                                         </li>
-                                        <li><a><span class="label label-info">Available {{ widget.data.available.length }}</span></a></li>
+                                        <li><a><span class="label label-info">Available {{ widget.data.available }}</span></a></li>
                                         <li>
                                             <a>
                                                 <span class="label " ng-class="{'label-success':widget.data.number_not_synchronized == 0, 'label-warning':widget.data.number_not_synchronized > 0}">
@@ -185,7 +185,7 @@
                 <tr ng-repeat="widget in filtered = (widgets | filter:{workspace.id:workspace.id})">
                     <td>{{ widget.position }}</td>
                     <td>{{ widget.title }}</td>
-                    <td ng-show="widget.is_offline_compatible"><span class="label label-info">{{ widget.data.available.length }}</span></td>
+                    <td ng-show="widget.is_offline_compatible"><span class="label label-info">{{ widget.data.available }}</span></td>
                     <td ng-show="widget.is_offline_compatible">
                         <span class="label " ng-class="{'label-success':widget.data.number_not_synchronized == 0, 'label-warning':widget.data.number_not_synchronized > 0}">
                             {{ widget.data.number_not_synchronized }}
