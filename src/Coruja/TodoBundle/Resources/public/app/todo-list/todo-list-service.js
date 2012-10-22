@@ -40,17 +40,14 @@ Application.Services.factory('todoListService', ["$resource", "$window", "$q", "
 
         service.post = function (item, success, error) {
             resource.post(item, success, error);
-            service.notifyParentAboutItems();
         };
 
         service.put = function (item, success, error) {
             resource.put(item, success, error);
-            service.notifyParentAboutItems();
         };
 
         service.delete = function (item, success, error) {
             resource.delete(item, success, error);
-            service.notifyParentAboutItems();
         };
 
         service.synchronize = function (success, error) {
@@ -60,35 +57,6 @@ Application.Services.factory('todoListService', ["$resource", "$window", "$q", "
         service.createEntity = function (data) {
             return entityFactory(data);
         };
-
-        service.notifyParentAboutItems = function() {
-            return;
-            function queryDeferred(storage) {
-                var deferred = $q.defer();
-
-                storage.query(function (data) {
-                    deferred.resolve(data);
-                });
-                return deferred.promise;
-            }
-
-            var promises = [
-                queryDeferred(config['localResource']),
-                queryDeferred(config['localResourceAdded']),
-                queryDeferred(config['localResourceChanged']),
-                queryDeferred(config['localResourceDeleted'])
-            ];
-            $q.all(promises).then(function (results) {
-                var data = {
-                    'available' : results[0],
-                    'added' : results[1],
-                    'changed' : results[2],
-                    'deleted' : results[3]
-                }
-                console.log('all storages resolved:', results);
-                childFrameMessenger.notifyParentAboutItems(data);
-            });
-        }
 
         return service;
     }]);

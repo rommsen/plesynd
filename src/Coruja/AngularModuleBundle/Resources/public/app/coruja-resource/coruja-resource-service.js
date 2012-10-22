@@ -32,24 +32,11 @@ Application.Services.factory('resourceService', ["$q", "$timeout", "$resource", 
             }
 
             /**
-             * Synchronizes the local resources for added, changed and deleted Items
-             * @param success
-             */
-            function synchronizeData(success) {
-                var promise = synchronizeStorage(localResource);
-
-                promise.then(function (results) {
-                    console.log('all (post put delete) resolved:', results);
-                    (success || noop)(results);
-                });
-            }
-
-            /**
              * Synchronizes local resource with remote resource
              * @param storage local resource
              * @return $q.defer().promise
              */
-            function synchronizeStorage(storage) {
+            function synchronizeData(success) {
                 var deferred = $q.defer();
                 var promise = deferred.promise;
                 var data_length;
@@ -80,7 +67,7 @@ Application.Services.factory('resourceService', ["$q", "$timeout", "$resource", 
                 }
 
                 // process each item of storage separately
-                storage.query(function (data) {
+                localResource.query(function (data) {
                     var to_synchronize = [];
                     forEach(data, function (item) {
                         if (item.synchronize_method !== undefined) {
@@ -265,7 +252,7 @@ Application.Services.factory('resourceService', ["$q", "$timeout", "$resource", 
                         break;
 
                     case 'put':
-                        // if there is a post or delete, stick with it
+                        // if there is a post or delete, stick to it
                         if (item.synchronize_method === undefined) {
                             item.synchronize_method = 'put';
                         }
@@ -276,7 +263,10 @@ Application.Services.factory('resourceService', ["$q", "$timeout", "$resource", 
 
             resource.synchronize = function (success, error) {
                 if (onlineStatus.isOnline()) {
-                    synchronizeData(success, error);
+                    synchronizeData().then(function (results) {
+                        console.log('all (post put delete) resolved:', results);
+                        (success || noop)(results);
+                    }, error);
                 } else {
                     // can not synchronize when offline
                     (success || noop)();

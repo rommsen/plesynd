@@ -30,11 +30,11 @@ Application.Services.factory('todoService', ["$resource", "$window", "$q", "loca
 
         var resolver = function() {
             service.notifyParentAboutItems();
-        }
+        };
 
         service.resetLocal = function() {
             config.localResource.reset();
-        }
+        };
 
         service.query = function (success, error) {
             return resource.query({}, success, error);
@@ -58,7 +58,7 @@ Application.Services.factory('todoService', ["$resource", "$window", "$q", "loca
 
         service.synchronize = function (success, error) {
             resource.synchronize(success, error);
-        }
+        };
 
         service.createEntity = function (data) {
             return entityFactory(data);
@@ -90,11 +90,7 @@ Application.Services.factory('todoService', ["$resource", "$window", "$q", "loca
                 console.log('information', information);
                 childFrameMessenger.notifyParentAboutItems(information);
             });
-
-//                console.log('all storages resolved:', results);
-
-//            });
-        }
+        };
 
         return service;
     }]);

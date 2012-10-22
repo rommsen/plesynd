@@ -185,11 +185,16 @@
                 <tr ng-repeat="widget in filtered = (widgets | filter:{workspace.id:workspace.id})">
                     <td>{{ widget.position }}</td>
                     <td>{{ widget.title }}</td>
-                    <td ng-show="widget.is_offline_compatible"><span class="label label-info">{{ widget.data.available }}</span></td>
-                    <td ng-show="widget.is_offline_compatible">
+                    <td ng-show="widget.is_offline_compatible && widget.data">
+                        <span class="label label-info">{{ widget.data.available }}</span>
+                    </td>
+                    <td ng-show="widget.is_offline_compatible && widget.data">
                         <span class="label " ng-class="{'label-success':widget.data.number_not_synchronized == 0, 'label-warning':widget.data.number_not_synchronized > 0}">
                             {{ widget.data.number_not_synchronized }}
                         </span>
+                    </td>
+                    <td colspan="2" ng-show="widget.is_offline_compatible && !widget.data">
+                        No data available, maybe not logged in?
                     </td>
                     <td ng-show="!widget.is_offline_compatible" colspan="2">Widget is not offline compatible</td>
                     <td><span ng-click="deleteWidget(widget)" class="btn btn-danger">x</span></td>

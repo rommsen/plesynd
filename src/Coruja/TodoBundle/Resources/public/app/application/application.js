@@ -18,10 +18,14 @@ angular.module('application', ['application.controllers', 'application.filters',
         childFrameMessenger.registerWithParent();
 
         $window.addEventListener("online", function () {
-            $rootScope.$broadcast('onlineChanged', true);
+            $rootScope.$apply(function () {
+                $rootScope.$broadcast('onlineChanged', true);
+            });
         }, true);
 
         $window.addEventListener("offline", function () {
-            $rootScope.$broadcast('onlineChanged', false);
+            $rootScope.$apply(function () {
+                $rootScope.$broadcast('onlineChanged', false);
+            });
         }, true);
     });

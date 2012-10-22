@@ -1,40 +1,40 @@
 'use strict';
 
 
-Application.Controllers.controller('TodoCtrl', function TodoCtrl($window, $rootScope, $http, $scope, $location, todoListService, todoService, filterFilter) {
-    var todoListIdLocalStorageKey = "activeTodoListId"+$window.name;
+Application.Controllers.controller('TodoCtrl', function TodoCtrl($window, $rootScope, $http, $scope, $location, onlineStatus, todoListService, todoService, filterFilter) {
+    var todoListIdLocalStorageKey = "activeTodoListId" + $window.name;
     var forEach = angular.forEach;
     var fromJson = angular.fromJson;
     var toJson = angular.toJson;
 
-    $scope.synchronize = function() {
+    $scope.synchronize = function () {
         todoListService.synchronize(function () {
-            $scope.todoLists = todoListService.query(function() {
-                forEach($scope.todoLists, function(todoList) {
-                    if(todoList.id == $scope.activeListId) {
+            $scope.todoLists = todoListService.query(function () {
+                forEach($scope.todoLists, function (todoList) {
+                    if (todoList.id == $scope.activeListId) {
                         $scope.activeTodoList = todoList;
                     }
                 });
             });
-            todoService.synchronize(function () {
-                // todos are synchronized after the lists are synchronized
-                $scope.todos = todoService.query(function () {
-                    todoService.notifyParentAboutItems();
-                });
+        });
+        todoService.synchronize(function () {
+            $scope.todos = todoService.query(function() {
+                todoService.notifyParentAboutItems();
             });
         });
     };
 
     $scope.prepareActiveTodos = function () {
-        if($scope.todos && $scope.activeTodoList) {
+        if ($scope.todos && $scope.activeTodoList) {
             localStorage.setItem(todoListIdLocalStorageKey, toJson($scope.activeTodoList.id));
-            $scope.activeTodos = filterFilter($scope.todos,  $scope.filterByActiveTodoList);
+            $scope.activeTodos = filterFilter($scope.todos, $scope.filterByActiveTodoList);
             $scope.remainingCount = filterFilter($scope.activeTodos, {completed:false}).length;
             $scope.doneCount = filterFilter($scope.activeTodos, {completed:true}).length;
         }
     };
 
     $scope.activeListId = fromJson(localStorage.getItem(todoListIdLocalStorageKey) || '[]');
+    $scope.isOnline = onlineStatus.isOnline();
     $scope.synchronize();
 
     $scope.newTodo = "";
@@ -53,7 +53,7 @@ Application.Controllers.controller('TodoCtrl', function TodoCtrl($window, $rootS
     });
 
     $scope.filterByActiveTodoList = function (todo) {
-        if($scope.activeTodoList) {
+        if ($scope.activeTodoList) {
             return todo.todo_list.id == $scope.activeTodoList.id;
         }
         return false;
@@ -61,7 +61,10 @@ Application.Controllers.controller('TodoCtrl', function TodoCtrl($window, $rootS
 
     $scope.$watch('activeTodoList', $scope.prepareActiveTodos);
     $scope.$watch('todos', $scope.prepareActiveTodos, true);
-    $rootScope.$on('onlineChanged', $scope.synchronize);
+    $rootScope.$on('onlineChanged', function (evt, isOnline) {
+        $scope.isOnline = isOnline;
+        $scope.synchronize();
+    });
     $rootScope.$on('event:auth-loginConfirmed', $scope.synchronize);
     $rootScope.$on('event:auth-logoutSuccessful', function () {
         $scope.todos = null;
@@ -79,9 +82,9 @@ Application.Controllers.controller('TodoCtrl', function TodoCtrl($window, $rootS
         if ($scope.newTodo.length === 0) return;
 
         var todo = todoService.createEntity({
-            title : $scope.newTodo,
-            completed : false,
-            todo_list : {id: $scope.activeTodoList.id}
+            title:$scope.newTodo,
+            completed:false,
+            todo_list:{id:$scope.activeTodoList.id}
         });
 
         todoService.post(todo, function () {
@@ -120,7 +123,7 @@ Application.Controllers.controller('TodoCtrl', function TodoCtrl($window, $rootS
 
     $scope.clearDoneTodos = function () {
         $scope.todos.forEach(function (todo) {
-            if(todo.completed) {
+            if (todo.completed) {
                 $scope.deleteTodo(todo);
             }
         });
@@ -128,7 +131,7 @@ Application.Controllers.controller('TodoCtrl', function TodoCtrl($window, $rootS
 
     $scope.toggleAll = function () {
         $scope.activeTodos.forEach(function (todo) {
-            if(todo.completed != $scope.allChecked) {
+            if (todo.completed != $scope.allChecked) {
                 $scope.todoCompleted(todo);
             }
         });
@@ -139,7 +142,7 @@ Application.Controllers.controller('TodoCtrl', function TodoCtrl($window, $rootS
         if ($scope.newTodoList.length === 0) return;
 
         var todoList = todoListService.createEntity({
-            title : $scope.newTodoList
+            title:$scope.newTodoList
         });
 
         todoListService.post(todoList, function () {
@@ -156,7 +159,7 @@ Application.Controllers.controller('TodoCtrl', function TodoCtrl($window, $rootS
         });
     };
 
-    $scope.editTodoList = function(todoList) {
+    $scope.editTodoList = function (todoList) {
         $scope.edit_todo_list = false;
         if (todoList.title.length === 0) return;
         todoListService.put(todoList);
