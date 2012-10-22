@@ -1,7 +1,7 @@
 'use strict';
 
-Application.Services.factory('todoListService', ["$resource", "$window", "$q", "localStorage", "resourceService", "childFrameMessenger", "configuration",
-    function ($resource, $window, $q, localStorage, resourceService, childFrameMessenger, configuration) {
+Application.Services.factory('todoListService', ["$resource", "$window", "$q", "localStorage", "resourceService", "configuration",
+    function ($resource, $window, $q, localStorage, resourceService, configuration) {
         var copy = angular.copy;
         var local_storage_prefix = "todoLists"+$window.name;
 
@@ -19,7 +19,7 @@ Application.Services.factory('todoListService', ["$resource", "$window", "$q", "
             }),
             localResource : localStorage(local_storage_prefix),
             entityFactory : entityFactory,
-            use_synchronization : true
+            use_synchronization : false
         };
 
         var resource = resourceService(config);
@@ -49,10 +49,6 @@ Application.Services.factory('todoListService', ["$resource", "$window", "$q", "
         service.delete = function (item, success, error) {
             resource.delete(item, success, error);
         };
-
-        service.synchronize = function (success, error) {
-            resource.synchronize(success, error);
-        }
 
         service.createEntity = function (data) {
             return entityFactory(data);

@@ -8,7 +8,6 @@ Application.Controllers.controller('TodoCtrl', function TodoCtrl($window, $rootS
     var toJson = angular.toJson;
 
     $scope.synchronize = function () {
-        todoListService.synchronize(function () {
             $scope.todoLists = todoListService.query(function () {
                 forEach($scope.todoLists, function (todoList) {
                     if (todoList.id == $scope.activeListId) {
@@ -16,7 +15,6 @@ Application.Controllers.controller('TodoCtrl', function TodoCtrl($window, $rootS
                     }
                 });
             });
-        });
         todoService.synchronize(function () {
             $scope.todos = todoService.query(function() {
                 todoService.notifyParentAboutItems();
