@@ -149,6 +149,7 @@ Application.Controllers.controller('TodoCtrl', function TodoCtrl($window, $rootS
         todoListService.post(todoList, function () {
             $scope.todoLists.push(todoList);
             $scope.newTodoList = '';
+            $scope.activeTodoList = todoList;
         });
     };
 
@@ -157,6 +158,7 @@ Application.Controllers.controller('TodoCtrl', function TodoCtrl($window, $rootS
             $scope.todoLists.splice($scope.todoLists.indexOf(todoList), 1);
             $scope.activeTodoList = null;
             $scope.edit_todo_list = false;
+            $scope.synchronize();
         });
     };
 
