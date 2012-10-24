@@ -1,21 +1,21 @@
 'use strict';
 
-Application.Directives
-    .directive('auth', function ($http, authService, systemMessageService) {
+Application.Directives.directive('auth', ['$http', 'authService', 'systemMessageService',
+    function ($http, authService, systemMessageService) {
         return {
-            restrict:'C',
-            controller:function ($scope, $element, $attrs) {
-                $scope.authType = 'login'
+            restrict : 'C',
+            controller : function ($scope, $element, $attrs) {
+                $scope.authType = 'login';
                 $scope.changeAuthType = function () {
-                    $scope.authType = $scope.authType == 'login' ? 'register' : 'login';
+                    $scope.authType = $scope.authType === 'login' ? 'register' : 'login';
                 };
                 $scope.login = function () {
-                    $http.defaults.headers.common['Authorization'] = "Basic " + btoa($scope.username + ":" + $scope.password);
+                    $http.defaults.headers.common.Authorization = "Basic " + btoa($scope.username + ":" + $scope.password);
                     $scope.doLogin();
                 };
 
                 $scope.logout = function () {
-                    $http.defaults.headers.common['Authorization'] = "Basic " + btoa('#' + ":" + '#');
+                    $http.defaults.headers.common.Authorization = "Basic " + btoa('#' + ":" + '#');
                     $http.get('http://plesynd/app_dev.php/logout');
                     systemMessageService.addSuccessMessage('See you next time');
                     $scope.$emit('event:auth-logoutSuccessful');
@@ -35,10 +35,9 @@ Application.Directives
                         });
                 };
             },
-            link:function (scope, element) {
-                var auth = element.find('#auth-container');
-                var auth = element.find('#auth-container');
-                var content = element.find('#content');
+            link : function (scope, element) {
+                var auth = element.find('#auth-container'),
+                    content = element.find('#content');
 
                 auth.hide();
 
@@ -52,15 +51,15 @@ Application.Directives
                 });
 
                 scope.$watch('authType', function (type) {
-                    if (type == 'register') {
+                    if (type === 'register') {
                         auth.find('#login').slideUp('slow');
                         auth.find('#register').slideDown('slow');
                     }
-                    if (type == 'login') {
+                    if (type === 'login') {
                         auth.find('#register').slideUp('slow');
                         auth.find('#login').slideDown('slow');
                     }
                 });
             }
-        }
-    })
+        };
+    }]);

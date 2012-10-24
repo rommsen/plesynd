@@ -8,8 +8,8 @@ Application.Services.factory('resourceService', ["$q", "$timeout", "$resource", 
             var entityFactory = config.entityFactory;
             var use_synchronization = config.use_synchronization;
 
-//            // uncomment to reset data
-//            localResource.storeData([]);
+            // uncomment to reset data
+//            localResource.reset();
 
             var localIdPrefix = 'local_';
 
@@ -33,10 +33,9 @@ Application.Services.factory('resourceService', ["$q", "$timeout", "$resource", 
 
             /**
              * Synchronizes local resource with remote resource
-             * @param storage local resource
              * @return $q.defer().promise
              */
-            function synchronizeData(success) {
+            function synchronizeData() {
                 var deferred = $q.defer();
                 var promise = deferred.promise;
                 var data_length;
@@ -271,7 +270,7 @@ Application.Services.factory('resourceService', ["$q", "$timeout", "$resource", 
                     // can not synchronize when offline
                     (success || noop)();
                 }
-            }
+            };
             return resource;
         }
 

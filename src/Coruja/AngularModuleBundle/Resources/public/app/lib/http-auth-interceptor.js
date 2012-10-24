@@ -4,7 +4,6 @@
  * License: MIT
  */
 angular.module('http-auth-interceptor', [])
-
   .provider('authService', function() {
     /**
      * Holds all the requests which failed due to 401 response,
@@ -21,7 +20,7 @@ angular.module('http-auth-interceptor', [])
         config: config, 
         deferred: deferred
       });
-    }
+    };
     
     this.$get = ['$rootScope','$injector', function($rootScope, $injector) {
       var $http; //initialized later because of circular dependency problem

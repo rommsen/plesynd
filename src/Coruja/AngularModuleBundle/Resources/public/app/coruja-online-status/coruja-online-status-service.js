@@ -1,21 +1,22 @@
 'use strict';
 
-Application.Services.factory('onlineStatus', ["$window", "$rootScope", function ($window, $rootScope) {
-    var onlineStatus = {};
+Application.Services.factory('onlineStatus', ["$window", "$rootScope",
+    function ($window, $rootScope) {
+        var onlineStatus = {};
 
-    onlineStatus.onLine = $window.navigator.onLine;
+        onlineStatus.onLine = $window.navigator.onLine;
 
-    onlineStatus.isOnline = function() {
-        return onlineStatus.onLine;
-    }
+        onlineStatus.isOnline = function () {
+            return onlineStatus.onLine;
+        };
 
-    onlineStatus.getOnlineStatusString = function() {
-        return onlineStatus.isOnline() ? 'online' : 'offline';
-    }
+        onlineStatus.getOnlineStatusString = function () {
+            return onlineStatus.isOnline() ? 'online' : 'offline';
+        };
 
-    $rootScope.$on('onlineChanged', function(evt, isOnline) {
-        onlineStatus.onLine = isOnline;
-    });
+        $rootScope.$on('onlineChanged', function (evt, isOnline) {
+            onlineStatus.onLine = isOnline;
+        });
 
-    return onlineStatus;
-}]);
+        return onlineStatus;
+    }]);
