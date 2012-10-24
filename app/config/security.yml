@@ -3,6 +3,9 @@ jms_security_extra:
     expressions: true
 
 security:
+    acl:
+      connection: default
+
     encoders:
         FOS\UserBundle\Model\UserInterface: sha512
 
@@ -26,7 +29,9 @@ security:
                 provider: fos_userbundle
 
     access_control:
-        - { path: ^/plesynd, roles: ROLE_USER }
+        - { path: ^/logout, roles: ROLE_USER }
+        - { path: ^/plesynd/api, roles: ROLE_USER }
+        - { path: ^/todo/api, roles: ROLE_USER }
         - { path: ^/, roles: IS_AUTHENTICATED_ANONYMOUSLY }
 
 
