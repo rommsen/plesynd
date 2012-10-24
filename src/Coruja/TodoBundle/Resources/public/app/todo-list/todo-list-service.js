@@ -2,8 +2,11 @@
 
 Application.Services.factory('todoListService', ["$resource", "$window", "$q", "localStorage", "resourceService", "configuration",
     function ($resource, $window, $q, localStorage, resourceService, configuration) {
-        var copy = angular.copy;
-        var local_storage_prefix = "todoLists"+$window.name;
+        var copy = angular.copy,
+            local_storage_prefix = "todoLists"+$window.name,
+            config,
+            resource,
+            service = {};
 
         function TodoList (data) {
             copy(data || {}, this);
@@ -12,7 +15,8 @@ Application.Services.factory('todoListService', ["$resource", "$window", "$q", "
         function entityFactory(data) {
             return new TodoList(data);
         }
-        var config = {
+
+        config = {
             remoteResource : $resource(configuration.TODO_LIST_RESOURCE_URI, {todoListId:'@id'}, {
                 put:{method:'PUT' },
                 post:{method:'POST' }
@@ -22,13 +26,13 @@ Application.Services.factory('todoListService', ["$resource", "$window", "$q", "
             use_synchronization : false
         };
 
-        var resource = resourceService(config);
+        resource = resourceService(config);
 
-        var service = {};
+        service = {};
 
         service.resetLocal = function() {
             config.localResource.reset();
-        }
+        };
 
         service.query = function (success, error) {
             return resource.query({}, success, error);
@@ -46,8 +50,8 @@ Application.Services.factory('todoListService', ["$resource", "$window", "$q", "
             resource.put(item, success, error);
         };
 
-        service.delete = function (item, success, error) {
-            resource.delete(item, success, error);
+        service['delete'] = function (item, success, error) {
+            resource['delete'](item, success, error);
         };
 
         service.createEntity = function (data) {

@@ -2,10 +2,10 @@
 
 
 Application.Controllers.controller('TodoCtrl', function TodoCtrl($window, $rootScope, $http, $scope, $location, onlineStatus, todoListService, todoService, filterFilter) {
-    var todoListIdLocalStorageKey = "activeTodoListId" + $window.name;
-    var forEach = angular.forEach;
-    var fromJson = angular.fromJson;
-    var toJson = angular.toJson;
+    var todoListIdLocalStorageKey = "activeTodoListId" + $window.name,
+        forEach = angular.forEach,
+        fromJson = angular.fromJson,
+        toJson = angular.toJson;
 
     $scope.synchronize = function () {
             $scope.todoLists = todoListService.query(function () {
@@ -46,8 +46,8 @@ Application.Controllers.controller('TodoCtrl', function TodoCtrl($window, $rootS
     $scope.location = $location;
 
     $scope.$watch('location.path()', function (path) {
-        $scope.statusFilter = (path == '/active') ?
-        { completed:false } : (path == '/completed') ?
+        $scope.statusFilter = (path === '/active') ?
+        { completed:false } : (path === '/completed') ?
         { completed:true } : null;
     });
 
@@ -78,7 +78,9 @@ Application.Controllers.controller('TodoCtrl', function TodoCtrl($window, $rootS
     });
 
     $scope.addTodo = function () {
-        if ($scope.newTodo.length === 0) return;
+        if ($scope.newTodo.length === 0) {
+            return;
+        }
 
         var todo = todoService.createEntity({
             title:$scope.newTodo,
@@ -89,7 +91,7 @@ Application.Controllers.controller('TodoCtrl', function TodoCtrl($window, $rootS
         todoService.post(todo, function () {
             $scope.todos.push(todo);
             $scope.newTodo = '';
-            $scope.remainingCount++;
+            $scope.remainingCount += 1;
         });
     };
 
@@ -138,7 +140,9 @@ Application.Controllers.controller('TodoCtrl', function TodoCtrl($window, $rootS
 
     $scope.addTodoList = function () {
         $scope.add_todo_list = false;
-        if ($scope.newTodoList.length === 0) return;
+        if ($scope.newTodoList.length === 0) {
+            return;
+        }
 
         var todoList = todoListService.createEntity({
             title:$scope.newTodoList
@@ -152,7 +156,7 @@ Application.Controllers.controller('TodoCtrl', function TodoCtrl($window, $rootS
     };
 
     $scope.deleteTodoList = function (todoList) {
-        todoListService.delete(todoList, function () {
+        todoListService['delete'](todoList, function () {
             $scope.todoLists.splice($scope.todoLists.indexOf(todoList), 1);
             $scope.activeTodoList = null;
             $scope.edit_todo_list = false;
@@ -162,7 +166,9 @@ Application.Controllers.controller('TodoCtrl', function TodoCtrl($window, $rootS
 
     $scope.editTodoList = function (todoList) {
         $scope.edit_todo_list = false;
-        if (todoList.title.length === 0) return;
+        if (todoList.title.length === 0) {
+            return;
+        }
         todoListService.put(todoList);
     };
 

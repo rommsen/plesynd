@@ -2,9 +2,13 @@
 
 Application.Services.factory('todoService', ["$resource", "$window", "$q", "localStorage", "resourceService", "childFrameMessenger", "configuration",
     function ($resource, $window, $q, localStorage, resourceService, childFrameMessenger, configuration) {
-        var copy = angular.copy;
-        var forEach = angular.forEach;
-        var local_storage_prefix = "todos_"+$window.name;
+        var copy = angular.copy,
+            forEach = angular.forEach,
+            local_storage_prefix = "todos_"+$window.name,
+            config,
+            resource,
+            service = {},
+            resolver;
 
         function Todo (data) {
             copy(data || {}, this);
@@ -14,7 +18,7 @@ Application.Services.factory('todoService', ["$resource", "$window", "$q", "loca
             return new Todo(data);
         }
 
-        var config = {
+        config = {
             remoteResource : $resource(configuration.TODO_RESOURCE_URI, {todoId:'@id'}, {
                 put:{method:'PUT' },
                 post:{method:'POST' }
@@ -24,11 +28,9 @@ Application.Services.factory('todoService', ["$resource", "$window", "$q", "loca
             use_synchronization : true
         };
 
-        var resource = resourceService(config);
+        resource = resourceService(config);
 
-        var service = {};
-
-        var resolver = function() {
+        resolver = function() {
             service.notifyParentAboutItems();
         };
 
@@ -52,8 +54,8 @@ Application.Services.factory('todoService', ["$resource", "$window", "$q", "loca
             resource.put(item, success, error).then(resolver, resolver);
         };
 
-        service.delete = function (item, success, error) {
-            resource.delete(item, success, error).then(resolver, resolver);
+        service['delete'] = function (item, success, error) {
+            resource['delete'](item, success, error).then(resolver, resolver);
         };
 
         service.synchronize = function (success, error) {
@@ -71,26 +73,25 @@ Application.Services.factory('todoService', ["$resource", "$window", "$q", "loca
                 'changed'   : 0,
                 'deleted'   : 0,
                 'data'      : null
-            };
+                },
 
-            var method_translation = {
+                method_translation = {
                 'delete' : 'deleted',
                 'post'   : 'added',
                 'put'    : 'changed'
-            }
+            };
 
             config.localResource.query(function (data) {
                 forEach(data, function(item) {
                     information.available += 1;
                     if(item.synchronize_method !== undefined && method_translation[item.synchronize_method] !== undefined) {
                         information[method_translation[item.synchronize_method]] += 1;
-                        if(item.synchronize_method == 'delete') {
+                        if(item.synchronize_method === 'delete') {
                             information.available -= 1;
                         }
                     }
                     information.data = data;
                 });
-                console.log('information', information);
                 childFrameMessenger.notifyParentAboutItems(information);
             });
         };
