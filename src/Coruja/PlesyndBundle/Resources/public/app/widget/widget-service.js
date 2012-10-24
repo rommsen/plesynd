@@ -2,7 +2,10 @@
 
 Application.Services.factory('widgetService', ["$resource", "localStorage", "resourceService", "configuration",
     function ($resource, localStorage, resourceService, configuration) {
-        var copy = angular.copy;
+        var copy = angular.copy,
+            resource,
+            service = {},
+            config;
 
         function Widget(data) {
             copy(data || {}, this);
@@ -12,7 +15,7 @@ Application.Services.factory('widgetService', ["$resource", "localStorage", "res
             return new Widget(data);
         }
 
-        var config = {
+        config = {
             remoteResource : $resource(configuration.WIDGET_RESOURCE_URI, {widgetId:'@id'}, {
                 put:{method:'PUT' },
                 post:{method:'POST' }
@@ -24,9 +27,7 @@ Application.Services.factory('widgetService', ["$resource", "localStorage", "res
             entityFactory : entityFactory
         };
 
-        var resource = resourceService(config);
-
-        var service = {};
+        resource = resourceService(config);
 
         service.query = function (success, error) {
             return resource.query({}, success, error);
@@ -44,13 +45,13 @@ Application.Services.factory('widgetService', ["$resource", "localStorage", "res
             resource.put(item, success, error);
         };
 
-        service.delete = function (item, success, error) {
-            resource.delete(item, success, error);
+        service['delete'] = function (item, success, error) {
+            resource['delete'](item, success, error);
         };
 
         service.synchronize = function (success, error) {
             resource.synchronize(success, error);
-        }
+        };
 
         service.createEntity = function (data) {
             return entityFactory(data);

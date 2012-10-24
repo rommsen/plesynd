@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 /**
  * Defines application-wide key value pairs

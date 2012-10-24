@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 /**
  * The application file bootstraps the angular app by initializing the main module and
@@ -14,28 +14,27 @@ Application.Directives = angular.module('application.directives', ['http-auth-in
 
 angular.module('application', ['application.controllers', 'application.filters', 'application.services', 'application.directives'])
     .config(['$routeProvider', function ($routeProvider) {
-    $routeProvider.when('/dashboard', {templateUrl:'dashboard', controller:'DashboardCtrl',
-        resolve:{
-            dashboard:function ($q, $route, $timeout) {
+    $routeProvider.when('/dashboard', {templateUrl : 'dashboard', controller : 'DashboardCtrl',
+        resolve                                    : {
+            dashboard : function ($q, $route, $timeout) {
                 var deferred = $q.defer();
 
                 $timeout(function () {
                     deferred.resolve({
-                        'info':'my Dashboard'
+                        'info' : 'my Dashboard'
                     });
                 });
 
                 return deferred.promise;
             }
         }});
-    $routeProvider.when('/workspace/:id', {templateUrl:'workspaceContainer', controller:'WorkspaceCtrl',
-        resolve:{
-            workspace:function ($q, $route, $location, $timeout, workspaceService, systemMessageService) {
-                var deferred = $q.defer();
-
-                var id = $route.current.params.id;
+    $routeProvider.when('/workspace/:id', {templateUrl : 'workspaceContainer', controller : 'WorkspaceCtrl',
+        resolve                                        : {
+            workspace : function ($q, $route, $location, $timeout, workspaceService, systemMessageService) {
+                var deferred = $q.defer(),
+                    id = $route.current.params.id;
                 $timeout(function () {
-                    workspaceService.get({'id':id}, function (result) {
+                    workspaceService.get({'id' : id}, function (result) {
                             deferred.resolve(result);
                         },
                         function () {
@@ -47,7 +46,7 @@ angular.module('application', ['application.controllers', 'application.filters',
                 return deferred.promise;
             }
         }});
-    $routeProvider.otherwise({redirectTo:'/dashboard'});
+    $routeProvider.otherwise({redirectTo : '/dashboard'});
 }])
     .run(function ($rootScope, $window, parentFrameMessenger) {
         parentFrameMessenger.initialize();

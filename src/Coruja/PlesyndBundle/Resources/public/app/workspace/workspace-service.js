@@ -2,7 +2,10 @@
 
 Application.Services.factory('workspaceService', ["$resource", "localStorage", "resourceService", "configuration",
     function ($resource, localStorage, resourceService, configuration) {
-        var copy = angular.copy;
+        var copy = angular.copy,
+            config,
+            resource,
+            service = {};
 
         function Workspace(data) {
             copy(data || {}, this);
@@ -12,8 +15,8 @@ Application.Services.factory('workspaceService', ["$resource", "localStorage", "
             return new Workspace(data);
         }
 
-        var config = {
-            remoteResource : $resource('plesynd/api/workspaces/:id', {id:'@id'}, {
+        config = {
+            remoteResource : $resource(configuration.WORKSPACE_RESOURCE_URI, {id:'@id'}, {
                 put:{method:'PUT' },
                 post:{method:'POST' }
             }),
@@ -21,9 +24,7 @@ Application.Services.factory('workspaceService', ["$resource", "localStorage", "
             entityFactory : entityFactory
         };
 
-        var resource = resourceService(config);
-
-        var service = {};
+        resource = resourceService(config);
 
         service.query = function (success, error) {
             return resource.query({}, success, error);
@@ -41,29 +42,17 @@ Application.Services.factory('workspaceService', ["$resource", "localStorage", "
             resource.put(item, success, error);
         };
 
-        service.delete = function (item, success, error) {
-            resource.delete(item, success, error);
+        service['delete'] = function (item, success, error) {
+            resource['delete'](item, success, error);
         };
 
         service.synchronize = function (success, error) {
             resource.synchronize(success, error);
-        }
+        };
 
         service.createEntity = function (data) {
             return entityFactory(data);
         };
-
-
-        // workspace specific methods
-        service.deleteWidget = function(workspace, widget) {
-
-            var tmp = $resource('plesynd/api/workspaces/:workspaceId/widgets/:widgetId', {workspaceId:'@id'}, {
-                put:{method:'PUT' },
-                post:{method:'POST' }
-            });
-
-            tmp.delete({'workspaceId': workspace.id, "widgetId": widget.id});
-        }
 
         return service;
     }]);
