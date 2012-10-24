@@ -1,0 +1,25 @@
+#main {
+    margin:0 auto;
+    float:none;
+}
+label[for='toggle-all'] {
+    display: none;
+}
+.todo-completed {
+    text-decoration: line-through;
+}
+.delete-todo {
+    display: none;
+}
+.todo:hover .delete-todo{
+    display:block;
+}
+#main td {
+    height: 60px ;
+    padding-bottom: 3px;
+}
+
+#main input[type="text"], #main input[type="password"] {
+    height: 30px;
+    margin: 0;
+}

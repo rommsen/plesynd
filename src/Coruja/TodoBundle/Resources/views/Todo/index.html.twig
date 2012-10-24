@@ -3,35 +3,12 @@
 <head>
     <meta charset="utf-8">
     <title>Todo</title>
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.1.1/css/bootstrap.min.css" />
-
-    <style>
-        #main {
-            margin:0 auto;
-            float:none;
-        }
-        label[for='toggle-all'] {
-            display: none;
-        }
-        .todo-completed {
-            text-decoration: line-through;
-        }
-        .delete-todo {
-            display: none;
-        }
-        .todo:hover .delete-todo{
-            display:block;
-        }
-        #main td {
-            height: 60px ;
-            padding-bottom: 3px;
-        }
-
-        #main input[type="text"], #main input[type="password"] {
-            height: 30px;
-            margin: 0;
-        }
-    </style>
+    {% stylesheets output='css/compiled/todo/main.css'
+    'http://netdna.bootstrapcdn.com/twitter-bootstrap/2.1.1/css/bootstrap.min.css'
+    '@CorujaTodoBundle/Resources/public/app/application/application.css'
+    %}
+    <link rel="stylesheet" href="{{ asset_url }}"/>
+    {% endstylesheets %}
 </head>
 <body>
 
@@ -92,8 +69,6 @@
         </div>
     </div>
     <div id="content">
-        <span ng-show="isOnline">online</span>
-        <span ng-show="!isOnline">offline</span>
         <table class="table table-striped" ng-cloak>
             <tr>
                 <th style="width: 20%">
@@ -164,7 +139,7 @@
 </div>
 {% endraw %}
 
-{% javascripts
+{% javascripts output='js/compiled/todo/main.js'
     '@CorujaAngularModuleBundle/Resources/public/app/lib/jquery-1.8.1.js'
     '@CorujaAngularModuleBundle/Resources/public/app/lib/angular.js'
     '@CorujaAngularModuleBundle/Resources/public/app/lib/angular-resource.js'
@@ -185,7 +160,6 @@
     '@CorujaAngularModuleBundle/Resources/public/app/coruja-remote-form/coruja-remote-form-directive.js'
     '@CorujaAngularModuleBundle/Resources/public/app/coruja-resource/coruja-resource-service.js'
     '@CorujaAngularModuleBundle/Resources/public/app/coruja-storage/coruja-local-storage-service.js'
-    output='js/compiled/todo/main.js'
 %}
 <script src="{{ asset_url }}"></script>
 
