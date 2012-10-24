@@ -14,7 +14,7 @@ Application.Directives = angular.module('application.directives', ['http-auth-in
 
 angular.module('application', ['application.controllers', 'application.filters', 'application.services', 'application.directives'])
     .config(['$routeProvider', function ($routeProvider) {
-    $routeProvider.when('/dashboard', {templateUrl : 'dashboard', controller : 'DashboardCtrl',
+    $routeProvider.when('/dashboard', {templateUrl : 'partials/dashboard', controller : 'DashboardCtrl',
         resolve                                    : {
             dashboard : function ($q, $route, $timeout) {
                 var deferred = $q.defer();
@@ -28,7 +28,7 @@ angular.module('application', ['application.controllers', 'application.filters',
                 return deferred.promise;
             }
         }});
-    $routeProvider.when('/workspace/:id', {templateUrl : 'workspaceContainer', controller : 'WorkspaceCtrl',
+    $routeProvider.when('/workspace/:id', {templateUrl : 'partials/workspace', controller : 'WorkspaceCtrl',
         resolve                                        : {
             workspace : function ($q, $route, $location, $timeout, workspaceService, systemMessageService) {
                 var deferred = $q.defer(),

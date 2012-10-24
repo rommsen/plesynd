@@ -1,0 +1,50 @@
+{% raw %}
+<div class="row-fluid edit-workspace" ng-show="show_edit">
+    <div class="span12 well">
+        <div class="row-fluid" style="margin-bottom:10px;">
+            <div class="span12">
+                <span ng-hide="change_title" ng-dblclick="change_title = true"><strong>Title</strong>: {{ workspace.title }} (double-click to change)</span>
+                <input ng-show="change_title" ng-model="workspace.title" />
+                <button ng-show="change_title" ng-disabled="workspace.title.length == 0" class="btn btn-primary" ng-click="updateTitle()">Update Title</button>
+            </div><!--/span-->
+        </div><!--/row-->
+        <div class="row-fluid choose-widget">
+            <div class="span2">
+                <select ng-model="widget" ng-options="widget.title for widget in availableWidgets | filter:{title:widgetTitleFilter} | filter:offlineCompatibleCheck">
+                    <option value="">-- Choose Widget --</option>
+                </select>
+            </div><!--/span-->
+            <div class="span10">
+                <button class="btn" ng-show="widget" ng-click="addWidgetToWorkspace(widget)">Add Widget to Workspace</button>
+                <input ng-hide="widget" ng-model="widgetTitleFilter" placeholder="Filter Widgets"/>
+                <div ng-hide="widget" class="btn-group">
+                    <button ng-class="{'btn-primary':!offlineCompatibleFilter}" ng-click="offlineCompatibleFilter = false" class="btn">all widgets</button>
+                    <button ng-class="{'btn-primary':offlineCompatibleFilter}" ng-click="offlineCompatibleFilter = true" class="btn">offline widgets</button>
+                </div>
+            </div><!--/span-->
+        </div><!--/row-->
+        <div class="row-fluid">
+            <div class="span5">
+                <table ng-show="widget" class="table table-bordered">
+                    <tbody>
+                    <tr>
+                        <td><img ng-src="{{widget.icon}}" /></td>
+                    </tr>
+                    <tr>
+                        <td>{{widget.title}}</td>
+                    </tr>
+                    <tr>
+                        <td>{{widget.description}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div><!--/span-->
+        </div><!--/row-->
+        <div class="row-fluid">
+            <div class="span12">
+                <button class="btn" ng-click="deleteWorkspace()">Delete workspace</button>
+            </div><!--/span-->
+        </div><!--/row-->
+    </div><!--/span-->
+</div><!--/row-->
+{% endraw %}

@@ -17,34 +17,42 @@ class PlesyndController extends Controller
     }
 
     /**
+     * @Route("/partials/dashboard")
+     */
+    public function dashboardAction() {
+        return $this->render('CorujaPlesyndBundle:Plesynd:dashboard.html.twig');
+    }
+
+    /**
+     * @Route("/partials/workspace")
+     */
+    public function workspaceAction() {
+        return $this->render('CorujaPlesyndBundle:Plesynd:workspace.html.twig');
+    }
+
+    /**
      * @Route("/cache.appcache")
      */
     public function appcacheAction() {
         $manifest = <<<EOF
 CACHE MANIFEST
-#Rev 1u66
+#Rev dfgdf
 
 CACHE:
 
+#Partials
+/partials/dashboard
+/partials/workspace
+
 #CSS
-/css/compiled/plesynd/main_bootstrap_1.css
-/css/compiled/plesynd/main_app_2.css
-/css/compiled/plesynd/main_bootstrap-responsive_3.css
+/css/compiled/plesynd/main.css
 
 #JS
-/js/compiled/plesynd/main_angular_1.js
-/js/compiled/plesynd/main_angular-resource_2.js
-/js/compiled/plesynd/main_app_3.js
-/js/compiled/plesynd/main_controllers_4.js
-/js/compiled/plesynd/main_workspace-service_5.js
-/js/compiled/plesynd/main_coruja-online-status_6.js
-/js/compiled/plesynd/main_coruja-storage_7.js
-/js/compiled/plesynd/main_coruja-resource_8.js
+/js/compiled/plesynd/main.js
 
 NETWORK:
 *
 EOF;
-
         return new Response($manifest);
     }
 

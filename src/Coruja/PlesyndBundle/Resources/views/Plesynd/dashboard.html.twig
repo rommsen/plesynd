@@ -1,0 +1,50 @@
+{% raw %}
+<div class="row-fluid">
+    <div class="span6 well" >
+        <span ng-hide="workspaces.length > 0">You have no workspace. <a ng-click="addWorkspace()">Add</a> one to start</span>
+        <table ng-repeat="workspace in workspaces" class="table table-bordered table-striped table-condensed">
+            <thead>
+            <tr>
+                <th colspan="4"><a href="#/workspace/{{workspace.id}}">{{workspace.title}}</a></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-show="filtered.length > 0">
+                <th>#</th>
+                <th>Widget</th>
+                <th>Items available</th>
+                <th>Items not synchronized</th>
+                <th>delete Widget</th>
+            </tr>
+            <tr ng-repeat="widget in filtered = (widgets | filter:{workspace.id:workspace.id})">
+                <td>{{ widget.position }}</td>
+                <td>{{ widget.title }}</td>
+                <td ng-show="widget.is_offline_compatible && widget.data">
+                    <span class="label label-info">{{ widget.data.available }}</span>
+                </td>
+                <td ng-show="widget.is_offline_compatible && widget.data">
+                    <span class="label " ng-class="{'label-success':widget.data.number_not_synchronized == 0, 'label-warning':widget.data.number_not_synchronized > 0}">
+                        {{ widget.data.number_not_synchronized }}
+                    </span>
+                </td>
+                <td colspan="2" ng-show="widget.is_offline_compatible && !widget.data">
+                    No data available, maybe not logged in?
+                </td>
+                <td ng-show="!widget.is_offline_compatible" colspan="2">Widget is not offline compatible</td>
+                <td><span ng-click="deleteWidget(widget)" class="btn btn-danger">x</span></td>
+            </tr>
+            <tr ng-show="filtered.length == 0">
+                <td colspan="5">Workspace does not have widgets</td>
+            </tr>
+            </tbody>
+        </table>
+    </div><!--/span-->
+</div><!--/row-->
+<div class="row-fluid"
+<div class="span12 well">
+    <div ng-repeat="childFrame in childFrames">
+        {{ childFrame }}
+    </div>
+</div><!--/span-->
+</div><!--/row-->
+{% endraw %}
