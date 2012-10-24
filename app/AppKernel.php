@@ -29,6 +29,7 @@ class AppKernel extends Kernel
             new Coruja\PlesyndBundle\CorujaPlesyndBundle(),
             new Coruja\WookieConnectorBundle\CorujaWookieConnectorBundle(),
             new Coruja\UserBundle\CorujaUserBundle(),
+            new Coruja\AngularModuleBundle\CorujaAngularModuleBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

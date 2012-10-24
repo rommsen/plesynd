@@ -1,7 +1,7 @@
-coruja_user:
-    resource: "@CorujaUserBundle/Controller/"
-    type:     annotation
-    prefix:   /
+#coruja_angular_module:
+#    resource: "@CorujaAngularModuleBundle/Controller/"
+#    type:     annotation
+#    prefix:   /
 
 CorujaWookieConnectorBundle:
     resource: "@CorujaWookieConnectorBundle/Controller/"
