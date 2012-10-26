@@ -6,8 +6,7 @@ Application.Directives.directive('remoteForm', ['$http',
             this.message = message;
         }
 
-        var forEach = angular.forEach,
-            noop = angular.noop;
+        var forEach = angular.forEach;
 
         return {
             'restrict':'A',
@@ -33,18 +32,18 @@ Application.Directives.directive('remoteForm', ['$http',
                     forEach(self.formComponents, function (component) {
                         component.$setValidity('server', true);
                     });
-                }
+                };
 
                 $scope.serverValidationError = {};
-                $scope.target = $attrs['target'];
-                $scope.success = $attrs['success'];
-                $scope.method = $attrs['method'] || 'post';
+                $scope.target = $attrs.target;
+                $scope.success = $attrs.success;
+                $scope.method = $attrs.method || 'post';
                 // error code defaults to 400
-                $scope.validation_error_code = $attrs['errorCode'] || 400;
+                $scope.validation_error_code = $attrs.errorCode || 400;
                 // property path defaults to propertyPath
-                $scope.property_path_key = $attrs['propertyPath'] || 'propertyPath';
+                $scope.property_path_key = $attrs.propertyPath || 'propertyPath';
                 // message key defaults to message
-                $scope.message_key = $attrs['message'] || 'message';
+                $scope.message_key = $attrs.message || 'message';
                 if ($scope.target == undefined) {
                     throw new IllegalArgumentException('target must be defined');
                 }
@@ -54,7 +53,7 @@ Application.Directives.directive('remoteForm', ['$http',
                     $scope.formData = formData;
                     $scope.is_submitted = true;
                     self.resetFormComponentsValidity();
-                }
+                };
             },
 
             'link':function (scope, element, attrs, ctrl) {
@@ -82,7 +81,7 @@ Application.Directives.directive('remoteForm', ['$http',
                     scope.is_submitted = false;
                 });
             }
-        }
+        };
     }])
     .directive('remoteFormComponent', function () {
         return {
@@ -90,9 +89,9 @@ Application.Directives.directive('remoteForm', ['$http',
             'require':['^remoteForm', 'ngModel'],
 
             'link':function (scope, element, attrs, ctrls) {
-                var formCtrl = ctrls[0];
-                var ngModel = ctrls[1];
+                var formCtrl = ctrls[0],
+                    ngModel = ctrls[1];
                 formCtrl.registerFormComponent(attrs.name, ngModel);
             }
-        }
+        };
     });
