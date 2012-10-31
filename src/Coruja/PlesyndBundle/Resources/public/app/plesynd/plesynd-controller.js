@@ -1,8 +1,8 @@
 'use strict';
 
 /* Controllers */
-Application.Controllers.controller('PlesyndCtrl', ['$rootScope', '$scope', '$http', '$location', 'onlineStatus', 'workspaceService', 'widgetService', 'childFrameService', 'systemMessageService',
-    function ($rootScope, $scope, $http, $location, onlineStatus, workspaceService, widgetService, childFrameService, systemMessageService) {
+Application.Controllers.controller('PlesyndCtrl', ['$rootScope', '$scope', '$http', '$location', 'onlineStatus', 'workspaceService', 'widgetService', 'childFrameService', 'systemMessageService',  'confirmationService',
+    function ($rootScope, $scope, $http, $location, onlineStatus, workspaceService, widgetService, childFrameService, systemMessageService,  confirmationService) {
         $rootScope.$on("$routeChangeStart", function (event, next, current) {
             $scope.loading = true;
             $scope.changeShowEdit(false);
@@ -88,9 +88,11 @@ Application.Controllers.controller('PlesyndCtrl', ['$rootScope', '$scope', '$htt
         };
 
         $scope.deleteWidget = function (widget) {
-            widgetService['delete'](widget, function () {
-                $scope.widgets.splice($scope.widgets.indexOf(widget), 1);
-                systemMessageService.addSuccessMessage('Widget ' + widget.title + ' deleted');
+            confirmationService.confirm('Do you really want to delete this widget?', function () {
+                widgetService['delete'](widget, function () {
+                    $scope.widgets.splice($scope.widgets.indexOf(widget), 1);
+                    systemMessageService.addSuccessMessage('Widget ' + widget.title + ' deleted');
+                });
             });
         };
     }]);

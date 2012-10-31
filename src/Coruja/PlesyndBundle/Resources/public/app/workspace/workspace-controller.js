@@ -1,7 +1,7 @@
 'use strict';
 
-Application.Controllers.controller('WorkspaceCtrl', ['$scope', '$http', '$location', '$filter', 'workspaceService', 'widgetService', 'workspace', 'systemMessageService',
-    function ($scope, $http, $location, $filter, workspaceService, widgetService, workspace, systemMessageService) {
+Application.Controllers.controller('WorkspaceCtrl', ['$scope', '$http', '$location', '$filter', 'workspaceService', 'widgetService', 'workspace', 'systemMessageService', 'confirmationService',
+    function ($scope, $http, $location, $filter, workspaceService, widgetService, workspace, systemMessageService, confirmationService) {
         $scope.workspace = workspace;
         $scope.widgetTitleFilter = '';
         $scope.offlineCompatibleFilter = false;
@@ -18,11 +18,13 @@ Application.Controllers.controller('WorkspaceCtrl', ['$scope', '$http', '$locati
         $scope.selected_widget = null;
 
         $scope.deleteWorkspace = function () {
-            workspaceService['delete']($scope.workspace, function () {
-                // need to reload, because there is no direct binding
-                $scope.$parent.workspaces = workspaceService.query();
-                systemMessageService.addSuccessMessage('Workspace ' + $scope.workspace.title + ' deleted');
-                $location.path('/dashboard');
+            confirmationService.confirm('Do you really want to delete this workspace?', function () {
+                workspaceService['delete']($scope.workspace, function () {
+                    // need to reload, because there is no direct binding
+                    $scope.$parent.workspaces = workspaceService.query();
+                    systemMessageService.addSuccessMessage('Workspace ' + $scope.workspace.title + ' deleted');
+                    $location.path('/dashboard');
+                });
             });
         };
 

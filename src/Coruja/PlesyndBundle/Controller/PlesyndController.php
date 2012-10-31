@@ -19,14 +19,14 @@ class PlesyndController extends Controller
     /**
      * @Route("/partials/dashboard")
      */
-    public function dashboardAction() {
+    public function dashboardPartialAction() {
         return $this->render('CorujaPlesyndBundle:Plesynd:dashboard.html.twig');
     }
 
     /**
      * @Route("/partials/workspace")
      */
-    public function workspaceAction() {
+    public function workspacePartialAction() {
         return $this->render('CorujaPlesyndBundle:Plesynd:workspace.html.twig');
     }
 
@@ -41,6 +41,7 @@ CACHE MANIFEST
 CACHE:
 
 #Partials
+/partials/auth
 /partials/dashboard
 /partials/workspace
 

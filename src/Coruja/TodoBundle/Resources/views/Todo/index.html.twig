@@ -14,6 +14,19 @@
 
 {% raw %}
 
+<div ng-controller="ConfirmationCtrl" ui-modal class="fade" ng-model="confirmationModalShown" id="confirmationModal">
+    <div class="modal-header">
+        <h3>Confirmation needed</h3>
+    </div>
+    <div class="modal-body">
+        <p>{{ confirmation_text }}</p>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" ng-click="cancel()">Cancel</a>
+        <a href="#" class="btn btn-primary" ng-click="confirm()">Confirm</a>
+    </div>
+</div>
+
 <div id="main" class="auth span6" ng-controller="TodoCtrl" >
     <div class="well well-small">
         <strong>Plesynd Todo</strong>
@@ -121,7 +134,7 @@
             <tfoot ng-show="activeTodoList && activeTodos.length">
                 <tr>
                     <td>
-                        <span id="todo-count"><strong>{{remainingCount}}</strong>
+                        <span id="todo-count"><strong>{{remainingCount}}</strong></span>
                         <ng-pluralize count="remainingCount" when="{ one: 'item left', other: 'items left' }"></ng-pluralize>
                     </td>
                     <td colspan="2">
@@ -140,8 +153,10 @@
 {% endraw %}
 
 {% javascripts output='js/compiled/todo/main.js'
-    '@CorujaAngularModuleBundle/Resources/public/app/lib/jquery-1.8.1.js'
-    '@CorujaAngularModuleBundle/Resources/public/app/lib/angular.js'
+    '//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js'
+    '//ajax.googleapis.com/ajax/libs/angularjs/1.0.2/angular.min.js'
+    '//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js'
+    '@CorujaAngularModuleBundle/Resources/public/app/lib/angular-ui.js'
     '@CorujaAngularModuleBundle/Resources/public/app/lib/angular-resource.js'
     '@CorujaAngularModuleBundle/Resources/public/app/lib/http-auth-interceptor.js'
     '@CorujaAngularModuleBundle/Resources/public/app/lib/postmessage.js'
@@ -153,6 +168,8 @@
     '@CorujaTodoBundle/Resources/public/app/todo/todo-focus-directive.js'
     '@CorujaTodoBundle/Resources/public/app/todo-list/todo-list-service.js'
     '@CorujaAngularModuleBundle/Resources/public/app/coruja-auth/coruja-auth-directive.js'
+    '@CorujaAngularModuleBundle/Resources/public/app/coruja-confirmation/coruja-confirmation-controller.js'
+    '@CorujaAngularModuleBundle/Resources/public/app/coruja-confirmation/coruja-confirmation-service.js'
     '@CorujaAngularModuleBundle/Resources/public/app/coruja-frame-messenger/coruja-child-frame-messenger-service.js'
     '@CorujaAngularModuleBundle/Resources/public/app/coruja-message/coruja-message-container-directive.js'
     '@CorujaAngularModuleBundle/Resources/public/app/coruja-message/coruja-message-service.js'

@@ -12,7 +12,7 @@ Application.Filters = angular.module('application.filters', []);
 Application.Services = angular.module('application.services', ['ngResource']);
 Application.Directives = angular.module('application.directives', ['http-auth-interceptor']);
 
-angular.module('application', ['application.controllers', 'application.filters', 'application.services', 'application.directives'])
+angular.module('application', ['ui', 'application.controllers', 'application.filters', 'application.services', 'application.directives'])
     .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/dashboard', {templateUrl : 'partials/dashboard', controller : 'DashboardCtrl',
         resolve                                    : {

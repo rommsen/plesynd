@@ -21,6 +21,19 @@
 
 {% raw %}
 
+<div ng-controller="ConfirmationCtrl" ui-modal class="fade" ng-model="confirmationModalShown" id="confirmationModal">
+    <div class="modal-header">
+        <h3>Confirmation needed</h3>
+    </div>
+    <div class="modal-body">
+        <p>{{ confirmation_text }}</p>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" ng-click="cancel()">Cancel</a>
+        <a href="#" class="btn btn-primary" ng-click="confirm()">Confirm</a>
+    </div>
+</div>
+
 <div class="navbar navbar-inverse navbar-fixed-top">
     <div class="navbar-inner">
         <div class="container-fluid">
@@ -82,10 +95,10 @@
                             <span class="help-inline" ng-show="!registerForm.email.$valid && registerForm.email.$error.server">{{ serverValidationError.email }}</span>
                         </div>
                     </div>
-                    <div class="control-group" ng-class="{error: !registerForm.password.$valid}">
+                    <div class="control-group" ng-class="{error: !registerForm.plainPassword.$valid}">
                         <div class="controls">
-                            <input remote-form-componen type="password" name="password" ng-model="user.password" placeholder="Password"/>
-                            <span class="help-inline" ng-show="!registerForm.password.$valid && registerForm.password.$error.server">{{ serverValidationError.email }}</span>
+                            <input remote-form-component type="password" name="plainPassword" ng-model="user.plainPassword" placeholder="Password"/>
+                            <span class="help-inline" ng-show="!registerForm.plainPassword.$valid && registerForm.plainPassword.$error.server">{{ serverValidationError.plainPassword }}</span>
                         </div>
                     </div>
                     <button type="submit" ng-click="submit(user)" ng-disabled="registerForm.$pristine" class="btn btn-primary">Register</button>
@@ -166,8 +179,10 @@
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
 {% javascripts output='js/compiled/plesynd/main.js'
-    '@CorujaAngularModuleBundle/Resources/public/app/lib/jquery-1.8.1.js'
-    '@CorujaAngularModuleBundle/Resources/public/app/lib/angular.js'
+    '//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js'
+    '//ajax.googleapis.com/ajax/libs/angularjs/1.0.2/angular.min.js'
+    '//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js'
+    '@CorujaAngularModuleBundle/Resources/public/app/lib/angular-ui.js'
     '@CorujaAngularModuleBundle/Resources/public/app/lib/angular-resource.js'
     '@CorujaAngularModuleBundle/Resources/public/app/lib/http-auth-interceptor.js'
     '@CorujaAngularModuleBundle/Resources/public/app/lib/postmessage.js'
@@ -180,6 +195,8 @@
     '@CorujaPlesyndBundle/Resources/public/app/widget/widget-service.js'
     '@CorujaAngularModuleBundle/Resources/public/app/coruja-auth/coruja-auth-directive.js'
     '@CorujaAngularModuleBundle/Resources/public/app/coruja-child-frame/coruja-child-frame-service.js'
+    '@CorujaAngularModuleBundle/Resources/public/app/coruja-confirmation/coruja-confirmation-controller.js'
+    '@CorujaAngularModuleBundle/Resources/public/app/coruja-confirmation/coruja-confirmation-service.js'
     '@CorujaAngularModuleBundle/Resources/public/app/coruja-frame-messenger/coruja-parent-frame-messenger-service.js'
     '@CorujaAngularModuleBundle/Resources/public/app/coruja-message/coruja-message-container-directive.js'
     '@CorujaAngularModuleBundle/Resources/public/app/coruja-message/coruja-message-service.js'
