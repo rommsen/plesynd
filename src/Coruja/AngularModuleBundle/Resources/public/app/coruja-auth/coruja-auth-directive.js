@@ -15,15 +15,17 @@ Application.Directives.directive('auth', ['$http', 'authService', 'systemMessage
                 };
 
                 $scope.logout = function () {
-                    $http.defaults.headers.common.Authorization = "Basic " + btoa('#' + ":" + '#');
+                    delete $http.defaults.headers.common.Authorization;
                     $http.get('http://plesynd/app_dev.php/logout');
                     systemMessageService.addSuccessMessage('See you next time');
                     $scope.$emit('event:auth-logoutSuccessful');
+                    $scope.$emit('event:auth-loginRequired');
                 };
 
                 $scope.doLogin = function () {
                     $http.get('http://plesynd/app_dev.php/login')
                         .success(function () {
+                            console.log('success login');
                             authService.loginConfirmed();
                             $scope.active_username = $scope.username;
                             $scope.username = '';
@@ -31,6 +33,7 @@ Application.Directives.directive('auth', ['$http', 'authService', 'systemMessage
                             systemMessageService.addSuccessMessage('Welcome back ' + $scope.active_username);
                         })
                         .error(function () {
+                            delete $http.defaults.headers.common.Authorization;
                             systemMessageService.addErrorMessage('Login with username "' + $scope.username + '" was not successful');
                         });
                 };
