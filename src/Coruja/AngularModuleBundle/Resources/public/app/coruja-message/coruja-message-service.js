@@ -8,7 +8,7 @@ Application.Services.factory('systemMessageService', ["$rootScope", "$timeout",
         MessageService.prototype.addMessageObject = function (message) {
             $timeout(function () {
                 $rootScope.$broadcast("systemMessageAdded", message);
-            })
+            });
         };
 
         MessageService.prototype.addMessage = function (message, sticky) {
