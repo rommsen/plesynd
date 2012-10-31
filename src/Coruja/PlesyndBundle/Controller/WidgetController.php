@@ -12,6 +12,11 @@ use FOS\RestBundle\View\RouteRedirectView;
 use FOS\RestBundle\View\View;
 use FOS\Rest\Util\Codes as HttpCodes;
 
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
+use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
+use Symfony\Component\Security\Acl\Permission\MaskBuilder;
+
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
@@ -55,6 +60,11 @@ class WidgetController extends FOSRestController
         $widget = /* @var \Coruja\PlesyndBundle\Entity\Widget $widget */
             $em->getRepository('CorujaPlesyndBundle:Widget')->find($id);
 
+        $securityContext = $this->get('security.context');
+        if($securityContext->isGranted('VIEW', $widget) === false) {
+            throw new AccessDeniedException();
+        }
+
         $connection = $this->get('coruja_wookie_connector.connector');
         $connection->getUser()->setLoginName($widget->getInstanceIdentifier());
         $widget->setInstance($connection->getOrCreateInstance($widget));
@@ -73,6 +83,11 @@ class WidgetController extends FOSRestController
         $connection = $this->get('coruja_wookie_connector.connector');
         $em = /* @var $em \Doctrine\ORM\EntityManager */ $this->get('doctrine')->getEntityManager();
         $widgets = $em->getRepository('CorujaPlesyndBundle:Widget')->findAll();
+
+        $securityContext = $this->get('security.context');
+        $widgets = array_filter($widgets, function(Widget $widget) use ($securityContext) {
+            return $securityContext->isGranted('VIEW', $widget);
+        });
 
         $widgets = array_map(function(Widget $widget) use($connection) {
             $connection->getUser()->setLoginName($widget->getInstanceIdentifier());
@@ -101,12 +116,23 @@ class WidgetController extends FOSRestController
     {
         $em = /* @var $em \Doctrine\ORM\EntityManager */ $this->get('doctrine')->getEntityManager();
         $widget = $em->find('CorujaPlesyndBundle:Widget', $id);
-        if ($widget !== NULL) {
-            $em->remove($widget);
-            $em->flush();
-            return View::create(null, HttpCodes::HTTP_NO_CONTENT);
+
+        if($widget === NULL) {
+            return View::create(null, HttpCodes::HTTP_NOT_FOUND);
         }
-        return View::create(null, HttpCodes::HTTP_NOT_FOUND);
+
+        $securityContext = $this->get('security.context');
+        if ($securityContext->isGranted('DELETE', $widget) === false) {
+            throw new AccessDeniedException();
+        }
+
+        $aclProvider = $this->get('security.acl.provider');
+        $objectIdentity = ObjectIdentity::fromDomainObject($widget);
+        $aclProvider->deleteAcl($objectIdentity);
+
+        $em->remove($widget);
+        $em->flush();
+        return View::create(null, HttpCodes::HTTP_NO_CONTENT);
     }
 
     /**
@@ -121,6 +147,18 @@ class WidgetController extends FOSRestController
         $widget = new Widget($data->get('identifier'), $data->get('title'), $data->get('description'), $data->get('title'));
         $widget->setWorkspace($em->getRepository('CorujaPlesyndBundle:Workspace')->findOneBy(array('id' => $data->get('workspace_id'))));
         $em->flush();
+
+        // creating the ACL
+        $aclProvider = $this->get('security.acl.provider');
+        $acl = $aclProvider->createAcl(ObjectIdentity::fromDomainObject($widget));
+
+        // retrieving the security identity of the currently logged-in user
+        $securityContext = $this->get('security.context');
+        $securityIdentity = UserSecurityIdentity::fromAccount($securityContext->getToken()->getUser());
+
+        // grant owner access
+        $acl->insertObjectAce($securityIdentity, MaskBuilder::MASK_OWNER);
+        $aclProvider->updateAcl($acl);
 
         return RouteRedirectView::create('get_widget', array('id' => $widget->getId()), HttpCodes::HTTP_CREATED);
     }

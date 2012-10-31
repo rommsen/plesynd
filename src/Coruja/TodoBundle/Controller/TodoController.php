@@ -150,6 +150,10 @@ class TodoController extends FOSRestController
             throw new AccessDeniedException();
         }
 
+        $aclProvider = $this->get('security.acl.provider');
+        $objectIdentity = ObjectIdentity::fromDomainObject($todo);
+        $aclProvider->deleteAcl($objectIdentity);
+
         $em->remove($todo);
         $em->flush();
         return View::create(null, HttpCodes::HTTP_NO_CONTENT);

@@ -149,6 +149,10 @@ class WorkspaceController extends FOSRestController
             throw new AccessDeniedException();
         }
 
+        $aclProvider = $this->get('security.acl.provider');
+        $objectIdentity = ObjectIdentity::fromDomainObject($workspace);
+        $aclProvider->deleteAcl($objectIdentity);
+
         $em->remove($workspace);
         $em->flush();
         return View::create(null, HttpCodes::HTTP_NO_CONTENT);

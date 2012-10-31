@@ -32,10 +32,8 @@ class TodoListController extends FOSRestController
         $em = /* @var $em \Doctrine\ORM\EntityManager */ $this->get('doctrine')->getEntityManager();
         $todoLists = $em->getRepository('CorujaTodoBundle:TodoList')->findAll();
 
-        $logger = $this->get('logger');
         $securityContext = $this->get('security.context');
-        $todoLists = array_filter($todoLists, function(TodoList $todoList) use ($securityContext, $logger) {
-            $logger->info($securityContext->isGranted('VIEW', $todoList)) ;
+        $todoLists = array_filter($todoLists, function(TodoList $todoList) use ($securityContext) {
             return $securityContext->isGranted('VIEW', $todoList);
         });
 
@@ -147,6 +145,10 @@ class TodoListController extends FOSRestController
         if ($securityContext->isGranted('DELETE', $todoList) === false) {
             throw new AccessDeniedException();
         }
+
+        $aclProvider = $this->get('security.acl.provider');
+        $objectIdentity = ObjectIdentity::fromDomainObject($todoList);
+        $aclProvider->deleteAcl($objectIdentity);
 
         $em->remove($todoList);
         $em->flush();
