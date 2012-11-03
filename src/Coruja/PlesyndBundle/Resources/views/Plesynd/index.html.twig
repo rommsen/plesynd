@@ -130,13 +130,14 @@
         </div><!--/row-->
 
         <div class="row-fluid">
-            <div class="span12">
-                <div ng-repeat="widget in widgets">
-                    <div ng-show="isWidgetVisible(widget)" class="widget well pull-left" style="width: {{ widget.instance.width }}px;height:({{ widget.instance.height }}+80)px;">
+            <div class="span12" class="widgets" widget-sort>
+                <div  >
+                    <div ng-repeat="widget in widgets" ng-show="isWidgetVisible(widget)" class="widget well pull-left" style="width: {{ widget.instance.width }}px;height:({{ widget.instance.height }}+80)px;">
                         <div class="navbar">
                             <div class="navbar-inner">
                                 <div class="container-fluid">
                                     <a class="brand" href="#">{{ widget.title }}</a>
+                                    <a>{{ widget.id }}</a>
                                     <ul ng-show="widget.is_offline_compatible" class="nav">
                                         <li>
                                             <a>
@@ -182,6 +183,7 @@
     '//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js'
     '//ajax.googleapis.com/ajax/libs/angularjs/1.0.2/angular.min.js'
     '//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js'
+    'http://code.jquery.com/ui/1.9.1/jquery-ui.js'
     '@CorujaAngularModuleBundle/Resources/public/app/lib/angular-ui.js'
     '@CorujaAngularModuleBundle/Resources/public/app/lib/angular-resource.js'
     '@CorujaAngularModuleBundle/Resources/public/app/lib/http-auth-interceptor.js'
@@ -193,6 +195,7 @@
     '@CorujaPlesyndBundle/Resources/public/app/workspace/workspace-controller.js'
     '@CorujaPlesyndBundle/Resources/public/app/workspace/workspace-service.js'
     '@CorujaPlesyndBundle/Resources/public/app/widget/widget-service.js'
+    '@CorujaPlesyndBundle/Resources/public/app/widget/widget-sort-directive.js'
     '@CorujaAngularModuleBundle/Resources/public/app/coruja-auth/coruja-auth-directive.js'
     '@CorujaAngularModuleBundle/Resources/public/app/coruja-child-frame/coruja-child-frame-service.js'
     '@CorujaAngularModuleBundle/Resources/public/app/coruja-confirmation/coruja-confirmation-controller.js'

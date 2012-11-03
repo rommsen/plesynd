@@ -82,7 +82,10 @@ class WidgetController extends FOSRestController
     {
         $connection = $this->get('coruja_wookie_connector.connector');
         $em = /* @var $em \Doctrine\ORM\EntityManager */ $this->get('doctrine')->getEntityManager();
-        $widgets = $em->getRepository('CorujaPlesyndBundle:Widget')->findAll();
+        $widgets =  $em->createQueryBuilder()
+            ->select('widget')
+            ->from('CorujaPlesyndBundle:Widget', 'widget')
+            ->orderBy('widget.position', 'asc')->getQuery()->getResult();
 
         $securityContext = $this->get('security.context');
         $widgets = array_filter($widgets, function(Widget $widget) use ($securityContext) {
@@ -161,5 +164,31 @@ class WidgetController extends FOSRestController
         $aclProvider->updateAcl($acl);
 
         return RouteRedirectView::create('get_widget', array('id' => $widget->getId()), HttpCodes::HTTP_CREATED);
+    }
+
+    /**
+     * @Route("/{id}", name="put_widget")
+     * @Method({"PUT"})
+     * @Rest\View()
+     * @ApiDoc
+     * @param $id
+     */
+    public function putWidgetAction($id)
+    {
+        $data = $this->getRequest()->request;
+        $em = $this->get('doctrine')->getEntityManager();
+        /* @var $em \Doctrine\ORM\EntityManager */
+        $widget = $em->find('CorujaPlesyndBundle:Widget', $id);
+        if($widget !== NULL) {
+            $securityContext = $this->get('security.context');
+            if ($securityContext->isGranted('EDIT', $widget) === false) {
+                throw new AccessDeniedException();
+            }
+
+            $widget->setPosition($data->get('position'));
+            $em->flush();
+            return View::create(null, HttpCodes::HTTP_NO_CONTENT);
+        }
+        return View::create(null, HttpCodes::HTTP_NOT_FOUND);
     }
 }
