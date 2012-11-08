@@ -30,7 +30,7 @@
 <div id="main" class="auth span6" ng-controller="TodoCtrl" >
     <div class="well well-small">
         <strong>Plesynd Todo</strong>
-        <a class="pull-right" ng-click="logout()">Logout</a>
+        <a ng-show="active_username" class="pull-right" ng-click="logout()">Logout {{ active_username }}</a>
     </div>
 
     <div message-container></div>
@@ -69,13 +69,19 @@
                             <span class="help-inline" ng-show="!registerForm.email.$valid && registerForm.email.$error.server">{{ serverValidationError.email }}</span>
                         </div>
                     </div>
-                    <div class="control-group" ng-class="{error: !registerForm.password.$valid}">
+                    <div class="control-group" ng-class="{error: !registerForm.plainPassword.$valid}">
                         <div class="controls">
-                            <input remote-form-componen type="password" name="password" ng-model="user.password" placeholder="Password"/>
-                            <span class="help-inline" ng-show="!registerForm.password.$valid && registerForm.password.$error.server">{{ serverValidationError.email }}</span>
+                            <input remote-form-component type="password" name="plainPassword" ng-model="user.plainPassword" placeholder="Password"/>
+                            <span class="help-inline" ng-show="!registerForm.plainPassword.$valid && registerForm.plainPassword.$error.server">{{ serverValidationError.plainPassword }}</span>
                         </div>
                     </div>
-                    <button type="submit" ng-click="submit(user)" ng-disabled="registerForm.$pristine" class="btn btn-primary">Register</button>
+                    <div class="control-group" ng-class="{error: !registerForm.repeatPassword.$valid}">
+                        <div class="controls">
+                            <input type="password" name="repeatPassword" ng-model="repeatPassword" password-validator="plainPassword" placeholder="Repeat Password"/>
+                            <span class="help-inline" ng-show="!registerForm.repeatPassword.$valid">Passwords do not match</span>
+                        </div>
+                    </div>
+                    <button type="submit" ng-click="submit(user)" ng-disabled="registerForm.$pristine || !registerForm.$valid" class="btn btn-primary">Register</button>
                     <button class="btn btn-info" ng-click="changeAuthType('login')">Go to login</button>
                 </form>
             </div>
@@ -174,6 +180,7 @@
     '@CorujaAngularModuleBundle/Resources/public/app/coruja-message/coruja-message-container-directive.js'
     '@CorujaAngularModuleBundle/Resources/public/app/coruja-message/coruja-message-service.js'
     '@CorujaAngularModuleBundle/Resources/public/app/coruja-online-status/coruja-online-status-service.js'
+    '@CorujaAngularModuleBundle/Resources/public/app/coruja-password-validator/coruja-password-validator-directive.js'
     '@CorujaAngularModuleBundle/Resources/public/app/coruja-remote-form/coruja-remote-form-directive.js'
     '@CorujaAngularModuleBundle/Resources/public/app/coruja-resource/coruja-resource-service.js'
     '@CorujaAngularModuleBundle/Resources/public/app/coruja-storage/coruja-local-storage-service.js'

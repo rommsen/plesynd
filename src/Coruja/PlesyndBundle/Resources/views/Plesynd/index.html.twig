@@ -39,7 +39,7 @@
         <div class="container-fluid">
             <a class="brand" href="#">Plesynd</a>
             <p class="navbar-text pull-right">
-                <span><a class="navbar-link" ng-click="logout()">Logout</a></span>
+                <span ng-show="active_username"><a class="navbar-link" ng-click="logout()">Logout {{ active_username }}</a></span>
             </p>
             <ul class="nav">
                 <li>
@@ -101,7 +101,13 @@
                             <span class="help-inline" ng-show="!registerForm.plainPassword.$valid && registerForm.plainPassword.$error.server">{{ serverValidationError.plainPassword }}</span>
                         </div>
                     </div>
-                    <button type="submit" ng-click="submit(user)" ng-disabled="registerForm.$pristine" class="btn btn-primary">Register</button>
+                    <div class="control-group" ng-class="{error: !registerForm.repeatPassword.$valid}">
+                        <div class="controls">
+                            <input type="password" name="repeatPassword" ng-model="repeatPassword" password-validator="plainPassword" placeholder="Repeat Password"/>
+                            <span class="help-inline" ng-show="!registerForm.repeatPassword.$valid">Passwords do not match</span>
+                        </div>
+                    </div>
+                    <button type="submit" ng-click="submit(user)" ng-disabled="registerForm.$pristine || !registerForm.$valid" class="btn btn-primary">Register</button>
                     <button class="btn btn-info" ng-click="changeAuthType('login')">Go to login</button>
                 </form>
             </div>
@@ -160,7 +166,7 @@
                         </div>
                     </div>
                     <hr>
-                    <div ng-bind-html-unsafe="renderWidgetIframe(widget)"></div>
+                    <widget-iframe />
                 </div>
             </div><!--/span-->
         </div><!--/row-->
@@ -193,6 +199,7 @@
     '@CorujaPlesyndBundle/Resources/public/app/workspace/workspace-controller.js'
     '@CorujaPlesyndBundle/Resources/public/app/workspace/workspace-service.js'
     '@CorujaPlesyndBundle/Resources/public/app/widget/widget-service.js'
+    '@CorujaPlesyndBundle/Resources/public/app/widget/widget-iframe-directive.js'
     '@CorujaPlesyndBundle/Resources/public/app/widget/widget-sort-directive.js'
     '@CorujaAngularModuleBundle/Resources/public/app/coruja-auth/coruja-auth-directive.js'
     '@CorujaAngularModuleBundle/Resources/public/app/coruja-child-frame/coruja-child-frame-service.js'
@@ -202,6 +209,7 @@
     '@CorujaAngularModuleBundle/Resources/public/app/coruja-message/coruja-message-container-directive.js'
     '@CorujaAngularModuleBundle/Resources/public/app/coruja-message/coruja-message-service.js'
     '@CorujaAngularModuleBundle/Resources/public/app/coruja-online-status/coruja-online-status-service.js'
+    '@CorujaAngularModuleBundle/Resources/public/app/coruja-password-validator/coruja-password-validator-directive.js'
     '@CorujaAngularModuleBundle/Resources/public/app/coruja-remote-form/coruja-remote-form-directive.js'
     '@CorujaAngularModuleBundle/Resources/public/app/coruja-resource/coruja-resource-service.js'
     '@CorujaAngularModuleBundle/Resources/public/app/coruja-storage/coruja-local-storage-service.js'

@@ -1,33 +1,38 @@
 'use strict';
 
-Application.Directives.directive('auth', ['$http', 'authService', 'systemMessageService',
-    function ($http, authService, systemMessageService) {
+Application.Directives.directive('auth', ['$http', '$window', 'authService', 'systemMessageService',
+    function ($http, $window, authService, systemMessageService) {
         return {
             restrict : 'C',
             controller : function ($scope, $element, $attrs) {
+                var username_key = "username"+$window.name;
+                $scope.active_username = sessionStorage.getItem(username_key);
+
                 $scope.authType = 'login';
                 $scope.changeAuthType = function () {
                     $scope.authType = $scope.authType === 'login' ? 'register' : 'login';
                 };
                 $scope.login = function () {
-                    $http.defaults.headers.common.Authorization = "Basic " + btoa($scope.username + ":" + $scope.password);
-                    $scope.doLogin();
+                    $scope.doLogin("Basic " + btoa($scope.username + ":" + $scope.password));
                 };
 
                 $scope.logout = function () {
                     delete $http.defaults.headers.common.Authorization;
+                    $scope.active_username = null;
+                    sessionStorage.removeItem(username_key);
                     $http.get('http://plesynd/app_dev.php/logout');
                     systemMessageService.addSuccessMessage('See you next time');
                     $scope.$emit('event:auth-logoutSuccessful');
                     $scope.$emit('event:auth-loginRequired');
                 };
 
-                $scope.doLogin = function () {
+                $scope.doLogin = function (header) {
+                    $http.defaults.headers.common.Authorization = header;
                     $http.get('http://plesynd/app_dev.php/login')
                         .success(function () {
-                            console.log('success login');
                             authService.loginConfirmed();
                             $scope.active_username = $scope.username;
+                            sessionStorage.setItem(username_key, $scope.active_username);
                             $scope.username = '';
                             $scope.password = '';
                             systemMessageService.addSuccessMessage('Welcome back ' + $scope.active_username);
