@@ -94,13 +94,6 @@ class WidgetController extends FOSRestController
 
         $widgets = array_map(function(Widget $widget) use($connection) {
             $connection->getUser()->setLoginName($widget->getInstanceIdentifier());
-            $instance = $connection->getOrCreateInstance($widget);
-            try {
-                $property = $connection->getProperty($instance, new WidgetProperty('plesynd_offline_compatible'));
-                $widget->setIsOfflineCompatible($property->getValue());
-            } catch(WookieConnectorException $e) {
-                $widget->setIsOfflineCompatible(false);
-            }
             $widget->setInstance($connection->getOrCreateInstance($widget));
             $widget->setWorkspaceId($widget->getWorkspace()->getId());
             return $widget;
@@ -149,6 +142,7 @@ class WidgetController extends FOSRestController
         $em = /* @var $em \Doctrine\ORM\EntityManager */ $this->get('doctrine')->getEntityManager();
         $widget = new Widget($data->get('identifier'), $data->get('title'), $data->get('description'), $data->get('title'));
         $widget->setWorkspace($em->getRepository('CorujaPlesyndBundle:Workspace')->findOneBy(array('id' => $data->get('workspace_id'))));
+        $widget->setIsOfflineCompatible($data->get('is_offline_compatible'));
         $em->flush();
 
         // creating the ACL

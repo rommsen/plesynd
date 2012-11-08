@@ -83,10 +83,6 @@ Application.Controllers.controller('PlesyndCtrl', ['$rootScope', '$scope', '$htt
             return widget.workspace.id === $scope.activeWorkspace.id;
         };
 
-        $scope.renderWidgetIframe = function (widget) {
-            return '<iframe src="' + widget.instance.url + '" name="' + widget.instance_identifier + '" width=' + widget.instance.width + ' height=' + widget.instance.height + '></iframe>';
-        };
-
         $scope.deleteWidget = function (widget) {
             confirmationService.confirm('Do you really want to delete this widget?', function () {
                 widgetService['delete'](widget, function () {

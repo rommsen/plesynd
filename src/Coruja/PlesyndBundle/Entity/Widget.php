@@ -59,11 +59,16 @@ class Widget implements WidgetInterface
     protected $position;
 
     /**
+     * @ORM\Column(type="boolean")
+     */
+    protected $is_offline_compatible;
+
+
+    /**
      * @var \Coruja\WookieConnectorBundle\Connector\WidgetInstance
      */
     protected $instance;
 
-    protected $is_offline_compatible;
 
     // TODO currently only used for json, maybe use serialize filter
     protected $workspace_id;
@@ -154,7 +159,7 @@ class Widget implements WidgetInterface
     }
 
     public function setIsOfflineCompatible($offline_compatible) {
-        $this->is_offline_compatible = $offline_compatible;
+        $this->is_offline_compatible = $offline_compatible && strtolower($offline_compatible) !== "false";
     }
 
 
