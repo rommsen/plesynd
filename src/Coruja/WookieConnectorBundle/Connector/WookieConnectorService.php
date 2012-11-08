@@ -433,16 +433,19 @@ class WookieConnectorService implements WookieConnectorServiceInterface {
 
 			if($xmlObj instanceof \SimpleXMLElement) {
 				foreach($xmlObj->children() as /* @var $widget \SimpleXMLElement */ $widget) {
-				 $id = (string) $widget->attributes()->id;
-				 $title = (string) $widget->name;
-				 $description = (string) $widget->description;
-				 $iconURL = (string) $widget->attributes()->icon;
-				 if($iconURL == '') {
-						$iconURL = (string) 'http://www.oss-watch.ac.uk/images/logo2.gif';
-					}
-					$Widget = new Widget($id, $title, $description, $iconURL);
-					$widgets[$id] = $Widget;
-				}
+                    $id = (string) $widget->attributes()->id;
+                    $title = (string) $widget->name;
+                    $description = (string) $widget->description;
+                    $iconURL = '';
+                    if($widget->icon) {
+                        $iconURL = (string)$widget->icon->attributes()->src;
+                    }
+                    if($iconURL == '') {
+                        $iconURL = (string) 'http://www.oss-watch.ac.uk/images/logo2.gif';
+                    }
+                    $Widget = new Widget($id, $title, $description, $iconURL);
+                    $widgets[$id] = $Widget;
+                }
 			} else {
 				throw new Exception\WookieConnectorException('Problem getting available widgets');
 			}
