@@ -3,6 +3,7 @@
 Application.Directives.directive('widgetSort', ['widgetService',
     function (widgetService) {
         return  {
+            'restrict' : 'A',
             'link' : function (scope, element, attrs, ctrl) {
                 function updateWidgets() {
                     var widget,
