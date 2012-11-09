@@ -3,13 +3,17 @@ parameters:
     database_host:     localhost
     database_port:     ~
     database_name:     plesynd
-    database_user:     root
-    database_password: flirtme
+    database_user:
+    database_password:
 
     mailer_transport:  smtp
-    mailer_host:       localhost
-    mailer_user:       ~
-    mailer_password:   ~
+    mailer_host:
+    mailer_user:
+    mailer_password:
+    mailer_encryption: null
+    mailer_auth_mode:  plain
+    mailer_port:       25
+    delivery_address:
 
     locale:            en
-    secret:            dFgtGhfkErfkgTkf12__39j
+    secret:
