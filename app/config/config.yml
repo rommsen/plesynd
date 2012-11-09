@@ -4,7 +4,7 @@ imports:
 
 framework:
     #esi:             ~
-    #translator:      { fallback: %locale% }
+    translator:      ~
     secret:          %secret%
     router:
         resource: "%kernel.root_dir%/config/routing.yml"
@@ -82,6 +82,11 @@ fos_user:
     db_driver: orm
     firewall_name: main
     user_class: Coruja\UserBundle\Entity\User
+    registration:
+        confirmation:
+            from_email:
+                address:        sarom@web.de
+                sender_name:    Acme Demo Registration
 
 sensio_framework_extra:
     # wegen FOSRestBundle ausgestellt https://github.com/FriendsOfSymfony/FOSRestBundle/blob/master/Resources/doc/3-listener-support.md
@@ -112,11 +117,13 @@ coruja_wookie_connector:
 
 # Swiftmailer Configuration
 swiftmailer:
-    transport: %mailer_transport%
-    host:      %mailer_host%
-    username:  %mailer_user%
-    password:  %mailer_password%
-    spool:     { type: memory }
-
-#framework:
-#    translator: ~
+    transport:  %mailer_transport%
+    host:       %mailer_host%
+    username:   %mailer_user%
+    password:   %mailer_password%
+    port:       %mailer_port%
+    encryption: %mailer_encryption%
+    auth_mode:  %mailer_auth_mode%
+    delivery_address:  %delivery_address%
+    disable_delivery: false
+    spool: { type: memory }
