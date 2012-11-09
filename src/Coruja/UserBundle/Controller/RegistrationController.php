@@ -57,7 +57,7 @@ class RegistrationController extends BaseController
 //        $mailer = $this->container->get('fos_user.mailer');
 //        $mailer->sendConfirmationEmailMessage($user);
 
-        //$userManager->updateUser($user);
+        $userManager->updateUser($user);
         return View::create(null, HttpCodes::HTTP_OK);
     }
 }
