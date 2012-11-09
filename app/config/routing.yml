@@ -23,8 +23,11 @@ CorujaUserBundle:
     type:     annotation
     prefix:   /
 
-logout:
-    pattern:   /logout
+
+
+fos_user_register:
+    resource: "@FOSUserBundle/Resources/config/routing/registration.xml"
+    prefix: /register
 
 
 #CorujaTodoBundle:
