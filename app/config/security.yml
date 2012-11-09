@@ -29,7 +29,6 @@ security:
                 provider: fos_userbundle
 
     access_control:
-        - { path: ^/logout, roles: ROLE_USER }
         - { path: ^/plesynd/api, roles: ROLE_USER }
         - { path: ^/todo/api, roles: ROLE_USER }
         - { path: ^/, roles: IS_AUTHENTICATED_ANONYMOUSLY }
