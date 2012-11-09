@@ -12,7 +12,6 @@ Application.Controllers.controller('PlesyndCtrl', ['$rootScope', '$scope', '$htt
             $scope.newLocation = $location.path();
         });
         $rootScope.$on("$routeChangeError", function (event, current, previous, rejection) {
-            alert("ROUTE CHANGE ERROR: " + rejection);
             $scope.loading = false;
         });
         $rootScope.$on('onlineChanged', function (evt, isOnline) {
