@@ -28,23 +28,36 @@ class RegistrationController extends BaseController
 
         $user = $userManager->createUser();
         $user->setUsername($data->get('username'));
-        $user->setPlainPassword($data->get('password'));
+        $user->setPlainPassword($data->get('plainPassword'));
         $user->setEmail($data->get('email'));
+        $user->setEnabled(true);
+        $this->container->get('session')->set('fos_user_send_confirmation_email/email', $user->getEmail());
 
         $validator = $this->container->get('validator');
         $violations = $validator->validate($user, 'Registration');
+
+        $translator = $this->container->get('translator');
 
         if(count($violations) > 0) {
             $errors = array();
             foreach($violations as $error) {
                 $errors[] = array(
                     'propertyPath' => $error->getPropertyPath(),
-                    'message' => $error->getMessage(),
+                    'message' => $translator->trans($error->getMessage(), array(), 'validators'),
                 );
             }
             return View::create($errors, HttpCodes::HTTP_BAD_REQUEST);
         }
 
+        // Todo baue irgendwie actions dafür
+//        if (null === $user->getConfirmationToken()) {
+//            $user->setConfirmationToken($this->tokenGenerator->generateToken());
+//        }
+//
+//        $mailer = $this->container->get('fos_user.mailer');
+//        $mailer->sendConfirmationEmailMessage($user);
+
+        //$userManager->updateUser($user);
         return View::create(null, HttpCodes::HTTP_OK);
     }
 }
