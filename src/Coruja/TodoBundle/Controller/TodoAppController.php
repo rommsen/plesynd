@@ -22,27 +22,21 @@ class TodoAppController extends Controller
         return $this->render('CorujaTodoBundle:Todo:index.html.twig');
     }
 
+    /**
+     * @Route("/cache.appcache")
+     */
     public function appcacheAction() {
         $manifest = <<<EOF
 CACHE MANIFEST
-#Rev klk
+#Rev 1
 
 CACHE:
 
 #CSS
-/css/compiled/todo/main_app_1.css
+/css/compiled/plesynd/main.css
 
 #JS
-/js/compiled/todo/main_angular_1.js
-/js/compiled/todo/main_angular-resource_2.js
-/js/compiled/todo/main_app_3.js
-/js/compiled/todo/main_controllers_4.js
-/js/compiled/todo/main_todoBlur_5.js
-/js/compiled/todo/main_todoFocus_6.js
-/js/compiled/todo/main_coruja-online-status_7.js
-/js/compiled/todo/main_coruja-storage_8.js
-/js/compiled/todo/main_coruja-resource_9.js
-/js/compiled/todo/main_todo-service_10.js
+/js/compiled/plesynd/main.js
 
 NETWORK:
 *

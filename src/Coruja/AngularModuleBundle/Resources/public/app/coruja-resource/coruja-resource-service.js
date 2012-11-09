@@ -3,18 +3,18 @@
 Application.Services.factory('resourceService', ["$q", "$timeout", "$resource", "localStorage", "onlineStatus",
     function ($q, $timeout, $resource, localStorage, onlineStatus) {
         function resourceFactory(config) {
-            var remoteResource = config.remoteResource;
-            var localResource = config.localResource;
-            var entityFactory = config.entityFactory;
-            var use_synchronization = config.use_synchronization;
+            var remoteResource = config.remoteResource,
+                localResource = config.localResource,
+                entityFactory = config.entityFactory,
+                use_synchronization = config.use_synchronization,
+                localIdPrefix = 'local_',
+                forEach = angular.forEach,
+                noop = angular.noop,
+                resource = {},
+                resourceDeferred;
 
             // uncomment to reset data
 //            localResource.reset();
-
-            var localIdPrefix = 'local_';
-
-            var forEach = angular.forEach,
-                noop = angular.noop;
 
             /**
              * Deletes $save, $get etc methods from Resource Object
@@ -22,9 +22,10 @@ Application.Services.factory('resourceService', ["$q", "$timeout", "$resource", 
              * @return {Object}
              */
             function deleteUnnecessaryProperties(object) {
-                var strippedObject = {};
-                for (var property in object) {
-                    if (property.charAt(0) != '$') {
+                var strippedObject = {},
+                    property;
+                for (property in object) {
+                    if (property.charAt(0) !== '$') {
                         strippedObject[property] = object[property];
                     }
                 }
@@ -36,11 +37,11 @@ Application.Services.factory('resourceService', ["$q", "$timeout", "$resource", 
              * @return $q.defer().promise
              */
             function synchronizeData() {
-                var deferred = $q.defer();
-                var promise = deferred.promise;
-                var data_length;
-                var resolved = 0;
-                var results = [];
+                var deferred = $q.defer(),
+                    promise = deferred.promise,
+                    data_length,
+                    resolved = 0,
+                    results = [];
 
                 function resolve(object, header) {
                     var result = {};
@@ -74,7 +75,7 @@ Application.Services.factory('resourceService', ["$q", "$timeout", "$resource", 
                         }
                     });
                     data_length = to_synchronize.length;
-                    if (data_length == 0) {
+                    if (data_length === 0) {
                         $timeout(function () {
                             deferred.resolve([]);
                         });
@@ -93,13 +94,11 @@ Application.Services.factory('resourceService', ["$q", "$timeout", "$resource", 
                 return promise;
             }
 
-            var resource = {};
-            var resourceDeferred;
-
             resource.query = function (params, success, error) {
-                var deferred = $q.defer();
-                var promise = deferred.promise;
-                var items = [];
+                var deferred = $q.defer(),
+                    promise = deferred.promise,
+                    items = [],
+                    resource = onlineStatus.isOnline() ? remoteResource : localResource;
 
                 function resolveQueryDeferred(data) {
                     $timeout(function () {
@@ -107,7 +106,6 @@ Application.Services.factory('resourceService', ["$q", "$timeout", "$resource", 
                     });
                 }
 
-                var resource = onlineStatus.isOnline() ? remoteResource : localResource;
                 resource.query(params, resolveQueryDeferred, function () {
                     // if remote query is not successful query the local resource
                     localResource.query(resolveQueryDeferred);
@@ -127,9 +125,10 @@ Application.Services.factory('resourceService', ["$q", "$timeout", "$resource", 
             };
 
             resource.get = function (params, success, error) {
-                var deferred = $q.defer();
-                var promise = deferred.promise;
-                var item;
+                var deferred = $q.defer(),
+                    promise = deferred.promise,
+                    item,
+                    resource = onlineStatus.isOnline() ? remoteResource : localResource;
 
                 function resolveQueryDeferred(data) {
                     $timeout(function () {
@@ -137,7 +136,6 @@ Application.Services.factory('resourceService', ["$q", "$timeout", "$resource", 
                     });
                 }
 
-                var resource = onlineStatus.isOnline() ? remoteResource : localResource;
                 resource.get(params, resolveQueryDeferred, function () {
                     // if remote query is not successful query the local resource
                     localResource.query(params, resolveQueryDeferred);
@@ -177,7 +175,6 @@ Application.Services.factory('resourceService', ["$q", "$timeout", "$resource", 
                 return promise;
             };
 
-
             resource.put = function (item, success, error) {
                 resourceDeferred = $q.defer();
                 var promise = resourceDeferred.promise;
@@ -198,7 +195,7 @@ Application.Services.factory('resourceService', ["$q", "$timeout", "$resource", 
                 return promise;
             };
 
-            resource.delete = function (item, success, error) {
+            resource['delete'] = function (item, success, error) {
                 resourceDeferred = $q.defer();
                 var promise = resourceDeferred.promise;
 
@@ -231,7 +228,8 @@ Application.Services.factory('resourceService', ["$q", "$timeout", "$resource", 
             };
 
             resource.updateLocalStorage = function (item, method, to_synchronize) {
-                var call_method = method;
+                var call_method = method,
+                    date = new Date();
                 switch (method) {
                     case 'delete':
                         if (to_synchronize) {
@@ -243,7 +241,6 @@ Application.Services.factory('resourceService', ["$q", "$timeout", "$resource", 
 
                     case 'post':
                         if (to_synchronize) {
-                            var date = new Date;
                             // generate local_id
                             item.id = localIdPrefix + date.getTime();
                             item.synchronize_method = 'post';

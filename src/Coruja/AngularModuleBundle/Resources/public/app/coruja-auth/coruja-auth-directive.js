@@ -4,7 +4,7 @@ Application.Directives.directive('auth', ['$http', '$window', 'configuration', '
     function ($http, $window, configuration, authService, systemMessageService) {
         return {
             restrict : 'C',
-            controller : function ($scope, $element, $attrs) {
+            controller : ['$scope', '$element', '$attrs', function ($scope, $element, $attrs) {
                 var username_key = "username"+$window.name;
                 $scope.active_username = sessionStorage.getItem(username_key);
 
@@ -42,7 +42,7 @@ Application.Directives.directive('auth', ['$http', '$window', 'configuration', '
                             systemMessageService.addErrorMessage('Login with username "' + $scope.username + '" was not successful');
                         });
                 };
-            },
+            }],
             link : function (scope, element) {
                 var auth = element.find('#auth-container'),
                     content = element.find('#content');

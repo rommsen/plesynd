@@ -1,11 +1,11 @@
 'use strict';
 
-Application.Directives.directive('messageContainer',
+Application.Directives.directive('messageContainer', [
     function () {
         var template = '<div class="alert" ></div>';
         return {
-            'restrict':'AE',
-            'link':function (scope, element, attrs, ctrl) {
+            'restrict' : 'AE',
+            'link' : function (scope, element, attrs, ctrl) {
                 scope.$on('systemMessageAdded', function (event, message) {
                     if (message.message !== undefined) {
                         var msg = angular.element(template);
@@ -24,5 +24,5 @@ Application.Directives.directive('messageContainer',
                     }
                 });
             }
-        }
-    });
+        };
+    }]);

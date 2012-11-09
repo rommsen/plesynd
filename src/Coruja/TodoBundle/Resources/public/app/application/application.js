@@ -14,7 +14,7 @@ Application.Services = angular.module('application.services', ['ngResource']);
 Application.Directives = angular.module('application.directives', ['http-auth-interceptor']);
 
 angular.module('application', ['ui', 'application.constants', 'application.controllers', 'application.filters', 'application.services', 'application.directives'])
-    .run(function ($rootScope, $window, childFrameMessenger) {
+    .run(['$rootScope', '$window', 'childFrameMessenger', function ($rootScope, $window, childFrameMessenger) {
         // register with parent system if available
         childFrameMessenger.registerWithParent();
 
@@ -29,4 +29,4 @@ angular.module('application', ['ui', 'application.constants', 'application.contr
                 $rootScope.$broadcast('onlineChanged', false);
             });
         }, true);
-    });
+    }]);

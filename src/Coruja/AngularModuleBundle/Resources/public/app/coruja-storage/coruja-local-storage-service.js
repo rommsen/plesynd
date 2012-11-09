@@ -62,9 +62,9 @@ Application.Services.factory('localStorage', ["$timeout", "$q",
              * @return {Array}
              */
             storage.query = function (a1, a2) {
-                var value = [];
-                var params;
-                var success;
+                var value = [],
+                    params,
+                    success;
                 // necessary to be compatible with ngResource, params can be first parameter
                 switch (arguments.length) {
                     case 1:
@@ -107,12 +107,12 @@ Application.Services.factory('localStorage', ["$timeout", "$q",
                 postData(data);
             };
 
-            storage.delete = function (item) {
+            storage['delete'] = function (item) {
                 getData().then(function (data) {
                     var position = findItemPosition(item, data);
                     if (position !== -1) {
                         data.splice(position, 1);
-                        postData(data)
+                        postData(data);
                     }
                 });
             };
@@ -133,7 +133,7 @@ Application.Services.factory('localStorage', ["$timeout", "$q",
                     } else {
                         data[position] = item;
                     }
-                    postData(data)
+                    postData(data);
                 });
             };
 

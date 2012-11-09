@@ -57,7 +57,6 @@ angular.module('http-auth-interceptor', [])
       }
  
       function error(response) {
-        console.log('response.config', response.config);
         if (response.status === 401 && response.config.url !== configuration.LOGIN_URL) {
           var deferred = $q.defer();
           authServiceProvider.pushToBuffer(response.config, deferred);

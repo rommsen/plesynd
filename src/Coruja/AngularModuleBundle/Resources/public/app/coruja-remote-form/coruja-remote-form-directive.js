@@ -2,16 +2,16 @@
 
 Application.Directives.directive('remoteForm', ['$http',
     function ($http) {
-        function IllegalArgumentException(message) {
+        function IllegalArgumentException (message) {
             this.message = message;
         }
 
         var forEach = angular.forEach;
 
         return {
-            'restrict':'A',
-            'scope':true,
-            'controller':function ($scope, $element, $attrs) {
+            'restrict' : 'A',
+            'scope' : true,
+            'controller' : ['$scope', '$element', '$attrs', function ($scope, $element, $attrs) {
                 var self = this;
                 self.formComponents = {};
                 self.registerFormComponent = function (name, ngModel) {
@@ -54,9 +54,9 @@ Application.Directives.directive('remoteForm', ['$http',
                     $scope.is_submitted = true;
                     self.resetFormComponentsValidity();
                 };
-            },
+            }],
 
-            'link':function (scope, element, attrs, ctrl) {
+            'link' : function (scope, element, attrs, ctrl) {
                 scope.$watch('is_submitted', function (is_submitted) {
                     if (!is_submitted) {
                         return;
@@ -83,15 +83,15 @@ Application.Directives.directive('remoteForm', ['$http',
             }
         };
     }])
-    .directive('remoteFormComponent', function () {
-        return {
-            'restrict':'A',
-            'require':['^remoteForm', 'ngModel'],
+    .directive('remoteFormComponent', [function () {
+    return {
+        'restrict' : 'A',
+        'require' : ['^remoteForm', 'ngModel'],
 
-            'link':function (scope, element, attrs, ctrls) {
-                var formCtrl = ctrls[0],
-                    ngModel = ctrls[1];
-                formCtrl.registerFormComponent(attrs.name, ngModel);
-            }
-        };
-    });
+        'link' : function (scope, element, attrs, ctrls) {
+            var formCtrl = ctrls[0],
+                ngModel = ctrls[1];
+            formCtrl.registerFormComponent(attrs.name, ngModel);
+        }
+    };
+}]);

@@ -13,43 +13,57 @@ Application.Filters = angular.module('application.filters', []);
 Application.Services = angular.module('application.services', ['ngResource']);
 Application.Directives = angular.module('application.directives', ['http-auth-interceptor']);
 
+
 angular.module('application', ['ui', 'application.constants', 'application.controllers', 'application.filters', 'application.services', 'application.directives'])
     .config(['$routeProvider', function ($routeProvider) {
-    $routeProvider.when('/dashboard', {templateUrl : 'partials/dashboard', controller : 'DashboardCtrl',
-        resolve                                    : {
-            dashboard : function ($q, $route, $timeout) {
-                var deferred = $q.defer();
 
-                $timeout(function () {
-                    deferred.resolve({
-                        'info' : 'my Dashboard'
-                    });
+    // workaround until https://github.com/angular/angular.js/pull/1196 is released
+    // (resolve function breaks with anonymous function after minification, need $injector)
+    var dashboardResolver,
+        workspaceResolver;
+
+    dashboardResolver = function ($q, $timeout) {
+        var deferred = $q.defer();
+
+        $timeout(function () {
+            deferred.resolve({
+                'info' : 'my Dashboard'
+            });
+        });
+
+        return deferred.promise;
+    };
+
+    dashboardResolver.$inject = ['$q', '$timeout'];
+
+    workspaceResolver = function ($q, $route, $location, $timeout, workspaceService, systemMessageService) {
+        var deferred = $q.defer(),
+            id = $route.current.params.id;
+        $timeout(function () {
+            workspaceService.get({'id' : id}, function (result) {
+                    deferred.resolve(result);
+                },
+                function () {
+                    systemMessageService.addErrorMessage('Workspace not found');
+                    $location.path('/dashboard');
                 });
+        }, 500);
 
-                return deferred.promise;
-            }
-        }});
+        return deferred.promise;
+    };
+
+    workspaceResolver.$inject = ['$q', '$route', '$location', '$timeout', 'workspaceService', 'systemMessageService'];
+
+    $routeProvider.when('/dashboard', {
+        templateUrl : 'partials/dashboard',
+        controller : 'DashboardCtrl',
+        resolve : { dashboard : dashboardResolver }});
     $routeProvider.when('/workspace/:id', {templateUrl : 'partials/workspace', controller : 'WorkspaceCtrl',
-        resolve                                        : {
-            workspace : function ($q, $route, $location, $timeout, workspaceService, systemMessageService) {
-                var deferred = $q.defer(),
-                    id = $route.current.params.id;
-                $timeout(function () {
-                    workspaceService.get({'id' : id}, function (result) {
-                            deferred.resolve(result);
-                        },
-                        function () {
-                            systemMessageService.addErrorMessage('Workspace not found');
-                            $location.path('/dashboard');
-                        });
-                }, 500);
-
-                return deferred.promise;
-            }
-        }});
+        resolve : { workspace : workspaceResolver }
+    });
     $routeProvider.otherwise({redirectTo : '/dashboard'});
-}])
-    .run(function ($rootScope, $window, parentFrameMessenger) {
+}]).run(['$rootScope', '$window', 'parentFrameMessenger',
+    function ($rootScope, $window, parentFrameMessenger) {
         parentFrameMessenger.initialize();
 
         $window.addEventListener("online", function () {
@@ -63,4 +77,4 @@ angular.module('application', ['ui', 'application.constants', 'application.contr
                 $rootScope.$broadcast('onlineChanged', false);
             });
         }, true);
-    });
+    }]);
