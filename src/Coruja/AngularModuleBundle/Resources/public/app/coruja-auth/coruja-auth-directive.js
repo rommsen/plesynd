@@ -1,7 +1,7 @@
 'use strict';
 
-Application.Directives.directive('auth', ['$http', '$window', 'authService', 'systemMessageService',
-    function ($http, $window, authService, systemMessageService) {
+Application.Directives.directive('auth', ['$http', '$window', 'configuration', 'authService', 'systemMessageService',
+    function ($http, $window, configuration, authService, systemMessageService) {
         return {
             restrict : 'C',
             controller : function ($scope, $element, $attrs) {
@@ -20,7 +20,7 @@ Application.Directives.directive('auth', ['$http', '$window', 'authService', 'sy
                     delete $http.defaults.headers.common.Authorization;
                     $scope.active_username = null;
                     sessionStorage.removeItem(username_key);
-                    $http.get('http://plesynd/app_dev.php/logout');
+                    $http.get(configuration.LOGOUT_URL);
                     systemMessageService.addSuccessMessage('See you next time');
                     $scope.$emit('event:auth-logoutSuccessful');
                     $scope.$emit('event:auth-loginRequired');
@@ -28,7 +28,7 @@ Application.Directives.directive('auth', ['$http', '$window', 'authService', 'sy
 
                 $scope.doLogin = function (header) {
                     $http.defaults.headers.common.Authorization = header;
-                    $http.get('http://plesynd/app_dev.php/login')
+                    $http.get(configuration.LOGIN_URL)
                         .success(function () {
                             authService.loginConfirmed();
                             $scope.active_username = $scope.username;

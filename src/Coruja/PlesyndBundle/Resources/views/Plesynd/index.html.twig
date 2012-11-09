@@ -107,7 +107,7 @@
                             <span class="help-inline" ng-show="!registerForm.repeatPassword.$valid">Passwords do not match</span>
                         </div>
                     </div>
-                    <button type="submit" ng-click="submit(user)" ng-disabled="registerForm.$pristine || !registerForm.$valid" class="btn btn-primary">Register</button>
+                    <button type="submit" ng-click="submit(user)" ng-disabled="registerForm.$pristine || !registerForm.repeatPassword.$valid" class="btn btn-primary">Register</button>
                     <button class="btn btn-info" ng-click="changeAuthType('login')">Go to login</button>
                 </form>
             </div>
@@ -193,7 +193,7 @@
     '@CorujaAngularModuleBundle/Resources/public/app/lib/http-auth-interceptor.js'
     '@CorujaAngularModuleBundle/Resources/public/app/lib/postmessage.js'
     '@CorujaPlesyndBundle/Resources/public/app/application/application.js'
-    '@CorujaPlesyndBundle/Resources/public/app/application/configuration-service.js'
+    '@CorujaPlesyndBundle/Resources/public/app/application/configuration-constants.js'
     '@CorujaPlesyndBundle/Resources/public/app/plesynd/plesynd-controller.js'
     '@CorujaPlesyndBundle/Resources/public/app/dashboard/dashboard-controller.js'
     '@CorujaPlesyndBundle/Resources/public/app/workspace/workspace-controller.js'

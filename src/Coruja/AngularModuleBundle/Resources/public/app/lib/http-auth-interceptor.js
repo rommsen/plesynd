@@ -50,15 +50,15 @@ angular.module('http-auth-interceptor', [])
    * $http interceptor.
    * On 401 response - it stores the request and broadcasts 'event:auth-loginRequired'.
    */
-  .config(function($httpProvider, authServiceProvider) {
-    var interceptor = ['$rootScope', '$q', function($rootScope, $q) {
+  .config(['$httpProvider', 'authServiceProvider', function($httpProvider, authServiceProvider) {
+    var interceptor = ['$rootScope', '$q', 'configuration', function($rootScope, $q, configuration) {
       function success(response) {
         return response;
       }
  
       function error(response) {
         console.log('response.config', response.config);
-        if (response.status === 401 && response.config.url !== 'http://plesynd/app_dev.php/login') {
+        if (response.status === 401 && response.config.url !== configuration.LOGIN_URL) {
           var deferred = $q.defer();
           authServiceProvider.pushToBuffer(response.config, deferred);
           $rootScope.$broadcast('event:auth-loginRequired');
@@ -74,4 +74,4 @@ angular.module('http-auth-interceptor', [])
  
     }];
     $httpProvider.responseInterceptors.push(interceptor);
-  });
+  }]);
