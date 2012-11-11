@@ -36,7 +36,7 @@ class PlesyndController extends Controller
     public function appcacheAction() {
         $manifest = <<<EOF
 CACHE MANIFEST
-#Rev 1
+#Rev 9
 
 CACHE:
 
@@ -49,6 +49,9 @@ CACHE:
 
 #JS
 /js/compiled/plesynd/main.js
+
+#ICONS
+http://netdna.bootstrapcdn.com/twitter-bootstrap/2.1.1/img/glyphicons-halflings.png
 
 NETWORK:
 *
