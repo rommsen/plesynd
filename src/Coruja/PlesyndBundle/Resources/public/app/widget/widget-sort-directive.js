@@ -1,7 +1,7 @@
 'use strict';
 
-Application.Directives.directive('widgetSort', ['widgetService',
-    function (widgetService) {
+Application.Directives.directive('widgetSort', ['$rootScope', 'widgetService',
+    function ($rootScope, widgetService) {
         return  {
             'restrict' : 'A',
             'link' : function (scope, element, attrs, ctrl) {
@@ -32,6 +32,15 @@ Application.Directives.directive('widgetSort', ['widgetService',
                         updateWidgets();
                     }
 
+                });
+
+                $rootScope.$on('onlineChanged', function (evt, isOnline) {
+                    if (isOnline) {
+                        element.sortable('enable');
+                    } else {
+                        element.sortable('disable');
+
+                    }
                 });
             }
         };
