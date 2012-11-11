@@ -91,4 +91,3 @@ Application.Controllers.controller('PlesyndCtrl', ['$rootScope', '$scope', '$htt
             });
         };
     }]);
-

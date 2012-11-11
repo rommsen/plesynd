@@ -27,6 +27,7 @@
     </div>
 </div>
 
+
 <div id="main" class="auth span6" ng-controller="TodoCtrl" >
     <div class="well well-small">
         <strong>Plesynd Todo</strong>
@@ -49,14 +50,14 @@
                             <input type="password" ng-model="password" placeholder="Password"/>
                         </div>
                     </div>
-                    <button type="submit" ng-click="login()" class="btn btn-primary">Login</button>
+                    <button type="submit" ng-disabled="!username || !password" ng-click="login()" class="btn btn-primary">Login</button>
                     <button class="btn btn-info" ng-click="changeAuthType('register')">Register</button>
                 </form>
             </div>
         </div>
         <div class="hero-unit" id="register">
             <div class="well">
-                <form novalidate remote-form method='post' target="user" success="changeAuthType" name="registerForm">
+                <form novalidate remote-form method='post' target="user" success="registrationSuccessful" name="registerForm">
                     <div class="control-group" ng-class="{error: !registerForm.username.$valid}">
                         <div class="controls">
                             <input remote-form-component type="text" name="username" ng-model="user.username" placeholder="Username"/>
@@ -81,7 +82,7 @@
                             <span class="help-inline" ng-show="!registerForm.repeatPassword.$valid">Passwords do not match</span>
                         </div>
                     </div>
-                    <button type="submit" ng-click="submit(user)" ng-disabled="registerForm.$pristine || !registerForm.$valid" class="btn btn-primary">Register</button>
+                    <button type="submit" ng-click="submit(user)" ng-disabled="registerForm.$pristine || !registerForm.repeatPassword.$valid" class="btn btn-primary">Register</button>
                     <button class="btn btn-info" ng-click="changeAuthType('login')">Go to login</button>
                 </form>
             </div>

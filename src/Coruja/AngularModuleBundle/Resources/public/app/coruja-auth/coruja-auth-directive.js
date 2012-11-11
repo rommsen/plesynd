@@ -6,6 +6,10 @@ Application.Directives.directive('auth', ['$http', '$window', 'configuration', '
             restrict : 'C',
             controller : ['$scope', '$element', '$attrs', function ($scope, $element, $attrs) {
                 var username_key = "username"+$window.name;
+                function buildAuthHeader(username, password) {
+                    return ("Basic " + btoa(username + ":" + password));
+                }
+
                 $scope.active_username = sessionStorage.getItem(username_key);
 
                 $scope.authType = 'login';
@@ -13,7 +17,12 @@ Application.Directives.directive('auth', ['$http', '$window', 'configuration', '
                     $scope.authType = $scope.authType === 'login' ? 'register' : 'login';
                 };
                 $scope.login = function () {
-                    $scope.doLogin("Basic " + btoa($scope.username + ":" + $scope.password));
+                    $scope.doLogin(buildAuthHeader($scope.username, $scope.password));
+                };
+
+                $scope.registrationSuccessful = function() {
+                    $scope.changeAuthType();
+                    systemMessageService.addSuccessMessage('Registration successful. Check your mails for more infos!');
                 };
 
                 $scope.logout = function () {

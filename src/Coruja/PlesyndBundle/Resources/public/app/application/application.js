@@ -20,15 +20,14 @@ angular.module('application', ['ui', 'application.constants', 'application.contr
     // workaround until https://github.com/angular/angular.js/pull/1196 is released
     // (resolve function breaks with anonymous function after minification, need $injector)
     var dashboardResolver,
-        workspaceResolver;
+        workspaceResolver,
+        accountActionResolver;
 
     dashboardResolver = function ($q, $timeout) {
         var deferred = $q.defer();
 
         $timeout(function () {
-            deferred.resolve({
-                'info' : 'my Dashboard'
-            });
+            deferred.resolve({});
         });
 
         return deferred.promise;
@@ -54,13 +53,38 @@ angular.module('application', ['ui', 'application.constants', 'application.contr
 
     workspaceResolver.$inject = ['$q', '$route', '$location', '$timeout', 'workspaceService', 'systemMessageService'];
 
+    accountActionResolver = function ($q, $timeout, $location) {
+        var deferred = $q.defer(),
+            path = $location.path();
+
+        $timeout(function () {
+            deferred.resolve({
+                'action' : path.substr(0, path.lastIndexOf('/'))
+            });
+        });
+
+        return deferred.promise;
+    };
+
+    accountActionResolver.$inject = ['$q', '$timeout', '$location'];
+
     $routeProvider.when('/dashboard', {
         templateUrl : 'partials/dashboard',
         controller : 'DashboardCtrl',
         resolve : { dashboard : dashboardResolver }});
-    $routeProvider.when('/workspace/:id', {templateUrl : 'partials/workspace', controller : 'WorkspaceCtrl',
+
+    $routeProvider.when('/workspace/:id', {
+        templateUrl : 'partials/workspace',
+        controller : 'WorkspaceCtrl',
         resolve : { workspace : workspaceResolver }
     });
+
+    $routeProvider.when('/account_confirmation/:code', {
+        template : ' ',
+        controller : 'AccountActionCtrl',
+        resolve : { info : accountActionResolver }
+    });
+
     $routeProvider.otherwise({redirectTo : '/dashboard'});
 }]).run(['$rootScope', '$window', 'parentFrameMessenger',
     function ($rootScope, $window, parentFrameMessenger) {

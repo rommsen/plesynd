@@ -75,14 +75,14 @@
                             <input type="password" ng-model="password" placeholder="Password"/>
                         </div>
                     </div>
-                    <button type="submit" ng-click="login()" class="btn btn-primary">Login</button>
+                    <button type="submit" ng-disabled="!username || !password" ng-click="login()" class="btn btn-primary">Login</button>
                     <button class="btn btn-info" ng-click="changeAuthType('register')">Register</button>
                 </form>
             </div>
         </div>
         <div class="hero-unit" id="register">
             <div class="well">
-                <form novalidate remote-form method='post' target="user" success="changeAuthType" name="registerForm">
+                <form novalidate remote-form method='post' target="user" success="registrationSuccessful" name="registerForm">
                     <div class="control-group" ng-class="{error: !registerForm.username.$valid}">
                         <div class="controls">
                             <input remote-form-component type="text" name="username" ng-model="user.username" placeholder="Username"/>
@@ -177,6 +177,9 @@
         </footer>
     </div><!--/.fluid-container-->
 </div>
+
+
+
 {% endraw %}
 
 <!-- Le javascript
@@ -200,6 +203,7 @@
 '@CorujaPlesyndBundle/Resources/public/app/widget/widget-service.js'
 '@CorujaPlesyndBundle/Resources/public/app/widget/widget-iframe-directive.js'
 '@CorujaPlesyndBundle/Resources/public/app/widget/widget-sort-directive.js'
+'@CorujaAngularModuleBundle/Resources/public/app/coruja-auth/coruja-account-action-controller.js'
 '@CorujaAngularModuleBundle/Resources/public/app/coruja-auth/coruja-auth-directive.js'
 '@CorujaAngularModuleBundle/Resources/public/app/coruja-child-frame/coruja-child-frame-service.js'
 '@CorujaAngularModuleBundle/Resources/public/app/coruja-confirmation/coruja-confirmation-controller.js'
