@@ -21,7 +21,8 @@ Application.Services.factory('workspaceService', ["$resource", "localStorage", "
                 post:{method:'POST' }
             }),
             localResource : localStorage('workspaces'),
-            entityFactory : entityFactory
+            entityFactory : entityFactory,
+            use_synchronization : false
         };
 
         resource = resourceService(config);

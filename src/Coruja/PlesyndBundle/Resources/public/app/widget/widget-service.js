@@ -21,10 +21,8 @@ Application.Services.factory('widgetService', ["$resource", "localStorage", "res
                 post:{method:'POST' }
             }),
             localResource : localStorage('widgets'),
-            localResourceAdded : localStorage('widgets.added'),
-            localResourceChanged : localStorage('widgets.changed'),
-            localResourceDeleted : localStorage('widgets.deleted'),
-            entityFactory : entityFactory
+            entityFactory : entityFactory,
+            use_synchronization : false
         };
 
         resource = resourceService(config);
