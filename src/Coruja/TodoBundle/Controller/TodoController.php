@@ -99,7 +99,10 @@ class TodoController extends FOSRestController
         $acl->insertObjectAce($securityIdentity, MaskBuilder::MASK_OWNER);
         $aclProvider->updateAcl($acl);
 
-        return RouteRedirectView::create('get_todo', array('id' => $todo->getId()), HttpCodes::HTTP_CREATED);
+        // can not use simple location header due to Firefox Bug: https://github.com/angular/angular.js/issues/1468
+        return View::create(array('id' => $todo->getId()), HttpCodes::HTTP_CREATED, array(
+            'Location' => $this->container->get('router')->generate('get_todo', array('id' => $todo->getId()))
+        ));
     }
 
     /**

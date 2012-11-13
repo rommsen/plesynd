@@ -164,7 +164,12 @@ Application.Services.factory('resourceService', ["$q", "$timeout", "$resource", 
                     function (data, header) {
                         // REST Server returns Location header with URI
                         var location = header('Location');
-                        item.id = location.substring(location.lastIndexOf('/') + 1);
+                        // necessary due to Firefox Bug: https://github.com/angular/angular.js/issues/1468
+                        if(location) {
+                            item.id = location.substring(location.lastIndexOf('/') + 1);
+                        } else {
+                            item.id = data.id;
+                        }
                         resource.updateLocalStorage(item, 'post');
                         resourceDeferred.resolve();
                         (success || noop)(item, header);
