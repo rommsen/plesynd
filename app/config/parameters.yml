@@ -3,17 +3,17 @@ parameters:
     database_host:     localhost
     database_port:     ~
     database_name:     plesynd
-    database_user:
-    database_password:
+    database_user:     root
+    database_password: flirtme
 
     mailer_transport:  smtp
-    mailer_host:
-    mailer_user:
-    mailer_password:
+    mailer_host:       smtp.ipark-media.de
+    mailer_user:       r.sachse@ipark-media.de
+    mailer_password:   sarom
     mailer_encryption: null
     mailer_auth_mode:  plain
     mailer_port:       25
-    delivery_address:
+    delivery_address:  sarom@web.de
 
     locale:            en
-    secret:
+    secret:            dFgtGhfkErfkgTkf12__39j
