@@ -159,7 +159,12 @@
 </div>
 {% endraw %}
 
-{% javascripts filter="uglifyjs" output='js/compiled/todo/main.js'
+<script type=text/javascript>
+//    var base_url = 'http://plesynd';
+    var base_url = 'http://beta.plesynd.de';
+</script>
+
+{% javascripts filter="?uglifyjs" output='js/compiled/todo/main.js'
 '@CorujaAngularModuleBundle/Resources/public/app/lib/jquery-1.8.2.js'
 '@CorujaAngularModuleBundle/Resources/public/app/lib/angular.js'
 '@CorujaAngularModuleBundle/Resources/public/app/lib/bootstrap.js'
