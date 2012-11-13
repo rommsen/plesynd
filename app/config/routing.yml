@@ -23,11 +23,8 @@ CorujaUserBundle:
     type:     annotation
     prefix:   /
 
-
-
-fos_user_register:
-    resource: "@FOSUserBundle/Resources/config/routing/registration.xml"
-    prefix: /register
+fos_user_registration_confirm:
+    pattern:   "#/account_confirmation/{token}"
 
 
 #CorujaTodoBundle:
