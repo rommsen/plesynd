@@ -79,11 +79,13 @@ fos_user:
     db_driver: orm
     firewall_name: main
     user_class: Coruja\UserBundle\Entity\User
+    service:
+            mailer: coruja.user.mailer
     registration:
         confirmation:
             from_email:
-                address:        sarom@web.de
-                sender_name:    Acme Demo Registration
+                address:        account@plesynd.de
+                sender_name:    Plesynd Registration
 
 sensio_framework_extra:
     # wegen FOSRestBundle ausgestellt https://github.com/FriendsOfSymfony/FOSRestBundle/blob/master/Resources/doc/3-listener-support.md
