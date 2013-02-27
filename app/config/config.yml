@@ -97,16 +97,18 @@ nelmio_api_doc: ~
 nelmio_cors:
     paths:
         '^/(todo/api|login|logout)':
-            allow_origin: ['*']
-            allow_headers: ['X-REQUESTED-WITH', 'Content-Type', 'Authorization']
+            allow_origin: ['http://127.0.0.1:8080', 'http://plesynd']
+#            allow_origin: ['*']
+            allow_headers: ['X-REQUESTED-WITH', 'Content-Type']
             allow_methods: ['POST', 'PUT', 'GET', 'DELETE', 'OPTIONS'],
-            # Location Header is used for POST Request Answers (URI of created Item
+            # Location Header is used for POST Request Answers (URI of created Item)
             expose_headers: ['Location']
             max_age: 3600
+            allow_credentials: true
 
 coruja_wookie_connector:
     protocol: http://
-    host: bla
+    host: localhost
     port: 8080
     path: wookie/
     api_key: TEST

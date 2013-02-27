@@ -22,11 +22,23 @@ security:
             pattern:  ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
+#        main:
+#            pattern:    ^/
+#            anonymous: ~
+#            http_basic:
+#                provider: fos_userbundle
+
         main:
-            pattern:    ^/
-            anonymous: ~
-            http_basic:
+            pattern: ^/
+            form_login:
                 provider: fos_userbundle
+#                csrf_provider: form.csrf_provider
+                success_handler: coruja.user.xhr_authentication_success_handler
+                failure_handler: coruja.user.xhr_authentication_failure_handler
+                login_path:  login
+                check_path:  login_check
+            logout: true
+            anonymous: ~
 
     access_control:
         - { path: ^/plesynd/api, roles: ROLE_USER }

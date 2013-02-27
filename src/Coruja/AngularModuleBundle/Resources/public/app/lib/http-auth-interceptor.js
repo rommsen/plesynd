@@ -57,10 +57,10 @@ angular.module('http-auth-interceptor', [])
       }
  
       function error(response) {
-        if (response.status === 401 && response.config.url !== configuration.LOGIN_URL) {
+        if (response.status === 403 && response.config.url !== configuration.LOGIN_URL) {
           var deferred = $q.defer();
           authServiceProvider.pushToBuffer(response.config, deferred);
-          $rootScope.$broadcast('event:auth-loginRequired');
+          $rootScope.$broadcast('event:auth-loginRequired', response.data.csrf);
           return deferred.promise;
         }
         // otherwise

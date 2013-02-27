@@ -1,4 +1,4 @@
-'use strict';
++'use strict';
 
 Application.Services.factory('workspaceService', ["$resource", "localStorage", "resourceService", "configuration",
     function ($resource, localStorage, resourceService, configuration) {

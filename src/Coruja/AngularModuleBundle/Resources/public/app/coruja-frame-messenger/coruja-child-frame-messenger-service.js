@@ -12,22 +12,22 @@ Application.Services.factory('childFrameMessenger', ["$window",
             this.name = name;
         }
 
-        ChildFrameMessenger.prototype.registerWithParent = function () {
-            pm({
-                target : $window.parent,
-                type   : "register_child_frame",
-                data   : {id : this.name}
-            });
-        };
+ChildFrameMessenger.prototype.registerWithParent = function () {
+    pm({
+        target : $window.parent,
+        type   : "register_child_frame",
+        data   : {id : this.name}
+    });
+};
 
-        ChildFrameMessenger.prototype.notifyParentAboutItems = function (data) {
-            data.id = this.name;
-            pm({
-                target : $window.parent,
-                type   : "notify_about_items",
-                data   : data
-            });
-        };
+ChildFrameMessenger.prototype.notifyParentAboutItems = function (data) {
+    data.id = this.name;
+    pm({
+        target : $window.parent,
+        type   : "notify_about_items",
+        data   : data
+    });
+};
 
         return new ChildFrameMessenger($window.name);
     }]);

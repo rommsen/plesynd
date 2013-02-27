@@ -5,22 +5,20 @@ Application.Directives.directive('auth', ['$http', '$window', 'configuration', '
         return {
             restrict : 'C',
             controller : ['$scope', '$element', '$attrs', function ($scope, $element, $attrs) {
-                var username_key = "username"+$window.name;
-                function buildAuthHeader(username, password) {
-                    return ("Basic " + btoa(username + ":" + password));
-                }
+                var username_key = "username" + $window.name;
 
-                $scope.active_username = sessionStorage.getItem(username_key);
+                $scope.active_username = localStorage.getItem(username_key);
+
+                $scope.$watch('active_username', function(new_value){
+                    localStorage.setItem(username_key, $scope.active_username);
+                });
 
                 $scope.authType = 'login';
                 $scope.changeAuthType = function () {
                     $scope.authType = $scope.authType === 'login' ? 'register' : 'login';
                 };
-                $scope.login = function () {
-                    $scope.doLogin(buildAuthHeader($scope.username, $scope.password));
-                };
 
-                $scope.registrationSuccessful = function() {
+                $scope.registrationSuccessful = function () {
                     $scope.changeAuthType();
                     systemMessageService.addSuccessMessage('Registration successful. Check your mails for more infos!');
                 };
@@ -28,37 +26,49 @@ Application.Directives.directive('auth', ['$http', '$window', 'configuration', '
                 $scope.logout = function () {
                     delete $http.defaults.headers.common.Authorization;
                     $scope.active_username = null;
-                    sessionStorage.removeItem(username_key);
                     $http.get(configuration.LOGOUT_URL);
                     systemMessageService.addSuccessMessage('See you next time');
                     $scope.$emit('event:auth-logoutSuccessful');
                     $scope.$emit('event:auth-loginRequired');
                 };
 
-                $scope.doLogin = function (header) {
-                    $http.defaults.headers.common.Authorization = header;
-                    $http.get(configuration.LOGIN_URL)
+                $scope.login = function (header) {
+                    var config = {
+                            headers : {
+                                'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8'
+                            }
+                        },
+
+                        data = $.param({
+                            '_username' : $scope.username,
+                            '_password' : $scope.password,
+                            '_csrf_token' : $scope.csrf
+                        });
+                    $http.post(configuration.LOGIN_URL, data, config)
                         .success(function () {
                             authService.loginConfirmed();
                             $scope.active_username = $scope.username;
-                            sessionStorage.setItem(username_key, $scope.active_username);
                             $scope.username = '';
                             $scope.password = '';
                             systemMessageService.addSuccessMessage('Welcome back ' + $scope.active_username);
-                        })
-                        .error(function () {
-                            delete $http.defaults.headers.common.Authorization;
+                        }).
+                        error(function () {
                             systemMessageService.addErrorMessage('Login with username "' + $scope.username + '" was not successful');
                         });
+                    return;
                 };
-            }],
+            }
+            ],
             link : function (scope, element) {
                 var auth = element.find('#auth-container'),
                     content = element.find('#content');
 
                 auth.hide();
 
-                scope.$on('event:auth-loginRequired', function () {
+                scope.$on('event:auth-loginRequired', function (event, csrf) {
+                    scope.csrf = csrf;
+                    scope.active_username = null;
+
                     content.hide();
                     auth.slideDown('slow');
                 });

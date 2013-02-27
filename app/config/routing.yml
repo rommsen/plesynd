@@ -3,6 +3,12 @@
 #    type:     annotation
 #    prefix:   /
 
+login_check:
+    pattern:   /login_check
+
+logout:
+    pattern:   /logout
+
 CorujaWookieConnectorBundle:
     resource: "@CorujaWookieConnectorBundle/Controller/"
     type:     annotation

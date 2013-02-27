@@ -3,6 +3,7 @@
 /* Controllers */
 Application.Controllers.controller('PlesyndCtrl', ['$rootScope', '$scope', '$http', '$location', 'onlineStatus', 'workspaceService', 'widgetService', 'childFrameService', 'systemMessageService',  'confirmationService',
     function ($rootScope, $scope, $http, $location, onlineStatus, workspaceService, widgetService, childFrameService, systemMessageService,  confirmationService) {
+
         $rootScope.$on("$routeChangeStart", function (event, next, current) {
             $scope.loading = true;
             $scope.changeShowEdit(false);

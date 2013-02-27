@@ -383,7 +383,8 @@ angular.module('ngResource', ['ng']).
           $http({
             method: action.method,
             url: route.url(extend({}, extractParams(data), action.params || {}, params)),
-            data: data
+            data: data,
+            withCredentials:true
           }).then(function(response) {
               var data = response.data;
 

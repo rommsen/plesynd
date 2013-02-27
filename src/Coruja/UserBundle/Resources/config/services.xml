@@ -4,7 +4,30 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
+    <parameters>
+        <parameter key="coruja.user.xhr_core_exception_listener.class">Coruja\UserBundle\Listener\XHRCoreExceptionListener</parameter>
+        <parameter key="coruja.user.xhr_authentication_success_handler.class">Coruja\UserBundle\Handler\XHRAuthenticationSuccessHandler</parameter>
+        <parameter key="coruja.user.xhr_authentication_failure_handler.class">Coruja\UserBundle\Handler\XHRAuthenticationFailureHandler</parameter>
+    </parameters>
+
     <services>
+        <service id="coruja.user.xhr_core_exception_listener" class="%coruja.user.xhr_core_exception_listener.class%">
+            <argument type="service" id="form.csrf_provider" />
+            <tag name="kernel.event_listener" event="kernel.exception" method="onCoreException" priority="1000" />
+        </service>
+
+        <service id="coruja.user.xhr_authentication_success_handler" class="%coruja.user.xhr_authentication_success_handler.class%">
+            <argument type="service" id="security.http_utils" />
+            <argument type="collection" /> <!-- Options -->
+        </service>
+
+        <service id="coruja.user.xhr_authentication_failure_handler" class="%coruja.user.xhr_authentication_failure_handler.class%">
+            <argument type="service" id="http_kernel" />
+            <argument type="service" id="security.http_utils" />
+            <argument type="collection" /> <!-- Options -->
+            <argument type="service" id="logger" on-invalid="null" />
+        </service>
+
         <service id="coruja.user.mailer" class="Coruja\UserBundle\Mailer\Mailer" public="false">
             <argument type="service" id="mailer" />
             <argument type="service" id="router" />
