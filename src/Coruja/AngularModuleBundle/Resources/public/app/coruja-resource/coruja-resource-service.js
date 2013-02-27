@@ -265,7 +265,7 @@ Application.Services.factory('resourceService', ["$q", "$timeout", "$resource", 
             resource.synchronize = function (success, error) {
                 if (onlineStatus.isOnline()) {
                     synchronizeData().then(function (results) {
-                        console.log('all (post put delete) resolved:', results);
+//                        console.log('all (post put delete) resolved:', results);
                         (success || noop)(results);
                     }, error);
                 } else {
