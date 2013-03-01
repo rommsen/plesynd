@@ -18,15 +18,14 @@ Application.Controllers.controller('PlesyndCtrl', ['$timeout', '$rootScope', '$s
             $scope.loading = false;
         });
         $rootScope.$on('onlineChanged', function (evt, isOnline) {
+            $scope.isOnline = isOnline;
+            $scope.online_status_string = onlineStatus.getOnlineStatusString();
             if (!isOnline) {
                 $scope.changeShowEdit(false);
             } else {
                 $scope.getAvailableWidgets();
                 $scope.rerender_content = true;
-
             }
-            $scope.isOnline = isOnline;
-            $scope.online_status_string = onlineStatus.getOnlineStatusString();
         });
 
         $rootScope.$on('event:auth-loginConfirmed', function () {
