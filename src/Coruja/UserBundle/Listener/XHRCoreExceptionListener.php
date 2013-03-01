@@ -24,9 +24,6 @@ class XHRCoreExceptionListener
         $exception = $event->getException();
         $request = $event->getRequest();
 
-        if (! $request->isXmlHttpRequest()) {
-            return;
-        }
 
         $statusCode = $exception->getCode();
         if (!array_key_exists($statusCode, Response::$statusTexts)) {
