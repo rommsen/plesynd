@@ -96,9 +96,8 @@ nelmio_api_doc: ~
 
 nelmio_cors:
     paths:
-        '^/(todo/api|login|logout)':
-            allow_origin: ['http://127.0.0.1:8080', 'http://plesynd']
-#            allow_origin: ['*']
+        '^/(todo/api|login|logout|login_check|)':
+            allow_origin: [%wookie_protocol%%wookie_host%:%wookie_port%, %plesynd_protocol%%plesynd_host%]
             allow_headers: ['X-REQUESTED-WITH', 'Content-Type']
             allow_methods: ['POST', 'PUT', 'GET', 'DELETE', 'OPTIONS'],
             # Location Header is used for POST Request Answers (URI of created Item)
@@ -107,13 +106,13 @@ nelmio_cors:
             allow_credentials: true
 
 coruja_wookie_connector:
-    protocol: http://
-    host: localhost
-    port: 8080
-    path: wookie/
-    api_key: TEST
-    shared_data_key: shared_data
-    login_name: user
+    protocol: %wookie_protocol%
+    host: %wookie_host%
+    port: %wookie_port%
+    path: %wookie_path%
+    api_key: %wookie_api_key%
+    shared_data_key: %wookie_shared_data_key%
+    login_name: %wookie_login_name%
     screen_name : ~
 
 # Swiftmailer Configuration
