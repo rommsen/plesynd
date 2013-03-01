@@ -1,8 +1,10 @@
 'use strict';
 
 /* Controllers */
-Application.Controllers.controller('PlesyndCtrl', ['$rootScope', '$scope', '$http', '$location', 'onlineStatus', 'workspaceService', 'widgetService', 'childFrameService', 'systemMessageService',  'confirmationService',
-    function ($rootScope, $scope, $http, $location, onlineStatus, workspaceService, widgetService, childFrameService, systemMessageService,  confirmationService) {
+Application.Controllers.controller('PlesyndCtrl', ['$timeout', '$rootScope', '$scope', '$http', '$location', 'onlineStatus', 'workspaceService', 'widgetService', 'childFrameService', 'systemMessageService',  'confirmationService',
+    function ($timeout, $rootScope, $scope, $http, $location, onlineStatus, workspaceService, widgetService, childFrameService, systemMessageService,  confirmationService) {
+
+        $scope.rerender_content = false;
 
         $rootScope.$on("$routeChangeStart", function (event, next, current) {
             $scope.loading = true;
@@ -18,13 +20,26 @@ Application.Controllers.controller('PlesyndCtrl', ['$rootScope', '$scope', '$htt
         $rootScope.$on('onlineChanged', function (evt, isOnline) {
             if (!isOnline) {
                 $scope.changeShowEdit(false);
+            } else {
+                $http.get('plesynd/api/widgets/available');
+                $scope.workspaces = [];
+                $scope.widgets = [];
+                $scope.rerender_content = true;
+
             }
             $scope.isOnline = isOnline;
             $scope.online_status_string = onlineStatus.getOnlineStatusString();
         });
 
         $rootScope.$on('event:auth-loginConfirmed', function () {
-            $scope.initializeContent();
+            if($scope.rerender_content) {
+                $scope.initializeContent();
+            }
+            $scope.rerender_content = false;
+        });
+
+        $rootScope.$on('event:auth-loginRequired', function () {
+            $location.path('/dashboard');
         });
 
         $scope.checkActiveTab = function (url) {
@@ -43,10 +58,15 @@ Application.Controllers.controller('PlesyndCtrl', ['$rootScope', '$scope', '$htt
 
         $scope.initializeContent = function () {
             var id;
+            $scope.workspaces = [];
+            $scope.widgets = [];
+            $timeout(function() {
+
             $scope.workspaces = workspaceService.query();
             $scope.widgets = widgetService.query(function (widgets) {
                 childFrameService.setWidgets(widgets);
             });
+            }, 20);
 
             // get the widgets for the selectbox
             $scope.availableWidgets = [];

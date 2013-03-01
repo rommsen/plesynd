@@ -31,7 +31,7 @@
 <div id="main" class="auth span6" ng-controller="TodoCtrl" >
     <div class="well well-small">
         <strong>Plesynd Todo</strong>
-        <a ng-show="active_username" class="pull-right" ng-click="logout()">Logout {{ active_username }}</a>
+        <a ng-show="!is_widget && active_username" class="pull-right" ng-click="logout()">Logout {{ active_username }}</a>
     </div>
 
     <div message-container></div>

@@ -18,7 +18,7 @@ angular.module('application', ['ui', 'application.constants', 'application.contr
     .config(['$routeProvider', '$httpProvider', function ($routeProvider, $httpProvider) {
 
     // Send cookies with request by default
-    $httpProvider.defaults.withCredentials = true;
+//    $httpProvider.defaults.withCredentials = true;
 
     // workaround until https://github.com/angular/angular.js/pull/1196 is released
     // (resolve function breaks with anonymous function after minification, need $injector)

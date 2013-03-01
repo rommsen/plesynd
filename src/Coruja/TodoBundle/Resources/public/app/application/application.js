@@ -45,6 +45,8 @@ angular.module('application', ['ui', 'application.constants', 'application.contr
     $routeProvider.otherwise({redirectTo : '/'});
 }])
     .run(['$rootScope', '$window', 'childFrameMessenger', function ($rootScope, $window, childFrameMessenger) {
+         // default value, might be changed in childFrameMessenger
+        $rootScope.is_widget = false;
         // register with parent system if available
         childFrameMessenger.registerWithParent();
 

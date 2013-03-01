@@ -16,11 +16,11 @@ Application.Controllers.controller('TodoCtrl', ['$window', '$rootScope', '$http'
                     }
                 });
             });
-        todoService.synchronize(function () {
-            $scope.todos = todoService.query(function () {
-                todoService.notifyParentAboutItems();
+            todoService.synchronize(function () {
+                $scope.todos = todoService.query(function () {
+                    todoService.notifyParentAboutItems();
+                });
             });
-        });
         };
 
         $scope.prepareActiveTodos = function () {
@@ -84,7 +84,7 @@ Application.Controllers.controller('TodoCtrl', ['$window', '$rootScope', '$http'
             }
 
             var todo = todoService.createEntity({
-                title     : $scope.newTodo,
+                title : $scope.newTodo,
                 completed : false,
                 todo_list : {id : $scope.activeTodoList.id}
             });
