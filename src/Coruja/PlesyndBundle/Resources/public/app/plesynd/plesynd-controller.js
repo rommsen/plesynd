@@ -21,9 +21,7 @@ Application.Controllers.controller('PlesyndCtrl', ['$timeout', '$rootScope', '$s
             if (!isOnline) {
                 $scope.changeShowEdit(false);
             } else {
-                $http.get('plesynd/api/widgets/available');
-                $scope.workspaces = [];
-                $scope.widgets = [];
+                $scope.getAvailableWidgets();
                 $scope.rerender_content = true;
 
             }
@@ -57,7 +55,7 @@ Application.Controllers.controller('PlesyndCtrl', ['$timeout', '$rootScope', '$s
         };
 
         $scope.initializeContent = function () {
-            var id;
+
             $scope.workspaces = [];
             $scope.widgets = [];
             $timeout(function() {
@@ -67,15 +65,21 @@ Application.Controllers.controller('PlesyndCtrl', ['$timeout', '$rootScope', '$s
                 childFrameService.setWidgets(widgets);
             });
             }, 20);
+            $scope.getAvailableWidgets();
+        };
 
+        $scope.getAvailableWidgets = function() {
             // get the widgets for the selectbox
             $scope.availableWidgets = [];
-            $http.get('plesynd/api/widgets/available').success(function (widgets) {
-                for (id in widgets) {
-                    $scope.availableWidgets.push(widgets[id]);
-                }
-            });
-        };
+            if($scope.isOnline) {
+                var id;
+                $http.get('plesynd/api/widgets/available').success(function (widgets) {
+                    for (id in widgets) {
+                        $scope.availableWidgets.push(widgets[id]);
+                    }
+                });
+            }
+        }
 
         $scope.isOnline = onlineStatus.isOnline();
         $scope.online_status_string = onlineStatus.getOnlineStatusString();
