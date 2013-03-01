@@ -1,0 +1,30 @@
+parameters:
+    database_driver:   pdo_mysql
+    database_host:     localhost
+    database_port:     ~
+    database_name:     plesynd
+    database_user:
+    database_password:
+
+    mailer_transport:  smtp
+    mailer_host:
+    mailer_user:
+    mailer_password:
+    mailer_encryption: null
+    mailer_auth_mode:  plain
+    mailer_port:       25
+    delivery_address:
+
+    locale:            en
+    secret:            changeMe
+
+    plesynd_protocol:  http://
+    plesynd_host:      plesynd
+
+    wookie_protocol:   http://
+    wookie_host:       127.0.0.1
+    wookie_port:       8080
+    wookie_path:       wookie/
+    wookie_api_key:    TEST
+    wookie_shared_data_key: shared_data
+    wookie_login_name: user
