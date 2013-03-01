@@ -125,7 +125,7 @@
                             <span ng-show="isOnline && checkActiveTab(workspace.id)" ng-click="changeShowEdit(!show_edit)"> | <i class="icon-wrench"></i> </span>
                         </a>
                     </li>
-                    <li><a ng-click="addWorkspace()">Add</a></li>
+                    <li ng-show="isOnline"><a ng-click="addWorkspace()">Add</a></li>
                 </ul>
             </div><!--/span-->
         </div><!--/row-->
