@@ -1,15 +1,41 @@
 'use strict';
 
+/**
+ * Angular Services
+ *
+ * @module Application.Services
+ */
+
+/**
+ * Stores and works with child frames (i.e. widgets)
+ *
+ * @class childFrameService
+ */
 Application.Services.factory('childFrameService', ["$rootScope",
+    /**
+     * @method Factory
+     * @param $rootScope
+     * @returns {ChildFrameService}
+     */
     function ($rootScope) {
         var forEach = angular.forEach,
             service;
 
+        /**
+         * Constructor
+         * @method ChildFrameService
+         * @constructor
+         */
         function ChildFrameService() {
             this.childFrames = {};
             this.widgets = [];
         }
 
+        /**
+         * Adds a child to the stored child frames
+         * @method addChild
+         * @param child
+         */
         ChildFrameService.prototype.addChild = function (child) {
             if (this.childFrames[child.id] === undefined) {
                 this.childFrames[child.id] = {
@@ -18,6 +44,11 @@ Application.Services.factory('childFrameService', ["$rootScope",
             }
         };
 
+        /**
+         * Sets the data for a specific child frame
+         * @method setChildFrameData
+         * @param data
+         */
         ChildFrameService.prototype.setChildFrameData = function (data) {
             var self = this,
                 position;
@@ -34,10 +65,19 @@ Application.Services.factory('childFrameService', ["$rootScope",
             }
         };
 
+        /**
+         * @method setWidgets
+         * @param widgets
+         */
         ChildFrameService.prototype.setWidgets = function (widgets) {
             this.widgets = widgets;
         };
 
+        /**
+         * @method findWidgetPosition
+         * @param instance_identifier
+         * @returns {*}
+         */
         ChildFrameService.prototype.findWidgetPosition = function (instance_identifier) {
             var position;
             forEach(this.widgets, function (widget, index) {

@@ -1,5 +1,16 @@
 'use strict';
 
+/**
+ * Angular Services
+ *
+ * @module Application.Services
+ */
+
+/**
+ * Unifies the work with Rest-Resurces and LocalStorage-Resources
+ *
+ * @class resourceService
+ */
 Application.Services.factory('resourceService', ["$q", "$timeout", "$resource", "localStorage", "onlineStatus",
     function ($q, $timeout, $resource, localStorage, onlineStatus) {
         function resourceFactory(config) {
@@ -94,6 +105,14 @@ Application.Services.factory('resourceService', ["$q", "$timeout", "$resource", 
                 return promise;
             }
 
+            /**
+             * GET collection of items
+             * @method query
+             * @param params
+             * @param success callback
+             * @param error callback
+             * @returns {Array}
+             */
             resource.query = function (params, success, error) {
                 var deferred = $q.defer(),
                     promise = deferred.promise,
@@ -124,6 +143,14 @@ Application.Services.factory('resourceService', ["$q", "$timeout", "$resource", 
                 return items;
             };
 
+            /**
+             * GET on item
+             * @method get
+             * @param params
+             * @param success callback
+             * @param error callback
+             * @returns {*}
+             */
             resource.get = function (params, success, error) {
                 var deferred = $q.defer(),
                     promise = deferred.promise,
@@ -151,6 +178,14 @@ Application.Services.factory('resourceService', ["$q", "$timeout", "$resource", 
                 return item;
             };
 
+            /**
+             * POST
+             * @method post
+             * @param item to call method for
+             * @param success callback
+             * @param error callback
+             * @returns promise
+             */
             resource.post = function (item, success, error) {
                 resourceDeferred = $q.defer();
                 var promise = resourceDeferred.promise;
@@ -180,6 +215,14 @@ Application.Services.factory('resourceService', ["$q", "$timeout", "$resource", 
                 return promise;
             };
 
+            /**
+             * PUT
+             * @method put
+             * @param item to call method for
+             * @param success callback
+             * @param error callback
+             * @returns promise
+             */
             resource.put = function (item, success, error) {
                 resourceDeferred = $q.defer();
                 var promise = resourceDeferred.promise;
@@ -200,6 +243,14 @@ Application.Services.factory('resourceService', ["$q", "$timeout", "$resource", 
                 return promise;
             };
 
+            /**
+             * DELETE
+             * @method delete
+             * @param item to call method for
+             * @param success callback
+             * @param error callback
+             * @returns promise
+             */
             resource['delete'] = function (item, success, error) {
                 resourceDeferred = $q.defer();
                 var promise = resourceDeferred.promise;
@@ -221,6 +272,15 @@ Application.Services.factory('resourceService', ["$q", "$timeout", "$resource", 
                 return promise;
             };
 
+            /**
+             * Registers a fallback when not online
+             * @method localFallback
+             * @param item to call method for
+             * @param method
+             * @param success callback
+             * @param error callback
+             * @param response
+             */
             resource.localFallback = function (item, method, success, error, response) {
                 if (use_synchronization) {
                     resource.updateLocalStorage(item, method, true);
@@ -232,6 +292,13 @@ Application.Services.factory('resourceService', ["$q", "$timeout", "$resource", 
                 }
             };
 
+            /**
+             * Updates the localStorage according to the given method
+             * @method updateLocalStorage
+             * @param item to call method for
+             * @param method post|delete|put
+             * @param to_synchronize
+             */
             resource.updateLocalStorage = function (item, method, to_synchronize) {
                 var call_method = method,
                     date = new Date();
@@ -262,6 +329,12 @@ Application.Services.factory('resourceService', ["$q", "$timeout", "$resource", 
                 localResource[call_method].call(localResource, item);
             };
 
+            /**
+             * Synchronizes localStorage with the online backend
+             * @method synchronize
+             * @param success
+             * @param error
+             */
             resource.synchronize = function (success, error) {
                 if (onlineStatus.isOnline()) {
                     synchronizeData().then(function (results) {

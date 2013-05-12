@@ -1,5 +1,16 @@
 'use strict';
 
+/**
+ * Angular Directives
+ *
+ * @module Application.Directives
+ */
+
+/**
+ * checks whether password-repeat matches password during registration
+ *
+ * @class passwordValidator
+ */
 Application.Directives.directive('passwordValidator', [
     function () {
         return {

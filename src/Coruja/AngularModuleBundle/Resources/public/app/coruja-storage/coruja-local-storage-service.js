@@ -1,6 +1,23 @@
 'use strict';
 
+/**
+ * Angular Services
+ *
+ * @module Application.Services
+ */
+
+/**
+ * Mimics a REST-API to work with the Local-Storage
+ *
+ * @class localStorage
+ */
 Application.Services.factory('localStorage', ["$timeout", "$q",
+    /**
+     * @method Factory
+     * @param $timeout
+     * @param $q
+     * @returns {Function}
+     */
     function ($timeout, $q) {
         var copy = angular.copy,
             forEach = angular.forEach,
@@ -9,12 +26,13 @@ Application.Services.factory('localStorage', ["$timeout", "$q",
             noop = angular.noop;
 
 
+        /**
+         * Factory that creates localStorage Objects
+         * @method storageFactory
+         * @param storage_id
+         * @returns {{}}
+         */
         function storageFactory(storage_id) {
-            /**
-             * Gets the data from localStorage.
-             * Uses deferred to make it integrate with ngResource
-             * @return $q.defer().promise
-             */
             function getData() {
                 var deferred = $q.defer();
 
@@ -25,12 +43,6 @@ Application.Services.factory('localStorage', ["$timeout", "$q",
                 return deferred.promise;
             }
 
-            /**
-             * Uses the id property of the item to find its position
-             * @param item
-             * @param data
-             * @return {Number}
-             */
             function findItemPosition(item, data) {
                 var position = -1;
                 forEach(data, function (storedItem, index) {
@@ -49,6 +61,10 @@ Application.Services.factory('localStorage', ["$timeout", "$q",
 
             var storage = {};
 
+            /**
+             * Resets all stored data
+             * @method reset
+             */
             storage.reset = function () {
                 postData([]);
             };
@@ -57,6 +73,7 @@ Application.Services.factory('localStorage', ["$timeout", "$q",
              * Queries the localStorage. Does not return a promise but the value array. This makes it
              * compatible with ngResource
              *
+             * @method query
              * @param a1 callback or params object TODO maybe we can use params to filter the results
              * @param a2 params object or undefined
              * @return {Array}
@@ -84,9 +101,11 @@ Application.Services.factory('localStorage', ["$timeout", "$q",
             };
 
             /**
+             * GET data
+             * @method query
              * @param params needs to include an id property
-             * @param success
-             * @param error
+             * @param success callback
+             * @param error callback
              * @return {*}
              */
             storage.get = function (params, success, error) {
@@ -103,10 +122,20 @@ Application.Services.factory('localStorage', ["$timeout", "$q",
                 return value;
             };
 
+            /**
+             * Stores the given data within the storage
+             * @method storeData
+             * @param data
+             */
             storage.storeData = function (data) {
                 postData(data);
             };
 
+            /**
+             * DELETE data
+             * @method delete
+             * @param item
+             */
             storage['delete'] = function (item) {
                 getData().then(function (data) {
                     var position = findItemPosition(item, data);
@@ -117,6 +146,12 @@ Application.Services.factory('localStorage', ["$timeout", "$q",
                 });
             };
 
+
+            /**
+             * POST data
+             * @method post
+             * @param item
+             */
             storage.post = function (item) {
                 getData().then(function (data) {
                     data.push(item);
@@ -124,6 +159,11 @@ Application.Services.factory('localStorage', ["$timeout", "$q",
                 });
             };
 
+            /**
+             * PUT data
+             * @method put
+             * @param item
+             */
             storage.put = function (item) {
                 getData().then(function (data) {
                     var position = findItemPosition(item, data);

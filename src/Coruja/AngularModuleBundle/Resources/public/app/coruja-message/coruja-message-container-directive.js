@@ -1,6 +1,21 @@
 'use strict';
 
+/**
+ * Angular Directives
+ *
+ * @module Application.Directives
+ */
+
+/**
+ * Provides a mechanism for a message-container displayed to the user
+ *
+ * @class messageContainer
+ */
 Application.Directives.directive('messageContainer', [
+    /**
+     * @method factory
+     * @returns {{restrict: string, link: Function}}
+     */
     function () {
         var template = '<div class="alert" ></div>';
         return {

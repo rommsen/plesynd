@@ -1,6 +1,23 @@
 'use strict';
 
+/**
+ * Angular Services
+ *
+ * @module Application.Services
+ */
+
+/**
+ * Enables child frames to communicate with parent frame
+ *
+ * @class childFrameMessenger
+ */
 Application.Services.factory('childFrameMessenger', ["$window", "$rootScope",
+    /**
+     * @method Factory
+     * @param $window
+     * @param $rootScope
+     * @returns {ChildFrameMessenger}
+     */
     function ($window, $rootScope) {
         var copy = angular.copy,
             forEach = angular.forEach,
@@ -12,6 +29,9 @@ Application.Services.factory('childFrameMessenger', ["$window", "$rootScope",
             this.name = name;
         }
 
+        /**
+         * @method registerWithParent
+         */
         ChildFrameMessenger.prototype.registerWithParent = function () {
             pm({
                 target : $window.parent,
@@ -24,6 +44,10 @@ Application.Services.factory('childFrameMessenger', ["$window", "$rootScope",
             });
         };
 
+        /**
+         * @method notifyParentAboutItems
+         * @param object data
+         */
         ChildFrameMessenger.prototype.notifyParentAboutItems = function (data) {
             data.id = this.name;
             pm({

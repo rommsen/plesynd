@@ -1,9 +1,35 @@
 'use strict';
 
+/**
+ * Angular Directives
+ *
+ * @module Application.Directives
+ */
+
+/**
+ * Handles authentication (login/logout)
+ *
+ * @class auth
+ */
 Application.Directives.directive('auth', ['$http', '$window', 'configuration', 'authService', 'systemMessageService',
+    /**
+     * @method Factory
+     * @param $http
+     * @param $window
+     * @param configuration
+     * @param authService
+     * @param systemMessageService
+     * @returns {{restrict: string, controller: Array, link: Function}}
+     */
     function ($http, $window, configuration, authService, systemMessageService) {
         return {
             restrict : 'C',
+            /**
+             * @method controller
+             * @param $scope
+             * @param $element
+             * @param $attrs
+             */
             controller : ['$scope', '$element', '$attrs', function ($scope, $element, $attrs) {
                 var username_key = "username" + $window.name;
 

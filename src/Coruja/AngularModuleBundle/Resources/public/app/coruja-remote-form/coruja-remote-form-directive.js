@@ -1,6 +1,22 @@
 'use strict';
 
+/**
+ * Angular Directives
+ *
+ * @module Application.Directives
+ */
+
+/**
+ * Provides a mechanism to validate Forms on the server
+ *
+ * @class remoteForm
+ */
 Application.Directives.directive('remoteForm', ['$http',
+    /**
+     * @method Factory
+     * @param $http
+     * @returns {{restrict: string, scope: boolean, controller: Array, link: Function}}
+     */
     function ($http) {
         function IllegalArgumentException (message) {
             this.message = message;

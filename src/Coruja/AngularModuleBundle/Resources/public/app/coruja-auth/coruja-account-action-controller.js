@@ -1,6 +1,28 @@
 'use strict';
 
+/**
+ * Angular Controllers
+ *
+ * @module Application.Controllers
+ */
+
+/**
+ * Handles account confirmation
+ *
+ * @class AccountActionCtrl
+ */
 Application.Controllers.controller('AccountActionCtrl', ['$scope', '$http', '$location', '$routeParams', 'confirmationService', 'systemMessageService', 'configuration', 'info',
+    /**
+     * @method Factory
+     * @param $scope
+     * @param $http
+     * @param $location
+     * @param $routeParams
+     * @param confirmationService
+     * @param systemMessageService
+     * @param configuration
+     * @param info
+     */
     function ($scope, $http, $location, $routeParams, confirmationService, systemMessageService, configuration, info) {
         var msg, callback;
         switch(info.action) {
