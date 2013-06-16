@@ -6,7 +6,7 @@ build/
 vendor
 bin
 composer.phar
-
+parameters.yml
 web/js/
 web/css/
 .directory
