@@ -29,7 +29,7 @@ class TodoListController extends FOSRestController
      */
     public function getTodoListsAction()
     {
-        $em = /* @var $em \Doctrine\ORM\EntityManager */ $this->get('doctrine')->getEntityManager();
+        $em = /* @var $em \Doctrine\ORM\EntityManager */ $this->get('doctrine')->getManager();
         $todoLists = $em->getRepository('CorujaTodoBundle:TodoList')->findAll();
 
         $securityContext = $this->get('security.context');
@@ -51,7 +51,7 @@ class TodoListController extends FOSRestController
      */
     public function getTodoListAction($id)
     {
-        $em = /* @var $em \Doctrine\ORM\EntityManager */ $this->get('doctrine')->getEntityManager();
+        $em = /* @var $em \Doctrine\ORM\EntityManager */ $this->get('doctrine')->getManager();
         $todoList = $em->find('CorujaTodoBundle:TodoList', $id);
 
         if($todoList === NULL) {
@@ -79,7 +79,7 @@ class TodoListController extends FOSRestController
         $todoList = new TodoList;
         $todoList->setTitle($data->get('title'));
 
-        $em = /* @var $em \Doctrine\ORM\EntityManager */ $this->get('doctrine')->getEntityManager();
+        $em = /* @var $em \Doctrine\ORM\EntityManager */ $this->get('doctrine')->getManager();
         $em->persist($todoList);
         $em->flush();
 
@@ -109,7 +109,7 @@ class TodoListController extends FOSRestController
     public function putTodoListAction($id)
     {
         $data = $this->getRequest()->request;
-        $em = /* @var $em \Doctrine\ORM\EntityManager */ $this->get('doctrine')->getEntityManager();
+        $em = /* @var $em \Doctrine\ORM\EntityManager */ $this->get('doctrine')->getManager();
         $todoList = $em->find('CorujaTodoBundle:TodoList', $id);
 
         if($todoList !== NULL) {
@@ -134,7 +134,7 @@ class TodoListController extends FOSRestController
      */
     public function deleteTodoListAction($id)
     {
-        $em = /* @var $em \Doctrine\ORM\EntityManager */ $this->get('doctrine')->getEntityManager();
+        $em = /* @var $em \Doctrine\ORM\EntityManager */ $this->get('doctrine')->getManager();
         $todoList = $em->find('CorujaTodoBundle:TodoList', $id);
 
         if($todoList === NULL) {

@@ -29,7 +29,7 @@ class WorkspaceController extends FOSRestController
      */
     public function getWorkspacesAction()
     {
-        $em = $this->get('doctrine')->getEntityManager();
+        $em = $this->get('doctrine')->getManager();
         /* @var $em \Doctrine\ORM\EntityManager */
         $workspaces = $em->getRepository('CorujaPlesyndBundle:Workspace')->findAll();
 
@@ -52,7 +52,7 @@ class WorkspaceController extends FOSRestController
      */
     public function getWorkspaceAction($id)
     {
-        $em = $this->get('doctrine')->getEntityManager();
+        $em = $this->get('doctrine')->getManager();
         /* @var $em \Doctrine\ORM\EntityManager */
         $workspace = $em->getRepository('CorujaPlesyndBundle:Workspace')->findOneBy(array('id' => $id));
 
@@ -83,7 +83,7 @@ class WorkspaceController extends FOSRestController
         $workspace = new Workspace();
         $workspace->setTitle($data->get('title'));
 
-        $em = /* @var $em \Doctrine\ORM\EntityManager */ $this->get('doctrine')->getEntityManager();
+        $em = /* @var $em \Doctrine\ORM\EntityManager */ $this->get('doctrine')->getManager();
         $em->persist($workspace);
         $em->flush();
 
@@ -112,7 +112,7 @@ class WorkspaceController extends FOSRestController
     public function putWorkspaceAction($id)
     {
         $data = $this->getRequest()->request;
-        $em = $this->get('doctrine')->getEntityManager();
+        $em = $this->get('doctrine')->getManager();
         /* @var $em \Doctrine\ORM\EntityManager */
         $workspace = $em->find('CorujaPlesyndBundle:Workspace', $id);
         if($workspace !== NULL) {
@@ -137,7 +137,7 @@ class WorkspaceController extends FOSRestController
      */
     public function deleteWorkspaceAction($id)
     {
-        $em = $this->get('doctrine')->getEntityManager();
+        $em = $this->get('doctrine')->getManager();
         /* @var $em \Doctrine\ORM\EntityManager */
         $workspace = $em->find('CorujaPlesyndBundle:Workspace', $id);
         if($workspace === NULL) {

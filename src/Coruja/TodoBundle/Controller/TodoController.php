@@ -30,7 +30,7 @@ class TodoController extends FOSRestController
      */
     public function getTodosAction()
     {
-        $em = $this->get('doctrine')->getEntityManager();
+        $em = $this->get('doctrine')->getManager();
         /* @var $em \Doctrine\ORM\EntityManager */
         $todos = $em->getRepository('CorujaTodoBundle:Todo')->findAll();
 
@@ -53,7 +53,7 @@ class TodoController extends FOSRestController
      */
     public function getTodoAction($id)
     {
-        $em = /* @var $em \Doctrine\ORM\EntityManager */ $this->get('doctrine')->getEntityManager();
+        $em = /* @var $em \Doctrine\ORM\EntityManager */ $this->get('doctrine')->getManager();
         $todo = $em->find('CorujaTodoBundle:Todo', $id);
 
         if($todo === NULL) {
@@ -77,7 +77,7 @@ class TodoController extends FOSRestController
     {
         $data = $this->getRequest()->request;
 
-        $em = /* @var $em \Doctrine\ORM\EntityManager */ $this->get('doctrine')->getEntityManager();
+        $em = /* @var $em \Doctrine\ORM\EntityManager */ $this->get('doctrine')->getManager();
 
         $todo = new Todo;
         $todo->setTitle($data->get('title'));
@@ -115,7 +115,7 @@ class TodoController extends FOSRestController
     public function putTodoAction($id)
     {
         $data = $this->getRequest()->request;
-        $em = /* @var $em \Doctrine\ORM\EntityManager */ $this->get('doctrine')->getEntityManager();
+        $em = /* @var $em \Doctrine\ORM\EntityManager */ $this->get('doctrine')->getManager();
         $todo = $em->find('CorujaTodoBundle:Todo', $id);
 
         if($todo !== NULL) {
@@ -140,7 +140,7 @@ class TodoController extends FOSRestController
      */
     public function deleteTodoAction($id)
     {
-        $em = /* @var $em \Doctrine\ORM\EntityManager */ $this->get('doctrine')->getEntityManager();
+        $em = /* @var $em \Doctrine\ORM\EntityManager */ $this->get('doctrine')->getManager();
 
         $todo = $em->find('CorujaTodoBundle:Todo', $id);
 

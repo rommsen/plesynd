@@ -13,7 +13,6 @@ parameters:
     mailer_encryption: null
     mailer_auth_mode:  plain
     mailer_port:       25
-    delivery_address:
 
     locale:            en
     secret:            changeMe

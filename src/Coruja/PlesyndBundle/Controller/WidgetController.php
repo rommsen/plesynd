@@ -56,7 +56,7 @@ class WidgetController extends FOSRestController
      */
     public function getWidgetAction($id)
     {
-        $em = /* @var $em \Doctrine\ORM\EntityManager */ $this->get('doctrine')->getEntityManager();
+        $em = /* @var $em \Doctrine\ORM\EntityManager */ $this->get('doctrine')->getManager();
         $widget = /* @var \Coruja\PlesyndBundle\Entity\Widget $widget */
             $em->getRepository('CorujaPlesyndBundle:Widget')->find($id);
 
@@ -81,7 +81,7 @@ class WidgetController extends FOSRestController
     public function getWidgetsAction()
     {
         $connection = $this->get('coruja_wookie_connector.connector');
-        $em = /* @var $em \Doctrine\ORM\EntityManager */ $this->get('doctrine')->getEntityManager();
+        $em = /* @var $em \Doctrine\ORM\EntityManager */ $this->get('doctrine')->getManager();
         $widgets =  $em->createQueryBuilder()
             ->select('widget')
             ->from('CorujaPlesyndBundle:Widget', 'widget')
@@ -110,7 +110,7 @@ class WidgetController extends FOSRestController
      */
     public function deleteWidgetAction($id)
     {
-        $em = /* @var $em \Doctrine\ORM\EntityManager */ $this->get('doctrine')->getEntityManager();
+        $em = /* @var $em \Doctrine\ORM\EntityManager */ $this->get('doctrine')->getManager();
         $widget = $em->find('CorujaPlesyndBundle:Widget', $id);
 
         if($widget === NULL) {
@@ -139,7 +139,7 @@ class WidgetController extends FOSRestController
     public function postWidgetAction()
     {
         $data = $this->getRequest()->request;
-        $em = /* @var $em \Doctrine\ORM\EntityManager */ $this->get('doctrine')->getEntityManager();
+        $em = /* @var $em \Doctrine\ORM\EntityManager */ $this->get('doctrine')->getManager();
         $widget = new Widget($data->get('identifier'), $data->get('title'), $data->get('description'), $data->get('title'));
         $widget->setWorkspace($em->getRepository('CorujaPlesyndBundle:Workspace')->findOneBy(array('id' => $data->get('workspace_id'))));
         $widget->setIsOfflineCompatible($data->get('is_offline_compatible'));
@@ -170,7 +170,7 @@ class WidgetController extends FOSRestController
     public function putWidgetAction($id)
     {
         $data = $this->getRequest()->request;
-        $em = $this->get('doctrine')->getEntityManager();
+        $em = $this->get('doctrine')->getManager();
         /* @var $em \Doctrine\ORM\EntityManager */
         $widget = $em->find('CorujaPlesyndBundle:Widget', $id);
         if($widget !== NULL) {

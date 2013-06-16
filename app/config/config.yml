@@ -3,19 +3,22 @@ imports:
     - { resource: security.yml }
 
 framework:
-    #esi:             ~
-    translator:      ~
-    secret:          %secret%
+    #esi: ~
+    translator: { fallback: %locale% }
+    secret: %secret%
     router:
         resource: "%kernel.root_dir%/config/routing.yml"
-        strict_requirements: %kernel.debug%
-    form:            true
-    csrf_protection: true
-    validation:      { enable_annotations: true }
-    templating:      { engines: ['twig', 'php'] } #assets_version: SomeVersionScheme
-    default_locale:  %locale%
-    trust_proxy_headers: false # Should Request object should trust proxy headers (X_FORWARDED_FOR/HTTP_CLIENT_IP)
-    session:         ~
+        strict_requirements: ~
+    form: ~
+    csrf_protection: ~
+    validation: { enable_annotations: true }
+    templating:
+        engines: ['twig']
+        #assets_version: SomeVersionScheme
+    default_locale: "%locale%"
+    trusted_proxies: ~
+    session: ~
+    fragments: ~
 
 # Twig Configuration
 twig:
@@ -99,7 +102,7 @@ nelmio_cors:
         '^/(todo/api|login|logout|login_check|)':
             allow_origin: [%wookie_protocol%%wookie_host%:%wookie_port%, %plesynd_protocol%%plesynd_host%]
             allow_headers: ['X-REQUESTED-WITH', 'Content-Type']
-            allow_methods: ['POST', 'PUT', 'GET', 'DELETE', 'OPTIONS'],
+            allow_methods: ['POST', 'PUT', 'GET', 'DELETE', 'OPTIONS']
             # Location Header is used for POST Request Answers (URI of created Item)
             expose_headers: ['Location']
             max_age: 3600
