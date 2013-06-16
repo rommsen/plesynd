@@ -34,7 +34,7 @@ Application.Controllers.controller('ConfirmationCtrl', ['$scope', 'confirmationS
 
         /**
          * Cancels a message
-         * @method confirm
+         * @method cancel
          */
         $scope.cancel = function() {
             $scope.confirmationService.cancelled();

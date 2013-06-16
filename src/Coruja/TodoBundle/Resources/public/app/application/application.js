@@ -3,6 +3,8 @@
 /**
  * The application file bootstraps the angular app by initializing the main module and
  * creating namespaces and moduled for controllers, filters, services, and directives.
+ *
+ * @module TodoWidget
  */
 
 var Application = Application || {};
@@ -13,6 +15,11 @@ Application.Filters = angular.module('application.filters', []);
 Application.Services = angular.module('application.services', ['ngResource']);
 Application.Directives = angular.module('application.directives', ['http-auth-interceptor']);
 
+/**
+ * Assembles needed submodules and defines routing
+ *
+ * @class application
+ */
 angular.module('application', ['ui', 'application.constants', 'application.controllers', 'application.filters', 'application.services', 'application.directives'])
     .config(['$routeProvider', '$httpProvider', function ($routeProvider, $httpProvider) {
 

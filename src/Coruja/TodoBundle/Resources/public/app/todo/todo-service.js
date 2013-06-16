@@ -1,6 +1,27 @@
 'use strict';
 
+/**
+ * TodoWidget Services
+ *
+ * @module TodoWidget.Services
+ */
+
+/**
+ * Uses the resourceService and the localStorage to work online and offline with a REST-API
+ *
+ * @class todoService
+ */
 Application.Services.factory('todoService', ["$resource", "$window", "$q", "localStorage", "resourceService", "childFrameMessenger", "configuration",
+    /**
+     * @method Factory
+     * @param $resource
+     * @param $window
+     * @param $q
+     * @param localStorage
+     * @param resourceService
+     * @param configuration
+     * @returns {Object}
+     */
     function ($resource, $window, $q, localStorage, resourceService, childFrameMessenger, configuration) {
         var copy = angular.copy,
             forEach = angular.forEach,

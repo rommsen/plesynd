@@ -1,6 +1,23 @@
 'use strict';
 
+/**
+ * Plesynd Directives
+ *
+ * @module Plesynd.Directives
+ */
+
+/**
+ * Enables Drag and Drop sorting of widgets
+ *
+ * @class widgetSort
+ */
 Application.Directives.directive('widgetSort', ['$rootScope', 'widgetService',
+    /**
+     * @method Factory
+     * @param $rootScope
+     * @param widgetService
+     * @returns {{restrict: string, link: Function}}
+     */
     function ($rootScope, widgetService) {
         return  {
             'restrict' : 'A',

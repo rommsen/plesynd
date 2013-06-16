@@ -17,10 +17,18 @@ Application.Services.factory('onlineStatus', ["$window", "$rootScope",
 
         onlineStatus.onLine = $window.navigator.onLine;
 
+        /**
+         * Return whether system is online
+         * @returns {boolean}
+         */
         onlineStatus.isOnline = function () {
             return onlineStatus.onLine;
         };
 
+        /**
+         * Returns "online" or "offline"
+         * @returns {string}
+         */
         onlineStatus.getOnlineStatusString = function () {
             return onlineStatus.isOnline() ? 'online' : 'offline';
         };

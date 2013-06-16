@@ -1,13 +1,40 @@
 'use strict';
 
+/**
+ * TodoWidget Controllers
+ *
+ * @module Plesynd.Controllers
+ */
 
+/**
+ * Main Controller of the widget
+ *
+ * @class TodoCtrl
+ */
 Application.Controllers.controller('TodoCtrl', ['$window', '$rootScope', '$http', '$scope', '$location', 'onlineStatus', 'todoListService', 'todoService', 'filterFilter', 'confirmationService',
+    /**
+     * @method Factory
+     * @param $window
+     * @param $rootScope
+     * @param $http
+     * @param $scope
+     * @param $location
+     * @param onlineStatus
+     * @param todoListService
+     * @param todoService
+     * @param filterFilter
+     * @param confirmationService
+     */
     function ($window, $rootScope, $http, $scope, $location, onlineStatus, todoListService, todoService, filterFilter, confirmationService) {
         var todoListIdLocalStorageKey = "activeTodoListId" + $window.name,
             forEach = angular.forEach,
             fromJson = angular.fromJson,
             toJson = angular.toJson;
 
+        /**
+         * Synchronizes the Todo-Items and the lists with the backend
+         * @method synchronize
+         */
         $scope.synchronize = function () {
             $scope.todoLists = todoListService.query(function () {
                 forEach($scope.todoLists, function (todoList) {
@@ -23,6 +50,10 @@ Application.Controllers.controller('TodoCtrl', ['$window', '$rootScope', '$http'
             });
         };
 
+        /**
+         * Counts the different todo-types based on the active todos
+         * @method prepareActiveTodos
+         */
         $scope.prepareActiveTodos = function () {
             if ($scope.todos && $scope.activeTodoList) {
                 localStorage.setItem(todoListIdLocalStorageKey, toJson($scope.activeTodoList.id));
@@ -52,6 +83,12 @@ Application.Controllers.controller('TodoCtrl', ['$window', '$rootScope', '$http'
             { completed : true } : null;
         });
 
+        /**
+         * Filter which returns true when a todo-item is visible
+         * @method filterByActiveTodoList
+         * @param todo
+         * @returns {boolean}
+         */
         $scope.filterByActiveTodoList = function (todo) {
             if ($scope.activeTodoList) {
                 return todo.todo_list.id == $scope.activeTodoList.id;
@@ -60,7 +97,12 @@ Application.Controllers.controller('TodoCtrl', ['$window', '$rootScope', '$http'
         };
 
         $scope.$watch('activeTodoList', $scope.prepareActiveTodos);
+
         $scope.$watch('todos', $scope.prepareActiveTodos, true);
+        /**
+         * Called when the online status of the widget has changed
+         * @method onlineChanged Event-Listener
+         */
         $rootScope.$on('onlineChanged', function (evt, isOnline) {
             $scope.isOnline = isOnline;
             $scope.synchronize();
@@ -78,6 +120,9 @@ Application.Controllers.controller('TodoCtrl', ['$window', '$rootScope', '$http'
             $scope.allChecked = val;
         });
 
+        /**
+         * @method addTodo
+         */
         $scope.addTodo = function () {
             if ($scope.newTodo.length === 0) {
                 return;
@@ -96,6 +141,11 @@ Application.Controllers.controller('TodoCtrl', ['$window', '$rootScope', '$http'
             });
         };
 
+        /**
+         * Edits an item
+         * @method editTodo
+         * @param todo
+         */
         $scope.editTodo = function (todo) {
             $scope.editedTodo = todo;
         };
@@ -109,6 +159,11 @@ Application.Controllers.controller('TodoCtrl', ['$window', '$rootScope', '$http'
             }
         };
 
+        /**
+         * Deletes on item
+         * @method deleteTodo
+         * @param todo
+         */
         $scope.deleteTodo = function (todo) {
             todoService.delete(todo, function () {
                 $scope.remainingCount -= todo.completed ? 0 : 1;
@@ -117,12 +172,20 @@ Application.Controllers.controller('TodoCtrl', ['$window', '$rootScope', '$http'
             });
         };
 
+        /**
+         * Toggles completed property of one items
+         * @method toggleAll
+         * @param todo
+         */
         $scope.todoCompleted = function (todo) {
             todo.completed = !todo.completed;
             // no need to change doneCount and remainingCount because todos are being watched
             todoService.put(todo);
         };
 
+        /**
+         * @method clearDoneTodos
+         */
         $scope.clearDoneTodos = function () {
             $scope.todos.forEach(function (todo) {
                 if (todo.completed) {
@@ -131,6 +194,10 @@ Application.Controllers.controller('TodoCtrl', ['$window', '$rootScope', '$http'
             });
         };
 
+        /**
+         * Toggles completed property of all items
+         * @method toggleAll
+         */
         $scope.toggleAll = function () {
             $scope.activeTodos.forEach(function (todo) {
                 if (todo.completed != $scope.allChecked) {
@@ -139,6 +206,9 @@ Application.Controllers.controller('TodoCtrl', ['$window', '$rootScope', '$http'
             });
         };
 
+        /**
+         * @method addTodoList
+         */
         $scope.addTodoList = function () {
             $scope.add_todo_list = false;
             if ($scope.newTodoList.length === 0) {
@@ -156,6 +226,10 @@ Application.Controllers.controller('TodoCtrl', ['$window', '$rootScope', '$http'
             });
         };
 
+        /**
+         * @method deleteTodoList
+         * @param {Object} todoList
+         */
         $scope.deleteTodoList = function (todoList) {
             confirmationService.confirm('Do you really want to delete this list?', function () {
                 todoListService['delete'](todoList, function () {
@@ -167,6 +241,10 @@ Application.Controllers.controller('TodoCtrl', ['$window', '$rootScope', '$http'
             });
         };
 
+        /**
+         * @method editTodoList
+         * @param {Object} todoList
+         */
         $scope.editTodoList = function (todoList) {
             $scope.edit_todo_list = false;
             if (todoList.title.length === 0) {

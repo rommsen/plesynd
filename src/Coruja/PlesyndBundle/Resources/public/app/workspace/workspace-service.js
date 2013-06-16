@@ -1,6 +1,25 @@
 +'use strict';
 
+/**
+ * Plesynd Services
+ *
+ * @module Plesynd.Services
+ */
+
+/**
+ * Uses the resourceService and the localStorage to work online and offline with a REST-API
+ *
+ * @class workspaceService
+ */
 Application.Services.factory('workspaceService', ["$resource", "localStorage", "resourceService", "configuration",
+    /**
+     * @method Factory
+     * @param $resource
+     * @param localStorage
+     * @param resourceService
+     * @param configuration
+     * @returns {Object}
+     */
     function ($resource, localStorage, resourceService, configuration) {
         var copy = angular.copy,
             config,

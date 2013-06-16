@@ -1,12 +1,39 @@
 'use strict';
 
+/**
+ * Plesynd Controllers
+ *
+ * @module Plesynd.Controllers
+ */
+
+/**
+ * Responsible for workspaces
+ *
+ * @class WorkspaceCtrl
+ */
 Application.Controllers.controller('WorkspaceCtrl', ['$scope', '$http', '$location', '$filter', 'workspaceService', 'widgetService', 'workspace', 'systemMessageService', 'confirmationService',
+    /**
+     * @method Factory
+     * @param $scope
+     * @param $http
+     * @param $location
+     * @param $filter
+     * @param workspaceService
+     * @param widgetService
+     * @param workspace
+     * @param systemMessageService
+     * @param confirmationService
+     */
     function ($scope, $http, $location, $filter, workspaceService, widgetService, workspace, systemMessageService, confirmationService) {
         $scope.workspace = workspace;
         $scope.widgetTitleFilter = '';
         $scope.offlineCompatibleFilter = false;
         $scope.$parent.activeWorkspace = workspace;
 
+        /**
+         * Reacts to changes in Widgets
+         * @method watchWidgets
+         */
         $scope.$watch('widgets', function () {
             // only show workspace widgets
             $scope.workspaceWidgets = $filter('filter')($scope.widgets, {workspace_id : $scope.workspace.id});
@@ -17,6 +44,9 @@ Application.Controllers.controller('WorkspaceCtrl', ['$scope', '$http', '$locati
 
         $scope.selected_widget = null;
 
+        /**
+         * @method deleteWorkspace
+         */
         $scope.deleteWorkspace = function () {
             confirmationService.confirm('Do you really want to delete this workspace?', function () {
                 workspaceService['delete']($scope.workspace, function () {
@@ -28,6 +58,9 @@ Application.Controllers.controller('WorkspaceCtrl', ['$scope', '$http', '$locati
             });
         };
 
+        /**
+         * @method updateTitle
+         */
         $scope.updateTitle = function () {
             workspaceService.put($scope.workspace,
                 function () {
@@ -43,6 +76,9 @@ Application.Controllers.controller('WorkspaceCtrl', ['$scope', '$http', '$locati
                 });
         };
 
+        /**
+         * @method addWidgetToWorkspace
+         */
         $scope.addWidgetToWorkspace = function () {
             $scope.widget.workspace_id = $scope.workspace.id;
             widgetService.post(widgetService.createEntity($scope.widget), function (widget) {
@@ -54,6 +90,11 @@ Application.Controllers.controller('WorkspaceCtrl', ['$scope', '$http', '$locati
             });
         };
 
+        /**
+         * Checks whether a widget ist offline compatible
+         * @method offlineCompatibleCheck
+         * @param {Object} widget
+         */
         $scope.offlineCompatibleCheck = function (widget) {
             if ($scope.offlineCompatibleFilter) {
                 return widget.is_offline_compatible;

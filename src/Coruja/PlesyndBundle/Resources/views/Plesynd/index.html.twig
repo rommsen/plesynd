@@ -82,32 +82,32 @@
         </div>
         <div class="hero-unit" id="register">
             <div class="well">
-                <form novalidate remote-form method='post' target="user" success="registrationSuccessful" name="registerForm">
-                    <div class="control-group" ng-class="{error: !registerForm.username.$valid}">
-                        <div class="controls">
-                            <input remote-form-component type="text" name="username" ng-model="user.username" placeholder="Username"/>
-                            <span class="help-inline" ng-show="!registerForm.username.$valid && registerForm.username.$error.server">{{ serverValidationError.username }}</span>
-                        </div>
-                    </div>
-                    <div class="control-group" ng-class="{error: !registerForm.email.$valid}">
-                        <div class="controls">
-                            <input remote-form-component email type="text" name="email" ng-model="user.email" placeholder="Email"/>
-                            <span class="help-inline" ng-show="!registerForm.email.$valid && registerForm.email.$error.server">{{ serverValidationError.email }}</span>
-                        </div>
-                    </div>
-                    <div class="control-group" ng-class="{error: !registerForm.plainPassword.$valid}">
-                        <div class="controls">
-                            <input remote-form-component type="password" name="plainPassword" ng-model="user.plainPassword" placeholder="Password"/>
-                            <span class="help-inline" ng-show="!registerForm.plainPassword.$valid && registerForm.plainPassword.$error.server">{{ serverValidationError.plainPassword }}</span>
-                        </div>
-                    </div>
-                    <div class="control-group" ng-class="{error: !registerForm.repeatPassword.$valid}">
-                        <div class="controls">
-                            <input type="password" name="repeatPassword" ng-model="repeatPassword" password-validator="plainPassword" placeholder="Repeat Password"/>
-                            <span class="help-inline" ng-show="!registerForm.repeatPassword.$valid">Passwords do not match</span>
-                        </div>
-                    </div>
-                    <button type="submit" ng-click="submit(user)" ng-disabled="registerForm.$pristine || !registerForm.repeatPassword.$valid" class="btn btn-primary">Register</button>
+<form novalidate remote-form method='post' target="user" success="registrationSuccessful" name="registerForm">
+    <div class="control-group" ng-class="{error: !registerForm.username.$valid}">
+        <div class="controls">
+            <input remote-form-component type="text" name="username" ng-model="user.username" placeholder="Username"/>
+            <span class="help-inline" ng-show="!registerForm.username.$valid && registerForm.username.$error.server">{{ serverValidationError.username }}</span>
+        </div>
+    </div>
+    <div class="control-group" ng-class="{error: !registerForm.email.$valid}">
+        <div class="controls">
+            <input remote-form-component email type="text" name="email" ng-model="user.email" placeholder="Email"/>
+            <span class="help-inline" ng-show="!registerForm.email.$valid && registerForm.email.$error.server">{{ serverValidationError.email }}</span>
+        </div>
+    </div>
+    <div class="control-group" ng-class="{error: !registerForm.plainPassword.$valid}">
+        <div class="controls">
+            <input remote-form-component type="password" name="plainPassword" ng-model="user.plainPassword" placeholder="Password"/>
+            <span class="help-inline" ng-show="!registerForm.plainPassword.$valid && registerForm.plainPassword.$error.server">{{ serverValidationError.plainPassword }}</span>
+        </div>
+    </div>
+    <div class="control-group" ng-class="{error: !registerForm.repeatPassword.$valid}">
+        <div class="controls">
+            <input type="password" name="repeatPassword" ng-model="repeatPassword" password-validator="plainPassword" placeholder="Repeat Password"/>
+            <span class="help-inline" ng-show="!registerForm.repeatPassword.$valid">Passwords do not match</span>
+        </div>
+    </div>
+    <button type="submit" ng-click="submit(user)" ng-disabled="registerForm.$pristine || !registerForm.repeatPassword.$valid" class="btn btn-primary">Register</button>
                     <button class="btn btn-info" ng-click="changeAuthType('login')">Go to login</button>
                 </form>
             </div>
@@ -173,7 +173,7 @@
         <hr>
 
         <footer>
-            <p>&copy; Roman Sachse 2012</p>
+            <p>&copy; Roman Sachse 2013</p>
         </footer>
     </div><!--/.fluid-container-->
 </div>

@@ -1,6 +1,21 @@
 'use strict';
 
+/**
+ * Plesynd Directives
+ *
+ * @module Plesynd.Directives
+ */
+
+/**
+ * Loads wifgets into an iframe dom element
+ *
+ * @class widgetIframe
+ */
 Application.Directives.directive('widgetIframe', [
+    /**
+     * @method Factory
+     * @returns {{restrict: string, link: Function}}
+     */
     function () {
         return  {
             'restrict' : 'E',

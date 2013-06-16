@@ -9,12 +9,12 @@
             </div><!--/span-->
         </div><!--/row-->
         <div class="row-fluid choose-widget">
-            <div class="span2">
+            <div class="span4">
                 <select ng-model="widget" ng-options="widget.title for widget in availableWidgets | filter:{title:widgetTitleFilter} | filter:offlineCompatibleCheck">
                     <option value="">-- Choose Widget --</option>
                 </select>
             </div><!--/span-->
-            <div class="span10">
+            <div class="span8">
                 <button class="btn" ng-show="widget" ng-click="addWidgetToWorkspace(widget)">Add Widget to Workspace</button>
                 <input ng-hide="widget" ng-model="widgetTitleFilter" placeholder="Filter Widgets"/>
                 <div ng-hide="widget" class="btn-group">
