@@ -11,6 +11,7 @@ Application.Constants.constant('configuration',   {
         LOGOUT_URL : 'logout',
         CONFIRM_URL : 'user/confirm/',
         WIDGET_RESOURCE_URI : 'plesynd/api/widgets/:widgetId',
+        WIDGET_AVAILABLE_RESOURCE_URI : 'plesynd/api/widgets/:widgetId',
         WORKSPACE_RESOURCE_URI : 'plesynd/api/workspaces/:id'
     }
 );

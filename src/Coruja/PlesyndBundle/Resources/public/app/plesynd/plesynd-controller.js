@@ -11,7 +11,7 @@
  *
  * @class PlesyndCtrl
  */
-Application.Controllers.controller('PlesyndCtrl', ['$timeout', '$rootScope', '$scope', '$http', '$location', 'onlineStatus', 'workspaceService', 'widgetService', 'childFrameService', 'systemMessageService',  'confirmationService',
+Application.Controllers.controller('PlesyndCtrl', ['$timeout', '$rootScope', '$scope', '$http', '$location', 'onlineStatus', 'workspaceService', 'widgetService', 'childFrameService', 'systemMessageService', 'confirmationService', "configuration",
     /**
      * @method Factory
      * @param {Object} $timeout
@@ -25,8 +25,9 @@ Application.Controllers.controller('PlesyndCtrl', ['$timeout', '$rootScope', '$s
      * @param {Object} childFrameService
      * @param {Object} systemMessageService
      * @param {Object} confirmationService
+     * @param {Object} configuration
      */
-    function ($timeout, $rootScope, $scope, $http, $location, onlineStatus, workspaceService, widgetService, childFrameService, systemMessageService,  confirmationService) {
+        function ($timeout, $rootScope, $scope, $http, $location, onlineStatus, workspaceService, widgetService, childFrameService, systemMessageService, confirmationService, configuration) {
 
         $scope.rerender_content = false;
 
@@ -72,7 +73,7 @@ Application.Controllers.controller('PlesyndCtrl', ['$timeout', '$rootScope', '$s
          * @method event:auth-loginConfirmed Event-Listener
          */
         $rootScope.$on('event:auth-loginConfirmed', function () {
-            if($scope.rerender_content) {
+            if ($scope.rerender_content) {
                 $scope.initializeContent();
             }
             $scope.rerender_content = false;
@@ -96,10 +97,10 @@ Application.Controllers.controller('PlesyndCtrl', ['$timeout', '$rootScope', '$s
         };
 
         /**
-        * Show the edit function or not
-        * @method changeShowEdit
-        * @param {Boolean} show_edit
-        */
+         * Show the edit function or not
+         * @method changeShowEdit
+         * @param {Boolean} show_edit
+         */
         $scope.changeShowEdit = function (show_edit) {
             // always false offline
             if (!$scope.isOnline) {
@@ -116,12 +117,12 @@ Application.Controllers.controller('PlesyndCtrl', ['$timeout', '$rootScope', '$s
         $scope.initializeContent = function () {
             $scope.workspaces = [];
             $scope.widgets = [];
-            $timeout(function() {
+            $timeout(function () {
 
-            $scope.workspaces = workspaceService.query();
-            $scope.widgets = widgetService.query(function (widgets) {
-                childFrameService.setWidgets(widgets);
-            });
+                $scope.workspaces = workspaceService.query();
+                $scope.widgets = widgetService.query(function (widgets) {
+                    childFrameService.setWidgets(widgets);
+                });
             }, 20);
             $scope.getAvailableWidgets();
         };
@@ -129,12 +130,12 @@ Application.Controllers.controller('PlesyndCtrl', ['$timeout', '$rootScope', '$s
         /**
          * @method getAvailableWidgets
          */
-        $scope.getAvailableWidgets = function() {
+        $scope.getAvailableWidgets = function () {
             // get the widgets for the selectbox
             $scope.availableWidgets = [];
-            if($scope.isOnline) {
+            if ($scope.isOnline) {
                 var id;
-                $http.get('plesynd/api/widgets/available').success(function (widgets) {
+                $http.get(configuration.WIDGET_AVAILABLE_RESOURCE_URI).success(function (widgets) {
                     for (id in widgets) {
                         $scope.availableWidgets.push(widgets[id]);
                     }
@@ -152,8 +153,8 @@ Application.Controllers.controller('PlesyndCtrl', ['$timeout', '$rootScope', '$s
          */
         $scope.addWorkspace = function () {
             var workspace = workspaceService.createEntity({
-                'title'   : 'untitled ',
-                'widgets' : []
+                'title': 'untitled ',
+                'widgets': []
             });
             workspaceService.post(workspace, function () {
                 $scope.workspaces.push(workspace);
