@@ -36,7 +36,7 @@ class PlesyndController extends Controller
     public function appcacheAction() {
         $manifest = <<<EOF
 CACHE MANIFEST
-#Rev 9
+#Rev 10
 
 CACHE:
 
