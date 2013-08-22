@@ -24,12 +24,13 @@ Application.Controllers.controller('AccountActionCtrl', ['$scope', '$http', '$lo
      * @param info
      */
     function ($scope, $http, $location, $routeParams, confirmationService, systemMessageService, configuration, info) {
-        var msg, callback;
+        var msg, callback, code;
         switch(info.action) {
             case '/account_confirmation':
                 msg = 'Click confirm to confirm your account';
+                code = $routeParams.code;
                 callback = function() {
-                    $http.post(configuration.CONFIRM_URL + $routeParams.code)
+                    $http.post(configuration.CONFIRM_URL + code)
                         .success(function(){
                             systemMessageService.addSuccessMessage('Account confirmed');
                             $location.path('/');
